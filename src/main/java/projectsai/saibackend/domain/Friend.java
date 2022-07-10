@@ -2,6 +2,8 @@ package projectsai.saibackend.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import projectsai.saibackend.domain.enums.RelationStatus;
+import projectsai.saibackend.domain.enums.Relationship;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,8 +16,8 @@ public class Friend {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User owner;
+    @JoinColumn(name = "member_id")
+    private Member owner;
 
     @Column(name = "friend_name")
     private String name;

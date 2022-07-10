@@ -2,6 +2,8 @@ package projectsai.saibackend.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import projectsai.saibackend.domain.enums.Evaluation;
+import projectsai.saibackend.domain.enums.EventPurpose;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,8 +18,8 @@ public class Event {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User owner;
+    @JoinColumn(name = "member_id")
+    private Member owner;
 
     private LocalDate eventDate;
 
@@ -30,8 +32,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Evaluation evaluation;
 
-    // OneToMany 이렇게 하는거 맞나? 김영한 강의 다시 찾아볼 것
-    @OneToMany
-    @JoinColumn(name = "friend_id")
+    // 이거 돌려보고 DB 구조 확인해볼 것
+    @ManyToMany
+    @JoinTable(name = "event_participants")
     private List<Friend> participants = new ArrayList<>();
 }

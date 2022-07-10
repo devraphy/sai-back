@@ -9,12 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity @Getter @Setter
-public class User {
+public class Member {
     @Id @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "user_name")
+    @Column(name = "member_name")
     private String name;
 
     private String email;
