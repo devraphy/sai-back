@@ -25,15 +25,13 @@ public class MemberRepository {
     }
 
     public Member findByEmail(String email) {
-        return em.find(Member.class, email);
-    }
-
-    public List<Member> findByName(String name) {
-        return em.createQuery("select m from Member m where m.name = :name", Member.class)
-                .setParameter("name", name).getResultList();
+        return em.createQuery("select m from Member m where m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getSingleResult();
     }
 
     public List<Member> findAll() {
-        return em.createQuery("select m from Member m", Member.class).getResultList();
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
     }
 }
