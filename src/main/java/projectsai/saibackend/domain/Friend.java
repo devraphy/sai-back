@@ -22,12 +22,15 @@ public class Friend {
     @Column(name = "friend_name")
     private String name;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Relationship relationship;
+    private Relationship type;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private RelationStatus relationStatus;
+    private RelationStatus status;
 
+    private Long score; // 최초 친구 등록시 status에 따라서 점수가 정해짐
     private LocalDate birthDate;
     private LocalDate lastContact;
     private String memo;
