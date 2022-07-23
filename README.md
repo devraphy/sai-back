@@ -1,7 +1,14 @@
 # 프로젝트 SAI(Social Activity Interpreter)
 ### * 프로젝트 SAI의 백엔드 개발을 위한 Repository 입니다.
-### * 프론트 개발 코드를 보고 싶으시다면, 아래의 링크로 이동해주시기 바랍니다.
+
+### * 개발 명세 및 보고서
+- 사이의 개발 과정이 궁금하시다면 아래의 링크를 확인해주세요!
+- [사이 개발 명세 및 보고서 바로가기](https://docs.google.com/spreadsheets/d/1BZaCrvZ1CDQfG-mHz1vHmHRu7D0na4q504e9GBBEco8/edit?usp=sharing)
+
+### * 프론트 개발 코드
+- 프론트 코드가 궁금하시다면, 아래의 링크로 이동해주시기 바랍니다.
 - [SAI 프론트 바로가기](https://github.com/devraphy/sai-front)
+
 <hr>
 
 # 사이(SAI) 소개
@@ -32,9 +39,3 @@
 - FE 개발에는 대표적으로 Vue, BootStrap, SCSS가 사용됩니다.
 - BE 개발에는 Spring JPA가 사용되며, RestAPI를 통해 프론트와 통신하는 구조입니다.  
 - 배포와 클라우드 서버 관련된 내용은 프로젝트 마무리 단계에서 결정할 예정입니다.
-
-</br>
-
-### e) 개발 명세 및 보고서
-- 사이의 개발 과정이 궁금하신 분들은 아래의 링크를 확인해주시면 감사하겠습니다. 
-- [사이 개발 명세 및 보고서 바로가기](https://docs.google.com/spreadsheets/d/1BZaCrvZ1CDQfG-mHz1vHmHRu7D0na4q504e9GBBEco8/edit?usp=sharing)
