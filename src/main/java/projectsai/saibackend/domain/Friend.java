@@ -19,7 +19,7 @@ public class Friend {
     @JoinColumn(name = "member_id")
     private Member owner;
 
-    @Column(name = "friend_name")
+    @Column(name = "friend_name", nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -30,7 +30,7 @@ public class Friend {
     @Enumerated(EnumType.STRING)
     private RelationStatus status;
 
-    private Long score; // 최초 친구 등록시 status에 따라서 점수가 정해짐
+    private int score; // 최초 친구 등록시 status에 따라서 점수가 정해짐
     private LocalDate birthDate;
     private LocalDate lastContact;
     private String memo;
