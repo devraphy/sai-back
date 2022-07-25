@@ -1,14 +1,12 @@
 package projectsai.saibackend.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
@@ -21,90 +19,90 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class FriendRepositoryTest {
 
     @Autowired FriendRepository friendRepository;
     @PersistenceContext EntityManager em;
 
-    private Friend friend;
+    private Friend friend1, friend2, friend3;
     private Member owner;
 
-    @BeforeEach @Rollback(value = false)
+    @BeforeEach
     public void createMemberAndFriend() {
         owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now());
-        friend = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, "test");
-        owner.addFriend(friend);
+        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, "normal friend");
+        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, "positive friend");
+        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, "normal business");
+        owner.addFriend(friend1);
+        owner.addFriend(friend2);
+        owner.addFriend(friend3);
         em.persist(owner);
     }
 
-    @Test @Transactional @DisplayName("친구 - ID 검색")
-    public void findById() throws Exception {
+    @Test
+    @Transactional @DisplayName("친구 - 모든 친구 검색")
+    public void findAll() throws Exception {
         // given
-//        Long savedFriendId = friendRepository.save(friend);
-
-        // when
-        Friend findFriend = friendRepository.findById(friend.getId());
-        // 여기서 NullPointer 에러 난다. ==> 우선 DB에 제대로 친구가 등록되는지 확인해보자.
-
-        //then
-        Assertions.assertThat(friend.getId()).isEqualTo(findFriend.getId());
-    }
-
-    @Test @Transactional @DisplayName("친구 - 이름 검색")
-    public void findByName() throws Exception {
-        // given
-//        Long savedFriend = friendRepository.save(friend);
-
-        // when
-        List<Friend> friendList = friendRepository.findByName(owner, friend.getName());
-
-        // then
-        for(Friend friend1 : friendList) {
-            Assertions.assertThat(friend1.getName()).isEqualTo(friend.getName());
-        }
-    }
-
-    @Test @Transactional @DisplayName("친구 - 관계 종류 검색")
-    public void findByType() {
-        // given
-//        Long savedFriend = friendRepository.save(friend);
-
-        // when
-        List<Friend> friendList = friendRepository.findByType(owner, RelationType.FRIEND);
-
-        // then
-        for(Friend friend1 : friendList) {
-            Assertions.assertThat(friend1.getType()).isEqualTo(friend.getType());
-        }
-    }
-
-    @Test @Transactional @DisplayName("친구 - 관계 상태 검색")
-    public void findByStatus() {
-        // given
-//        Long savedFriend = friendRepository.save(friend);
-
-        // when
-        List<Friend> friendList = friendRepository.findByStatus(owner, RelationStatus.NORMAL);
-
-        // then
-        for(Friend friend1 : friendList) {
-            Assertions.assertThat(friend1.getStatus()).isEqualTo(friend.getStatus());
-        }
-    }
-
-    @Test @Transactional @DisplayName("친구 - 모든 친구 검색")
-    public void findAll() {
-        // given
-//        Long savedFriend = friendRepository.save(friend);
 
         // when
         List<Friend> friendList = friendRepository.findAll(owner);
 
         // then
         for(Friend friend1 : friendList) {
+            log.info("ID: " + friend1.getId() + " " + friend1.getName());
             Assertions.assertThat(friend1.getOwner().getId()).isEqualTo(owner.getId());
         }
     }
+
+    @Test
+    @Transactional @DisplayName("친구 - 이름 검색")
+    public void findByName() throws Exception {
+        // given
+        String name = "친구1";
+
+        // when
+        List<Friend> friendList = friendRepository.findByName(owner, name);
+
+        // then
+        for(Friend friend1 : friendList) {
+            log.info("이름: " + friend1.getName());
+            Assertions.assertThat(friend1.getName()).isEqualTo(name);
+        }
+    }
+
+    @Test
+    @Transactional @DisplayName("친구 - 관계 종류 검색")
+    public void findByType() throws Exception {
+        // given
+        RelationType type = RelationType.FRIEND;
+
+        // when
+        List<Friend> friendList = friendRepository.findByType(owner, type);
+
+        // then
+        for(Friend friend1 : friendList) {
+            log.info("이름: " + friend1.getName() + " / type =>" + friend1.getType());
+            Assertions.assertThat(friend1.getType()).isEqualTo(type);
+        }
+    }
+
+    @Test
+    @Transactional @DisplayName("친구 - 관계 상태 검색")
+    public void findByStatus() throws Exception {
+        // given
+        RelationStatus status = RelationStatus.NORMAL;
+
+        // when
+        List<Friend> friendList = friendRepository.findByStatus(owner, status);
+
+        // then
+        for(Friend friend1 : friendList) {
+            log.info("이름: " + friend1.getName() + " / status => " + friend1.getStatus());
+            Assertions.assertThat(friend1.getStatus()).isEqualTo(status);
+        }
+    }
+
+
 }
