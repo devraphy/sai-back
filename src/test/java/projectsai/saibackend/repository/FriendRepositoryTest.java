@@ -32,9 +32,9 @@ public class FriendRepositoryTest {
     @BeforeEach
     public void createMemberAndFriend() {
         owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now());
-        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, "normal friend");
-        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, "positive friend");
-        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, "normal business");
+        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
+        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
         owner.addFriend(friend1);
         owner.addFriend(friend2);
         owner.addFriend(friend3);
