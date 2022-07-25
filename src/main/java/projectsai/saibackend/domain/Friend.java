@@ -48,7 +48,7 @@ public class Friend {
         this.memo = memo;
     }
 
-    public void setOwner(Member member) {
+    public void setOwner(Member member) { // Setter 대신 사용하는 비즈니스 메서드
         this.owner = member;
     }
 }
