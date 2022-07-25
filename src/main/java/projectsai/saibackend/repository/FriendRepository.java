@@ -8,7 +8,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -18,43 +17,32 @@ public class FriendRepository {
     private EntityManager em;
 
     // CREATE
-    @Transactional
-    public Long save(Friend friend) {
-        em.persist(friend);
-        return friend.getId();
-    }
 
     // READ
-    public Friend findById(Long id) {
-        // owner_id 같이 검색하도록 하는게 안전할까?
-        // 그냥 friend_id만 있으면 소유자가 아닌 다른 소유자의 친구 정보를 볼 수도 있잖아?
-        return em.find(Friend.class, id);
-    }
-
-    public List<Friend> findByName(Member owner, String name) {
-        return em.createQuery("select f from Friend f where f.name = :name and f.owner = :owner", Friend.class)
-                .setParameter("name", name)
+    public List<Friend> findAll(Member owner) { // Member ID 값을 이용한 검색
+        return em.createQuery("select f from Friend f where f.owner = :owner", Friend.class)
                 .setParameter("owner", owner)
                 .getResultList();
     }
 
-    public List<Friend> findByType(Member owner, RelationType type) {
+    public List<Friend> findByName(Member owner, String name) { // Member ID, 친구의 이름을 이용한 검색
+        return em.createQuery("select f from Friend f where f.owner = :owner and f.name = :name ", Friend.class)
+                .setParameter("owner", owner)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+    public List<Friend> findByType(Member owner, RelationType type) { // Member ID, 관계 종류를 이용한 검색
         return em.createQuery("select f from Friend f where f.owner = :owner and f.type = :type", Friend.class)
                 .setParameter("owner", owner)
                 .setParameter("type", type)
                 .getResultList();
     }
 
-    public List<Friend> findByStatus(Member owner, RelationStatus status) {
+    public List<Friend> findByStatus(Member owner, RelationStatus status) { // Member ID, 관계 상태를 이용한 검색
         return em.createQuery("select f from Friend f where f.owner = :owner and f.status = :status", Friend.class)
                 .setParameter("owner", owner)
                 .setParameter("status", status)
                 .getResultList();
     }
-
-    public List<Friend> findAll(Member owner) {
-        return em.createQuery("select f from Friend f where f.owner = :owner", Friend.class)
-                .setParameter("owner", owner).getResultList();
-    }
-
 }
