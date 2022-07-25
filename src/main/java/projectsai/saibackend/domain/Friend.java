@@ -8,6 +8,7 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity @Getter
 public class Friend {
@@ -38,14 +39,23 @@ public class Friend {
     @Nullable
     private String memo;
 
+    @Nullable
+    private LocalDate lastContact;
+
+    @Nullable
+    private LocalDate birthDate;
+
     public Friend() {}
 
-    public Friend(String name, RelationType type, RelationStatus status, int score, @Nullable String memo) {
+    public Friend(String name, RelationType type, RelationStatus status, int score,
+                  @Nullable String memo, @Nullable LocalDate lastContact, @Nullable LocalDate birthDate) {
         this.name = name;
         this.type = type;
         this.status = status;
         this.score = score;
         this.memo = memo;
+        this.lastContact = lastContact;
+        this.birthDate = birthDate;
     }
 
     public void setOwner(Member member) { // Setter 대신 사용하는 비즈니스 메서드
