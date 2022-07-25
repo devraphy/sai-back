@@ -2,14 +2,20 @@ package projectsai.saibackend.repository;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.Relationship;
+import projectsai.saibackend.domain.enums.RelationType;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,65 +25,37 @@ import java.util.List;
 @SpringBootTest
 public class FriendRepositoryTest {
 
-    @Autowired MemberRepository memberRepository;
     @Autowired FriendRepository friendRepository;
+    @PersistenceContext EntityManager em;
 
-// 올바르게 테스트 짰는지 점검해볼 것!
-    public Member createMember() {
-        Member member = new Member();
-        member.setName("이근형");
-        member.setEmail("abc@gmail.com");
-        member.setSignUpDate(LocalDate.now());
-        member.setPassword("abcdefs");
-        return member;
+    private Friend friend;
+    private Member owner;
+
+    @BeforeEach @Rollback(value = false)
+    public void createMemberAndFriend() {
+        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now());
+        friend = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, "test");
+        owner.addFriend(friend);
+        em.persist(owner);
     }
 
-    public Friend createFriend(Member owner) {
-        Friend friend = new Friend();
-        friend.setName("친구1");
-        friend.setOwner(owner);
-        friend.setType(Relationship.FRIEND);
-        friend.setStatus(RelationStatus.NORMAL);
-        friend.setScore(50);
-        return friend;
-    }
-
-    @Test @Transactional
-    public void save() {
-        // given
-        Member owner = createMember();
-        memberRepository.save(owner);
-        Friend friend = createFriend(owner);
-
-        // when
-        Long savedFriend = friendRepository.save(friend);
-
-        // then
-        Assertions.assertThat(friend.getId()).isEqualTo(savedFriend);
-    }
-
-    @Test @Transactional
+    @Test @Transactional @DisplayName("친구 - ID 검색")
     public void findById() throws Exception {
         // given
-        Member owner = createMember();
-        memberRepository.save(owner);
-        Friend friend = createFriend(owner);
+//        Long savedFriendId = friendRepository.save(friend);
 
         // when
-        Long savedFriend = friendRepository.save(friend);
-        Friend findFriend = friendRepository.findById(savedFriend);
+        Friend findFriend = friendRepository.findById(friend.getId());
+        // 여기서 NullPointer 에러 난다. ==> 우선 DB에 제대로 친구가 등록되는지 확인해보자.
 
         //then
         Assertions.assertThat(friend.getId()).isEqualTo(findFriend.getId());
     }
 
-    @Test @Transactional
+    @Test @Transactional @DisplayName("친구 - 이름 검색")
     public void findByName() throws Exception {
         // given
-        Member owner = createMember();
-        Long owner_id = memberRepository.save(owner);
-        Friend friend = createFriend(owner);
-        Long savedFriend = friendRepository.save(friend);
+//        Long savedFriend = friendRepository.save(friend);
 
         // when
         List<Friend> friendList = friendRepository.findByName(owner, friend.getName());
@@ -88,16 +66,13 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @Transactional
+    @Test @Transactional @DisplayName("친구 - 관계 종류 검색")
     public void findByType() {
         // given
-        Member owner = createMember();
-        memberRepository.save(owner);
-        Friend friend = createFriend(owner);
+//        Long savedFriend = friendRepository.save(friend);
 
         // when
-        Long savedFriend = friendRepository.save(friend);
-        List<Friend> friendList = friendRepository.findByType(owner, Relationship.FRIEND);
+        List<Friend> friendList = friendRepository.findByType(owner, RelationType.FRIEND);
 
         // then
         for(Friend friend1 : friendList) {
@@ -105,15 +80,12 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @Transactional
+    @Test @Transactional @DisplayName("친구 - 관계 상태 검색")
     public void findByStatus() {
         // given
-        Member owner = createMember();
-        memberRepository.save(owner);
-        Friend friend = createFriend(owner);
+//        Long savedFriend = friendRepository.save(friend);
 
         // when
-        Long savedFriend = friendRepository.save(friend);
         List<Friend> friendList = friendRepository.findByStatus(owner, RelationStatus.NORMAL);
 
         // then
@@ -122,15 +94,12 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @Transactional
+    @Test @Transactional @DisplayName("친구 - 모든 친구 검색")
     public void findAll() {
         // given
-        Member owner = createMember();
-        memberRepository.save(owner);
-        Friend friend = createFriend(owner);
+//        Long savedFriend = friendRepository.save(friend);
 
         // when
-        Long savedFriend = friendRepository.save(friend);
         List<Friend> friendList = friendRepository.findAll(owner);
 
         // then

@@ -4,10 +4,11 @@ import org.springframework.stereotype.Repository;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.Relationship;
+import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,7 @@ public class FriendRepository {
     private EntityManager em;
 
     // CREATE
+    @Transactional
     public Long save(Friend friend) {
         em.persist(friend);
         return friend.getId();
@@ -36,7 +38,7 @@ public class FriendRepository {
                 .getResultList();
     }
 
-    public List<Friend> findByType(Member owner, Relationship type) {
+    public List<Friend> findByType(Member owner, RelationType type) {
         return em.createQuery("select f from Friend f where f.owner = :owner and f.type = :type", Friend.class)
                 .setParameter("owner", owner)
                 .setParameter("type", type)
