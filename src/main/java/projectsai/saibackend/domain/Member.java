@@ -5,9 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
-@Entity @Getter @Setter
+@Entity @Getter
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -23,4 +22,14 @@ public class Member {
     private String password;
 
     private LocalDate signUpDate;
+
+    public Member() {}
+
+    public Member(Long id, String name, String email, String password, LocalDate signUpDate) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.signUpDate = signUpDate;
+    }
 }
