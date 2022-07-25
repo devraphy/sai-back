@@ -1,5 +1,5 @@
 package projectsai.saibackend.domain.enums;
 
-public enum Relationship {
+public enum RelationType {
     FRIEND, BUSINESS
 }
