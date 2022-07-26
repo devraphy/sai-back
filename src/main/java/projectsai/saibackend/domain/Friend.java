@@ -17,7 +17,6 @@ public class Friend {
     @Column(name = "friend_id")
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member owner;
