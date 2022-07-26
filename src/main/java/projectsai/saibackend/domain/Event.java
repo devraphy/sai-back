@@ -34,8 +34,10 @@ public class Event {
     @Enumerated(EnumType.STRING) @NotNull
     private EventEvaluation evaluation;
 
-    @ManyToMany
-    @JoinTable(name = "event_participants")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<Friend> participants = new ArrayList<>();
 
     // 연관 관계 메서드

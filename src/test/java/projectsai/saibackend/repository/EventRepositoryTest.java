@@ -33,7 +33,7 @@ class EventRepositoryTest {
     @PersistenceContext EntityManager em;
 
     private Friend friend1, friend2, business1;
-    private Event event1, event2, event3;
+    private Event event;
     private Member owner;
 
     @BeforeEach
@@ -49,29 +49,20 @@ class EventRepositoryTest {
     }
 
     public List<Friend> findFriends() {
-        return em.createQuery("select f from Friend f where f.owner =: owner and f.type = :relationType", Friend.class)
+        return em.createQuery("select f from Friend f " +
+                        "where f.owner =: owner " +
+                        "and f.type = :relationType", Friend.class)
                 .setParameter("owner", this.owner)
                 .setParameter("relationType", RelationType.FRIEND)
                 .getResultList();
     }
 
-    public List<Friend> findBusiness() {
-        return em.createQuery("select f from Friend f where f.owner =: owner and f.type = :relationType", Friend.class)
-                .setParameter("owner", this.owner)
-                .setParameter("relationType", RelationType.BUSINESS)
-                .getResultList();
-    }
-
-
-    @Test @DisplayName("모든 Event 검색")
-    @Rollback(false)
+    @Test @DisplayName("모든 Event 검색") @Rollback(value = false)
     void findAll() {
         //given
         List<Friend> friendList = findFriends();
-        event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
-        owner.addEvent(event1);
-        em.flush();
-        em.clear();
+        event = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
+        owner.addEvent(event);
 
         //when
         List<Event> eventList = eventRepository.findAll(owner);
@@ -87,8 +78,17 @@ class EventRepositoryTest {
     @Test @DisplayName("참가자로 Event 검색")
     void findByFriend() {
         //given
+        List<Friend> friendList = findFriends();
+        event = new Event(LocalDate.now(), EventPurpose.BUSINESS, "친구 모임", EventEvaluation.NORMAL, friendList);
+        owner.addEvent(event);
+
         //when
+        List<Event> eventList = eventRepository.findByParticipants(owner, friendList);
+
         //then
+        for(Event event1 : eventList) {
+            Assertions.assertThat(event1.getEventName()).isEqualTo(event.getEventName());
+        }
     }
 
     @Test @DisplayName("Event 이름으로 검색")

@@ -22,41 +22,50 @@ public class EventRepository {
 
     // READ
     public List<Event> findAll(Member owner) {
-        return em.createQuery("select e from Event e where e.owner = :owner", Event.class)
+        return em.createQuery("select e from Event e " +
+                        "where e.owner = :owner", Event.class)
                 .setParameter("owner", owner)
                 .getResultList();
     }
 
-    public List<Event> findByFriend(Member owner, List<Friend> friendList) { // 이거 제대로 동작하는지 검증하기
-        return em.createQuery("select e from Event e where e.owner = :owner and e.participants = :friendList", Event.class)
-                .setParameter("owner", owner)
+    public List<Event> findByParticipants(Member owner, List<Friend> friendList) { // 이거 제대로 동작하는지 검증하기
+        return em.createQuery("select e from Event e " +
+                                "where e.participants = :friendList", Event.class)
                 .setParameter("friendList", friendList)
                 .getResultList();
     }
 
     public List<Event> findByEventName(Member owner, String eventName) {
-        return em.createQuery("select e from Event e where e.owner = :owner and e.eventName = :eventName", Event.class)
+        return em.createQuery("select e from Event e " +
+                        "where e.owner = :owner " +
+                        "and e.eventName = :eventName", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("eventName", eventName)
                 .getResultList();
     }
 
     public List<Event> findByDate(Member owner, LocalDate date) {
-        return em.createQuery("select e from Event e where e.owner = :owner and e.eventDate = :date", Event.class)
+        return em.createQuery("select e from Event e " +
+                        "where e.owner = :owner " +
+                        "and e.eventDate = :date", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("date", date)
                 .getResultList();
     }
 
     public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
-        return em.createQuery("select e from Event e where e.owner = :owner and e.eventPurpose = :purpose", Event.class)
+        return em.createQuery("select e from Event e " +
+                                "where e.owner = :owner " +
+                                "and e.eventPurpose = :purpose", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("purpose", purpose)
                 .getResultList();
     }
 
     public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
-        return em.createQuery("select e from Event e where e.owner = :owner and e.evaluation = :evaluation", Event.class)
+        return em.createQuery("select e from Event e " +
+                                "where e.owner = :owner " +
+                                "and e.evaluation = :evaluation", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("evaluation", evaluation)
                 .getResultList();
