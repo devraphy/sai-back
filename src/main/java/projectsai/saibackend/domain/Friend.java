@@ -1,7 +1,6 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.lang.Nullable;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
