@@ -57,6 +57,7 @@ public class Friend {
         this.birthDate = birthDate;
     }
 
+    // 연관 관계 메서드
     public void setOwner(Member member) { // Setter 대신 사용하는 비즈니스 메서드
         this.owner = member;
     }
