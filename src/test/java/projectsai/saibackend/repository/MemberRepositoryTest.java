@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @SpringBootTest
+@Transactional
 class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
@@ -30,7 +31,7 @@ class MemberRepositoryTest {
     }
 
 
-    @Test @Transactional @DisplayName("회원 - ID 검색")
+    @Test @DisplayName("회원 - ID 검색")
     public void findById() throws Exception {
        //given
         Long savedId = memberRepository.save(member1);
@@ -43,7 +44,7 @@ class MemberRepositoryTest {
         Assertions.assertThat(findMember.getName()).isEqualTo(member1.getName());
     }
 
-    @Test @Transactional @DisplayName("회원 - Email 검색")
+    @Test @DisplayName("회원 - Email 검색")
     public void findByEmail() throws Exception {
         // given
         Long savedId = memberRepository.save(member1);
@@ -57,7 +58,7 @@ class MemberRepositoryTest {
         System.out.println(member1.getSignUpDate());
     }
 
-    @Test @Transactional @DisplayName("회원 - 모든 회원 검색")
+    @Test @DisplayName("회원 - 모든 회원 검색")
     public void findAllMember() throws  Exception {
         // given
         Long savedMember1 = memberRepository.save(member1);

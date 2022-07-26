@@ -19,8 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@SpringBootTest
-@Slf4j
+@Transactional @SpringBootTest @Slf4j
 public class FriendRepositoryTest {
 
     @Autowired FriendRepository friendRepository;
@@ -41,8 +40,7 @@ public class FriendRepositoryTest {
         em.persist(owner);
     }
 
-    @Test
-    @Transactional @DisplayName("친구 - 모든 친구 검색")
+    @Test @DisplayName("친구 - 모든 친구 검색")
     public void findAll() throws Exception {
         // given
 
@@ -56,8 +54,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test
-    @Transactional @DisplayName("친구 - 이름 검색")
+    @Test @DisplayName("친구 - 이름 검색")
     public void findByName() throws Exception {
         // given
         String name = "친구1";
@@ -72,8 +69,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test
-    @Transactional @DisplayName("친구 - 관계 종류 검색")
+    @Test @DisplayName("친구 - 관계 종류 검색")
     public void findByType() throws Exception {
         // given
         RelationType type = RelationType.FRIEND;
@@ -88,8 +84,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test
-    @Transactional @DisplayName("친구 - 관계 상태 검색")
+    @Test @DisplayName("친구 - 관계 상태 검색")
     public void findByStatus() throws Exception {
         // given
         RelationStatus status = RelationStatus.NORMAL;
