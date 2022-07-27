@@ -8,6 +8,7 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity @Getter
 public class Friend {
@@ -59,5 +60,23 @@ public class Friend {
     // 연관 관계 메서드
     public void setOwner(Member member) { // Setter 대신 사용하는 비즈니스 메서드
         this.owner = member;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Friend friend = (Friend) o;
+        return getScore() == friend.getScore()
+                && Objects.equals(getId(), friend.getId())
+                && Objects.equals(getOwner(), friend.getOwner())
+                && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
+                && Objects.equals(getMemo(), friend.getMemo()) && Objects.equals(getLastContact(), friend.getLastContact())
+                && Objects.equals(getBirthDate(), friend.getBirthDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getLastContact(), getBirthDate());
     }
 }
