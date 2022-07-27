@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity @Getter
 public class Event {
@@ -54,5 +55,22 @@ public class Event {
         this.eventName = eventName;
         this.evaluation = evaluation;
         this.participants = participants;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(getId(), event.getId())
+                && Objects.equals(getOwner(), event.getOwner())
+                && Objects.equals(getEventDate(), event.getEventDate()) && getEventPurpose() == event.getEventPurpose()
+                && Objects.equals(getEventName(), event.getEventName()) && getEvaluation() == event.getEvaluation()
+                && Objects.equals(getParticipants(), event.getParticipants());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOwner(), getEventDate(), getEventPurpose(), getEventName(), getEvaluation(), getParticipants());
     }
 }
