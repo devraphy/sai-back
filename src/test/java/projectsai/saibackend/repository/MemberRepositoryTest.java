@@ -21,54 +21,54 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
 
-    private Member member1;
-    private Member member2;
+    private Member member1, member2;
+    private Long savedId1, savedId2;
 
     @BeforeEach
     public void createMember() {
         member1 = new Member("이근형","abc@gamil.com", "abcde", LocalDate.now());
         member2 = new Member("곽두팔","twoegiht@gamil.com", "2828", LocalDate.now());
+        savedId1 = memberRepository.save(member1);
+        savedId2 = memberRepository.save(member2);
     }
 
 
     @Test @DisplayName("회원 - ID 검색")
     public void findById() throws Exception {
        //given
-        Long savedId = memberRepository.save(member1);
-
         //when
-        Member findMember = memberRepository.findById(savedId);
+        Member findMember1 = memberRepository.findById(savedId1);
+        Member findMember2 = memberRepository.findById(savedId2);
 
         //then
-        Assertions.assertThat(findMember.getId()).isEqualTo(member1.getId());
-        Assertions.assertThat(findMember.getName()).isEqualTo(member1.getName());
+        Assertions.assertThat(findMember1.getId()).isEqualTo(savedId1);
+        Assertions.assertThat(findMember2.getId()).isEqualTo(savedId2);
     }
 
     @Test @DisplayName("회원 - Email 검색")
     public void findByEmail() throws Exception {
         // given
-        Long savedId = memberRepository.save(member1);
-        String email = member1.getEmail();
+        String email1 = member1.getEmail();
+        String email2 = member2.getEmail();
 
         // when
-        Member findMember = memberRepository.findByEmail(email);
+        Member findMember1 = memberRepository.findByEmail(email1);
+        Member findMember2 = memberRepository.findByEmail(email2);
 
         //then
-        Assertions.assertThat(findMember.getId()).isEqualTo(member1.getId());
-        System.out.println(member1.getSignUpDate());
+        Assertions.assertThat(findMember1.getId()).isEqualTo(member1.getId());
+        Assertions.assertThat(findMember2.getId()).isEqualTo(member2.getId());
     }
 
     @Test @DisplayName("회원 - 모든 회원 검색")
     public void findAllMember() throws  Exception {
         // given
-        Long savedMember1 = memberRepository.save(member1);
-        Long savedMember2 = memberRepository.save(member1);
 
         // when
         List<Member> all = memberRepository.findAll();
 
         for(Member member : all) {
-            Assertions.assertThat(member.getEmail()).isIn(member1.getEmail(), member1.getEmail());
+            Assertions.assertThat(member.getId()).isIn(member1.getId(), member2.getId());
         }
     }
 }
