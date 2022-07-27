@@ -28,9 +28,12 @@ public class EventRepository {
                 .getResultList();
     }
 
-    public List<Event> findByParticipants(Member owner, List<Friend> friendList) { // 이거 제대로 동작하는지 검증하기
+    public List<Event> findByParticipants(Member owner, List<Friend> friendList) {
         return em.createQuery("select e from Event e " +
-                                "where e.participants = :friendList", Event.class)
+                        "join e.participants p " +
+                        "where e.owner = :owner " +
+                        "and p in :friendList", Event.class)
+                .setParameter("owner", owner)
                 .setParameter("friendList", friendList)
                 .getResultList();
     }
@@ -38,7 +41,7 @@ public class EventRepository {
     public List<Event> findByEventName(Member owner, String eventName) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner " +
-                        "and e.eventName = :eventName", Event.class)
+                        "and e.name = :eventName", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("eventName", eventName)
                 .getResultList();
@@ -47,7 +50,7 @@ public class EventRepository {
     public List<Event> findByDate(Member owner, LocalDate date) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner " +
-                        "and e.eventDate = :date", Event.class)
+                        "and e.date = :date", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("date", date)
                 .getResultList();
@@ -56,7 +59,7 @@ public class EventRepository {
     public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
                                 "where e.owner = :owner " +
-                                "and e.eventPurpose = :purpose", Event.class)
+                                "and e.purpose = :purpose", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("purpose", purpose)
                 .getResultList();
