@@ -32,8 +32,19 @@ class MemberRepositoryTest {
         savedId2 = memberRepository.save(member2);
     }
 
+    @Test @DisplayName("Member - 전체 검색")
+    public void findAllMember() throws  Exception {
+        // given
 
-    @Test @DisplayName("회원 - ID 검색")
+        // when
+        List<Member> all = memberRepository.findAll();
+
+        for(Member member : all) {
+            Assertions.assertThat(member.getId()).isIn(member1.getId(), member2.getId());
+        }
+    }
+
+    @Test @DisplayName("Member - ID로 검색")
     public void findById() throws Exception {
        //given
         //when
@@ -45,7 +56,7 @@ class MemberRepositoryTest {
         Assertions.assertThat(findMember2.getId()).isEqualTo(savedId2);
     }
 
-    @Test @DisplayName("회원 - Email 검색")
+    @Test @DisplayName("Member - Email로 검색")
     public void findByEmail() throws Exception {
         // given
         String email1 = member1.getEmail();
@@ -58,17 +69,5 @@ class MemberRepositoryTest {
         //then
         Assertions.assertThat(findMember1.getId()).isEqualTo(member1.getId());
         Assertions.assertThat(findMember2.getId()).isEqualTo(member2.getId());
-    }
-
-    @Test @DisplayName("회원 - 모든 회원 검색")
-    public void findAllMember() throws  Exception {
-        // given
-
-        // when
-        List<Member> all = memberRepository.findAll();
-
-        for(Member member : all) {
-            Assertions.assertThat(member.getId()).isIn(member1.getId(), member2.getId());
-        }
     }
 }

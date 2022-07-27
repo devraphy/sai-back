@@ -76,7 +76,7 @@ class EventRepositoryTest {
                 .getResultList();
     }
 
-    @Test @DisplayName("모든 Event 검색")
+    @Test @DisplayName("Event - 전체 검색")
     void findAll() {
         //given
 
@@ -91,7 +91,7 @@ class EventRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Event 참가자로 검색")
+    @Test @DisplayName("Event - 참가자로 검색")
     void findByFriend() {
         //given
 
@@ -113,7 +113,7 @@ class EventRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Event 이름으로 검색")
+    @Test @DisplayName("Event - 이름으로 검색")
     void findByEventName() {
         //given
 
@@ -126,7 +126,7 @@ class EventRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Event 날짜로 검색")
+    @Test @DisplayName("Event - 날짜로 검색")
     void findByDate() {
         //given
 
@@ -139,7 +139,7 @@ class EventRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Event 목적으로 검색")
+    @Test @DisplayName("Event - 목적으로 검색")
     void findByPurpose() {
         //given
 
@@ -157,7 +157,7 @@ class EventRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Event 평가로 검색")
+    @Test @DisplayName("Event - 평가로 검색")
     void findByEvaluation() {
         //given
 

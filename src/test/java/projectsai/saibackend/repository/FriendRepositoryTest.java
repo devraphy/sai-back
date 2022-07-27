@@ -40,7 +40,7 @@ public class FriendRepositoryTest {
         em.persist(owner);
     }
 
-    @Test @DisplayName("친구 - 모든 친구 검색")
+    @Test @DisplayName("Friend - 전체 검색")
     public void findAll() throws Exception {
         // given
 
@@ -54,7 +54,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @DisplayName("친구 - 이름 검색")
+    @Test @DisplayName("Friend - 이름으로 검색")
     public void findByName() throws Exception {
         // given
         String name = "친구1";
@@ -69,7 +69,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @DisplayName("친구 - 관계 종류 검색")
+    @Test @DisplayName("Friend - 관계 종류로 검색")
     public void findByType() throws Exception {
         // given
         RelationType type = RelationType.FRIEND;
@@ -84,7 +84,7 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @DisplayName("친구 - 관계 상태 검색")
+    @Test @DisplayName("Friend - 관계 상태로 검색")
     public void findByStatus() throws Exception {
         // given
         RelationStatus status = RelationStatus.NORMAL;
