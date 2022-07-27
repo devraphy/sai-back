@@ -71,7 +71,8 @@ public class Friend {
                 && Objects.equals(getId(), friend.getId())
                 && Objects.equals(getOwner(), friend.getOwner())
                 && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
-                && Objects.equals(getMemo(), friend.getMemo()) && Objects.equals(getLastContact(), friend.getLastContact())
+                && Objects.equals(getMemo(), friend.getMemo())
+                && Objects.equals(getLastContact(), friend.getLastContact())
                 && Objects.equals(getBirthDate(), friend.getBirthDate());
     }
 

@@ -24,13 +24,13 @@ public class Event {
     private Member owner;
 
     @NotNull
-    private LocalDate eventDate;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING) @NotNull
-    private EventPurpose eventPurpose;
+    private EventPurpose purpose;
 
     @Column(name = "event_name") @Nullable
-    private String eventName;
+    private String name;
 
     @Enumerated(EnumType.STRING) @NotNull
     private EventEvaluation evaluation;
@@ -48,11 +48,10 @@ public class Event {
 
     public Event() {}
 
-    public Event(LocalDate eventDate, EventPurpose eventPurpose, @Nullable String eventName,
-                 EventEvaluation evaluation, List<Friend> participants) {
-        this.eventDate = eventDate;
-        this.eventPurpose = eventPurpose;
-        this.eventName = eventName;
+    public Event(LocalDate date, EventPurpose purpose, @Nullable String name, EventEvaluation evaluation, List<Friend> participants) {
+        this.date = date;
+        this.purpose = purpose;
+        this.name = name;
         this.evaluation = evaluation;
         this.participants = participants;
     }
@@ -64,13 +63,13 @@ public class Event {
         Event event = (Event) o;
         return Objects.equals(getId(), event.getId())
                 && Objects.equals(getOwner(), event.getOwner())
-                && Objects.equals(getEventDate(), event.getEventDate()) && getEventPurpose() == event.getEventPurpose()
-                && Objects.equals(getEventName(), event.getEventName()) && getEvaluation() == event.getEvaluation()
+                && Objects.equals(getDate(), event.getDate()) && getPurpose() == event.getPurpose()
+                && Objects.equals(getName(), event.getName()) && getEvaluation() == event.getEvaluation()
                 && Objects.equals(getParticipants(), event.getParticipants());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getEventDate(), getEventPurpose(), getEventName(), getEvaluation(), getParticipants());
+        return Objects.hash(getId(), getOwner(), getDate(), getPurpose(), getName(), getEvaluation(), getParticipants());
     }
 }
