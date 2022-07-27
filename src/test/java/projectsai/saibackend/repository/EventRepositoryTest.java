@@ -21,10 +21,8 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest @Slf4j @Transactional
 class EventRepositoryTest {
@@ -32,9 +30,9 @@ class EventRepositoryTest {
     @Autowired EventRepository eventRepository;
     @PersistenceContext EntityManager em;
 
-    private Friend friend1, friend2, business1;
-    private Event event;
     private Member owner;
+    private Friend friend1, friend2, business1, business2;
+    private List<Friend> friendList, businessList;
 
     @BeforeEach
     public void createMemberAndFriend() {
@@ -42,10 +40,22 @@ class EventRepositoryTest {
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
         business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
+        business2 = new Friend("동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
         owner.addFriend(friend1);
         owner.addFriend(friend2);
         owner.addFriend(business1);
+        owner.addFriend(business2);
         em.persist(owner);
+    }
+
+    @BeforeEach
+    public void createEvent() {
+        friendList = findFriends();
+        businessList = findBusiness();
+        Event friendEvent = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
+        Event businessEvent = new Event(LocalDate.now(), EventPurpose.BUSINESS, "비지니스 모임", EventEvaluation.POSITIVE, businessList);
+        owner.addEvent(friendEvent);
+        owner.addEvent(businessEvent);
     }
 
     public List<Friend> findFriends() {
@@ -57,65 +67,111 @@ class EventRepositoryTest {
                 .getResultList();
     }
 
-    @Test @DisplayName("모든 Event 검색") @Rollback(value = false)
+    public List<Friend> findBusiness() {
+        return em.createQuery("select f from Friend f " +
+                        "where f.owner =: owner " +
+                        "and f.type = :relationType", Friend.class)
+                .setParameter("owner", this.owner)
+                .setParameter("relationType", RelationType.BUSINESS)
+                .getResultList();
+    }
+
+    @Test @DisplayName("모든 Event 검색")
     void findAll() {
         //given
-        List<Friend> friendList = findFriends();
-        event = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
-        owner.addEvent(event);
 
         //when
-        List<Event> eventList = eventRepository.findAll(owner);
+        List<Event> allEvent = eventRepository.findAll(owner);
 
         //then
-        for(Event event : eventList) {
+        for(Event event : allEvent) {
             for(Friend participant : event.getParticipants()) {
-                Assertions.assertThat(participant.getName()).isIn(friend1.getName(), friend2.getName());
+                Assertions.assertThat(participant.getId()).isIn(friend1.getId(), friend2.getId(), business1.getId(), business2.getId());
             }
         }
     }
 
-    @Test @DisplayName("참가자로 Event 검색")
+    @Test @DisplayName("Event 참가자로 검색")
     void findByFriend() {
         //given
-        List<Friend> friendList = findFriends();
-        event = new Event(LocalDate.now(), EventPurpose.BUSINESS, "친구 모임", EventEvaluation.NORMAL, friendList);
-        owner.addEvent(event);
 
         //when
-        List<Event> eventList = eventRepository.findByParticipants(owner, friendList);
+        List<Event> friendEventList = eventRepository.findByParticipants(owner, friendList);
+        List<Event> businessEventList = eventRepository.findByParticipants(owner, businessList);
 
         //then
-        for(Event event1 : eventList) {
-            Assertions.assertThat(event1.getEventName()).isEqualTo(event.getEventName());
+        for(Event event : friendEventList) {
+            for(Friend participant : event.getParticipants()) {
+                Assertions.assertThat(participant.getId()).isIn(friend1.getId(), friend2.getId());
+            }
+        }
+
+        for(Event event : businessEventList) {
+            for(Friend participant : event.getParticipants()) {
+                Assertions.assertThat(participant.getId()).isIn(business1.getId(), business2.getId());
+            }
         }
     }
 
     @Test @DisplayName("Event 이름으로 검색")
     void findByEventName() {
         //given
+
         //when
+        List<Event> eventList = eventRepository.findByEventName(owner, "친구 모임");
+
         //then
+        for(Event event: eventList) {
+            Assertions.assertThat(event.getName()).isEqualTo("친구 모임");
+        }
     }
 
     @Test @DisplayName("Event 날짜로 검색")
     void findByDate() {
         //given
+
         //when
+        List<Event> eventList = eventRepository.findByDate(owner, LocalDate.now());
+
         //then
+        for(Event event : eventList) {
+            Assertions.assertThat(event.getDate()).isEqualTo(LocalDate.now());
+        }
     }
 
     @Test @DisplayName("Event 목적으로 검색")
     void findByPurpose() {
         //given
+
         //when
+        List<Event> chillEvents = eventRepository.findByPurpose(owner, EventPurpose.CHILL);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner, EventPurpose.BUSINESS);
+
         //then
+        for(Event event : chillEvents) {
+            Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.CHILL);
+        }
+
+        for(Event event : businessEvents) {
+            Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.BUSINESS);
+        }
     }
 
     @Test @DisplayName("Event 평가로 검색")
     void findByEvaluation() {
         //given
+
         //when
+        List<Event> normalEvents = eventRepository.findByEvaluation(owner, EventEvaluation.NORMAL);
+        List<Event> positiveEvents = eventRepository.findByEvaluation(owner, EventEvaluation.POSITIVE);
+
         //then
+        for(Event event : normalEvents) {
+            Assertions.assertThat(event.getEvaluation()).isEqualTo(EventEvaluation.NORMAL);
+        }
+
+        for(Event event : positiveEvents) {
+            Assertions.assertThat(event.getEvaluation()).isEqualTo(EventEvaluation.POSITIVE);
+        }
     }
 }
