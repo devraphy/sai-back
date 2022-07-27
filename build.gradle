@@ -25,7 +25,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5' // jackson
 	implementation 'com.querydsl:querydsl-jpa' // query dsl
-	implementation 'com.querydsl:querydsl-apt' // query dsl
+	implementation 'com.querydsl:querydsl-apt'
+    implementation 'org.jetbrains:annotations:20.1.0'// query dsl
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
