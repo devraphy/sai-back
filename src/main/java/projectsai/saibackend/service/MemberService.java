@@ -1,6 +1,8 @@
 package projectsai.saibackend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
+@RequiredArgsConstructor @Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -26,9 +28,15 @@ public class MemberService {
 
     // 회원 가입 - email 중복 검사
     private void validateDuplicate(Member member) {
-        Member findMember = memberRepository.findByEmail(member.getEmail());
-        if(findMember.getEmail().equals(member.getEmail())) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+        try {
+            Member findMember = memberRepository.findByEmail(member.getEmail());
+            if(findMember != null) {
+                throw new IllegalStateException("이미 존재하는 이메일입니다.");
+            }
+        }
+        catch (EmptyResultDataAccessException e) {
+            log.info("해당 이메일은 존재하지 않는 신규 이메일입니다.");
+            return;
         }
     }
 
