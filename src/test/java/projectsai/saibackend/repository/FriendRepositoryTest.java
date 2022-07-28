@@ -41,6 +41,19 @@ public class FriendRepositoryTest {
         em.persist(owner);
     }
 
+    @Test @DisplayName("Friend - 친구 저장")
+    public void save() throws Exception {
+        // given
+        Member newMember = new Member("라파파", "rapapa@gmail.com", "abc", LocalDate.now());
+        Friend newFriend = new Friend("테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+
+        // when
+        Long savedFriendId = friendRepository.save(newMember, newFriend);
+
+        // then
+        Assertions.assertThat(savedFriendId).isEqualTo(newFriend.getId());
+    }
+
     @Test @DisplayName("Friend - 전체 검색")
     public void findAll() throws Exception {
         // given
