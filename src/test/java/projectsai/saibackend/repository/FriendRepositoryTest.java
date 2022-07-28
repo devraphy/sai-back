@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
@@ -14,12 +15,12 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
 
-@Transactional @SpringBootTest @Slf4j
+@Transactional
+@SpringBootTest @Slf4j
 public class FriendRepositoryTest {
 
     @Autowired FriendRepository friendRepository;
