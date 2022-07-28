@@ -29,6 +29,11 @@ public class FriendService {
         return friendRepository.findAll(member);
     }
 
+    // 친구 ID 검색
+    public Friend findById(Member member, Long id) {
+        return friendRepository.findById(member, id);
+    }
+
     // 친구 이름 검색
     public List<Friend> findByName(Member member, String name) {
         return friendRepository.findByName(member, name);
