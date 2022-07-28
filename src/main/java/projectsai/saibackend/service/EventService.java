@@ -26,6 +26,11 @@ public class EventService {
         return eventRepository.save(member, event);
     }
 
+    // 이벤트 ID 검색
+    public Event findById(Member member, Long id) {
+        return eventRepository.findById(member, id);
+    }
+
     // 이벤트 전체 검색
     public List<Event> findAll(Member member) {
         return eventRepository.findAll(member);
