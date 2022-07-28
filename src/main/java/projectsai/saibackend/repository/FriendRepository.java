@@ -17,6 +17,11 @@ public class FriendRepository {
     private EntityManager em;
 
     // CREATE
+    public Long save(Member member, Friend friend) {
+        member.addFriend(friend);
+        em.persist(member);
+        return friend.getId();
+    }
 
     // READ
     public List<Friend> findAll(Member owner) { // Member ID 값을 이용한 검색
