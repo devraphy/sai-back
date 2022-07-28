@@ -26,6 +26,16 @@ public class EventRepository {
     }
 
     // READ
+
+    public Event findById(Member owner, Long id) {
+        return em.createQuery("select e from Event e " +
+                        "where e.owner = :owner " +
+                        "and e.id = :id", Event.class)
+                .setParameter("owner", owner)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
     public List<Event> findAll(Member owner) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner", Event.class)
