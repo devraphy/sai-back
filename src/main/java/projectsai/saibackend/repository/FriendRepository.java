@@ -17,9 +17,9 @@ public class FriendRepository {
     private EntityManager em;
 
     // CREATE
-    public Long save(Member member, Friend friend) {
-        member.addFriend(friend);
-        em.persist(member);
+    public Long save(Member owner, Friend friend) {
+        owner.addFriend(friend);
+        em.persist(owner);
         return friend.getId();
     }
 
