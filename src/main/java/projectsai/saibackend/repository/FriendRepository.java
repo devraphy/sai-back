@@ -30,6 +30,13 @@ public class FriendRepository {
                 .getResultList();
     }
 
+    public Friend findById(Member owner, Long id) { // Member ID 값과 Friend ID를 이용한 검색
+        return em.createQuery("select f from Friend f where f.owner = :owner and f.id = :id", Friend.class)
+                .setParameter("owner", owner)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
     public List<Friend> findByName(Member owner, String name) { // Member ID, 친구의 이름을 이용한 검색
         return em.createQuery("select f from Friend f where f.owner = :owner and f.name = :name ", Friend.class)
                 .setParameter("owner", owner)
