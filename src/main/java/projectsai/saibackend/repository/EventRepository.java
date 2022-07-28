@@ -19,6 +19,11 @@ public class EventRepository {
     private EntityManager em;
 
     // CREATE
+    public Long save(Member owner, Event event) {
+        owner.addEvent(event);
+        em.persist(owner);
+        return event.getId();
+    }
 
     // READ
     public List<Event> findAll(Member owner) {
