@@ -35,10 +35,11 @@ class EventServiceTest {
 
     private Member owner;
     private Friend friend1, friend2, friend3;
+    private Event event1, event2, event3, event4;
     private List<Friend> friendList;
 
     @BeforeEach
-    void createMemberFriend() {
+    void createMemberFriendEvent() {
         owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now());
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -53,25 +54,28 @@ class EventServiceTest {
         friendList.add(friend1);
         friendList.add(friend2);
         friendList.add(friend3);
+
+        event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "오늘 코딩", EventEvaluation.POSITIVE, friendList);
+        event2 = new Event(LocalDate.of(2022, 07, 10), EventPurpose.CHILL, "알고리즘 스터디", EventEvaluation.POSITIVE, friendList);
+        event3 = new Event(LocalDate.of(2022, 6, 6), EventPurpose.BUSINESS, "6월 결산 회의", EventEvaluation.NORMAL, friendList);
+        event4 = new Event(LocalDate.of(2022, 7, 7), EventPurpose.BUSINESS, "7월 결산 회의", EventEvaluation.NORMAL, friendList);
     }
 
     @Test
     void addEvent() {
         // given
-        Event event = new Event(LocalDate.now(), EventPurpose.CHILL, "새벽 코딩", EventEvaluation.GREAT, friendList);
 
         // when
-        Long savedEventId = eventRepository.save(owner, event);
+        Long savedEventId = eventRepository.save(owner, event1);
 
         // then
-        Assertions.assertEquals(savedEventId, event.getId());
+        Assertions.assertEquals(savedEventId, event1.getId());
     }
 
     @Test
     void findById() {
         // given
-        Event event = new Event(LocalDate.now(), EventPurpose.CHILL, "새벽 코딩", EventEvaluation.GREAT, friendList);
-        Long savedEventId = eventRepository.save(owner, event);
+        Long savedEventId = eventRepository.save(owner, event1);
 
         // when
         Event findEvent = eventRepository.findById(owner, savedEventId);
@@ -83,9 +87,6 @@ class EventServiceTest {
     @Test
     void findAll() {
         // given
-        Event event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "새벽 코딩", EventEvaluation.GREAT, friendList);
-        Event event2 = new Event(LocalDate.now(), EventPurpose.CHILL, "저녁 코딩", EventEvaluation.GREAT, friendList);
-        Event event3 = new Event(LocalDate.now(), EventPurpose.CHILL, "아침 코딩", EventEvaluation.GREAT, friendList);
         Long savedEventId1 = eventRepository.save(owner, event1);
         Long savedEventId2 = eventRepository.save(owner, event2);
         Long savedEventId3 = eventRepository.save(owner, event3);
@@ -94,19 +95,25 @@ class EventServiceTest {
         List<Event> findEventList = eventRepository.findAll(owner);
 
         // then
+        if(findEventList.isEmpty()) {
+            Assertions.fail("findAll() => findEventList is empty.");
+        }
+
         for(Event event : findEventList) {
             org.assertj.core.api.Assertions.assertThat(event).isIn(event1, event2, event3);
         }
     }
 
-    @Test @Rollback(value = false)
+    @Test
     void findByParticipants() {
         // given
         List<Friend> friendList1 = friendList.subList(0, 2);
         List<Friend> friendList2 = friendList.subList(1, 3);
-        Event event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "새벽 코딩", EventEvaluation.GREAT, friendList);
-        Event event2 = new Event(LocalDate.now(), EventPurpose.CHILL, "저녁 코딩", EventEvaluation.GREAT, friendList1);
-        Event event3 = new Event(LocalDate.now(), EventPurpose.CHILL, "아침 코딩", EventEvaluation.GREAT, friendList2);
+
+        event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "새벽 코딩", EventEvaluation.GREAT, friendList);
+        event2 = new Event(LocalDate.now(), EventPurpose.CHILL, "저녁 코딩", EventEvaluation.GREAT, friendList1);
+        event3 = new Event(LocalDate.now(), EventPurpose.CHILL, "아침 코딩", EventEvaluation.GREAT, friendList2);
+
         eventRepository.save(owner, event1);
         eventRepository.save(owner, event2);
         eventRepository.save(owner, event3);
@@ -115,36 +122,116 @@ class EventServiceTest {
         List<Event> findEventList = eventRepository.findByParticipants(owner, friendList);
 
         // then
+        if(findEventList.isEmpty()) {
+            Assertions.fail("findByParticipants() => findEventList is empty.");
+        }
+
         for(Event event : findEventList) {
-            org.assertj.core.api.Assertions.assertThat(event.getName()).isIn(event1.getName(), event2.getName(), event3.getName());
+            org.assertj.core.api.Assertions.assertThat(event.getName()).isIn("새벽 코딩", "저녁 코딩", "아침 코딩");
         }
     }
 
     @Test
     void findByName() {
         // given
+        eventRepository.save(owner, event1);
+
         // when
+        List<Event> findEventList = eventRepository.findByEventName(owner, "오늘 코딩");
+
         // then
+        if(findEventList.isEmpty()) {
+            Assertions.fail("findByName() => findEventList is empty.");
+        }
+
+        for(Event event : findEventList) {
+            Assertions.assertEquals(event.getName(), event1.getName());
+        }
     }
 
     @Test
     void findByDate() {
         // given
+        eventRepository.save(owner, event1);
+        eventRepository.save(owner, event2);
+        eventRepository.save(owner, event3);
+        eventRepository.save(owner, event4);
+
         // when
+        List<Event> findEventList = eventRepository.findByDate(owner, LocalDate.of(2022,7,29));
+
         // then
+        if(findEventList.isEmpty()) {
+            Assertions.fail("findByDate() => findEventList is empty.");
+        }
+
+        for(Event event : findEventList) {
+            Assertions.assertEquals(event.getName(), event1.getName());
+        }
     }
 
     @Test
     void findByPurpose() {
         // given
+        eventRepository.save(owner, event1);
+        eventRepository.save(owner, event2);
+        eventRepository.save(owner, event3);
+        eventRepository.save(owner, event4);
+
         // when
+        List<Event> chillEvents = eventRepository.findByPurpose(owner, EventPurpose.CHILL);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner, EventPurpose.BUSINESS);
+
         // then
+        if(chillEvents.isEmpty()) {
+            Assertions.fail("findByPurpose() => chillEvents is empty.");
+        }
+
+        if(businessEvents.isEmpty()) {
+            Assertions.fail("findByPurpose() => businessEvents is empty.");
+        }
+
+        for(Event event : chillEvents) {
+            log.info("chill event name => " + event.getName());
+            org.assertj.core.api.Assertions.assertThat(event.getPurpose()).isIn(EventPurpose.CHILL);
+        }
+
+        for(Event event : businessEvents) {
+            log.info("business event name => " + event.getName());
+            org.assertj.core.api.Assertions.assertThat(event.getPurpose()).isIn(EventPurpose.BUSINESS);
+        }
     }
 
     @Test
     void findByEvaluation() {
         // given
+        eventRepository.save(owner, event1);
+        eventRepository.save(owner, event2);
+        eventRepository.save(owner, event3);
+        eventRepository.save(owner, event4);
+
         // when
+        List<Event> normalEvents = eventRepository.findByEvaluation(owner, EventEvaluation.NORMAL);
+        List<Event> positiveEvents = eventRepository.findByEvaluation(owner, EventEvaluation.POSITIVE);
+
         // then
+
+        if(normalEvents.isEmpty()) {
+            Assertions.fail("findByEvaluation() => normalEvents is empty.");
+        }
+
+        if(positiveEvents.isEmpty()) {
+            Assertions.fail("findByEvaluation() => positiveEvents is empty.");
+        }
+
+        for(Event event : normalEvents) {
+            log.info("normal event name => " + event.getName());
+            org.assertj.core.api.Assertions.assertThat(event.getEvaluation()).isIn(EventEvaluation.NORMAL);
+        }
+
+        for(Event event : positiveEvents) {
+            log.info("positive event name => " + event.getName());
+            org.assertj.core.api.Assertions.assertThat(event.getEvaluation()).isIn(EventEvaluation.POSITIVE);
+        }
     }
 }
