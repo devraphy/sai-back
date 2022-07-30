@@ -50,6 +50,11 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
+    // email 회원 검색
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
     // 회원 정보 수정
     @Transactional
     public int updateMember(Long id, String name, String email, String password) {

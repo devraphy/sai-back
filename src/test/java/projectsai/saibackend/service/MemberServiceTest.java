@@ -60,7 +60,7 @@ class MemberServiceTest {
         log.info("중복 이메일 검증이 올바르게 작동합니다.");
     }
 
-    @Test
+    @Test @DisplayName("Member - 전체 검색")
     void findAll() throws Exception {
         // given
 
@@ -73,8 +73,8 @@ class MemberServiceTest {
         }
     }
 
-    @Test
-    void findMember() throws Exception {
+    @Test @DisplayName("Member - ID 검색")
+    void findById() throws Exception {
         // given
 
         // when
@@ -86,7 +86,19 @@ class MemberServiceTest {
         Assertions.assertEquals(savedMemberId2, findMember2.getId());
     }
 
-    @Test
+    @Test @DisplayName("Member - Email 검색")
+    void findByEmail() throws Exception {
+        // given
+        String email1 = member1.getEmail();
+
+        // when
+        Member findMember = memberRepository.findByEmail(email1);
+
+        // then
+        Assertions.assertEquals(findMember.getEmail(), email1);
+    }
+
+    @Test @DisplayName("Member - 수정")
     public void updateMember() throws Exception {
        //given
 
@@ -97,7 +109,7 @@ class MemberServiceTest {
         Assertions.assertEquals(i, 1);
     }
 
-    @Test
+    @Test @DisplayName("Member - 비활성화")
     public void deleteMember() throws Exception {
         // given
 
