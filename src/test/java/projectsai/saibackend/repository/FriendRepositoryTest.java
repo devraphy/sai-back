@@ -31,7 +31,7 @@ public class FriendRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now());
+        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), null);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
         friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);

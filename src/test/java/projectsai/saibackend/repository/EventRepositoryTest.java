@@ -35,7 +35,7 @@ class EventRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now());
+        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), null);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
         business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);

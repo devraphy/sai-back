@@ -40,7 +40,7 @@ class EventServiceTest {
 
     @BeforeEach
     void createMemberFriendEvent() {
-        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now());
+        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now(), null);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend3 = new Friend("친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);

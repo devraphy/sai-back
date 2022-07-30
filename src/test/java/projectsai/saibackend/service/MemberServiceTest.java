@@ -28,8 +28,8 @@ class MemberServiceTest {
 
     @BeforeEach
     void createMember() throws Exception {
-        member1 = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now());
-        member2 = new Member("박근형", "def@gmail.com", "abcdefg", LocalDate.now());
+        member1 = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
+        member2 = new Member("박근형", "def@gmail.com", "abcdefg", LocalDate.now(), true);
         savedMemberId1 = memberService.join(member1);
         savedMemberId2 = memberService.join(member2);
     }
@@ -37,7 +37,7 @@ class MemberServiceTest {
     @Test @DisplayName("Member - 회원 가입")
     void join() {
         // given
-        Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now());
+        Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), true);
 
         // when
         Long savedMemberId = memberService.join(newMember);
@@ -49,7 +49,7 @@ class MemberServiceTest {
     @Test @DisplayName("Member - 중복 이메일 검증")
     void validateDuplication() {
         // given
-        Member newMember = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now());
+        Member newMember = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
 
         // when
         Assertions.assertThrows(IllegalStateException.class, () -> {
@@ -84,5 +84,16 @@ class MemberServiceTest {
         // then
         Assertions.assertEquals(savedMemberId1, findMember1.getId());
         Assertions.assertEquals(savedMemberId2, findMember2.getId());
+    }
+
+    @Test
+    public void updateMember() throws Exception {
+       //given
+
+       //when
+        int i = memberService.updateMember(savedMemberId2, "이태백", "leemountain@gmail.com", "mountain");
+
+        //then
+        Assertions.assertEquals(i, 1);
     }
 }

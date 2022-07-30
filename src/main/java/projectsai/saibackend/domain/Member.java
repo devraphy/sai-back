@@ -1,6 +1,7 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,9 @@ public class Member {
     @NotNull
     private LocalDate signUpDate;
 
+    @NotNull
+    private Boolean visibility;
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Friend> friendList = new ArrayList<>();
 
@@ -45,11 +49,12 @@ public class Member {
 
     public Member() {}
 
-    public Member(String name, String email, String password, LocalDate signUpDate) {
+    public Member(String name, String email, String password, LocalDate signUpDate, Boolean visibility) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.signUpDate = signUpDate;
+        this.visibility = visibility;
     }
 
     @Override
@@ -57,17 +62,11 @@ public class Member {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
-        return Objects.equals(getId(), member.getId())
-                && Objects.equals(getName(), member.getName())
-                && Objects.equals(getEmail(), member.getEmail())
-                && Objects.equals(getPassword(), member.getPassword())
-                && Objects.equals(getSignUpDate(), member.getSignUpDate())
-                && Objects.equals(getFriendList(), member.getFriendList())
-                && Objects.equals(getEventList(), member.getEventList());
+        return Objects.equals(getId(), member.getId()) && Objects.equals(getName(), member.getName()) && Objects.equals(getEmail(), member.getEmail()) && Objects.equals(getPassword(), member.getPassword()) && Objects.equals(getSignUpDate(), member.getSignUpDate()) && Objects.equals(getVisibility(), member.getVisibility()) && Objects.equals(getFriendList(), member.getFriendList()) && Objects.equals(getEventList(), member.getEventList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getSignUpDate(), getFriendList(), getEventList());
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getSignUpDate(), getVisibility(), getFriendList(), getEventList());
     }
 }

@@ -6,9 +6,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,14 +22,15 @@ import java.util.List;
 class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
+    @PersistenceContext EntityManager em;
 
     private Member member1, member2;
     private Long savedId1, savedId2;
 
     @BeforeEach
     public void createMember() {
-        member1 = new Member("이근형","abc@gamil.com", "abcde", LocalDate.now());
-        member2 = new Member("곽두팔","twoegiht@gamil.com", "2828", LocalDate.now());
+        member1 = new Member("이근형","abc@gamil.com", "abcde", LocalDate.now(), true);
+        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), true);
         savedId1 = memberRepository.save(member1);
         savedId2 = memberRepository.save(member2);
     }
@@ -45,7 +49,8 @@ class MemberRepositoryTest {
 
     @Test @DisplayName("Member - ID로 검색")
     public void findById() throws Exception {
-       //given
+        //given
+
         //when
         Member findMember1 = memberRepository.findById(savedId1);
         Member findMember2 = memberRepository.findById(savedId2);
@@ -61,6 +66,7 @@ class MemberRepositoryTest {
         String email1 = member1.getEmail();
         String email2 = member2.getEmail();
 
+
         // when
         Member findMember1 = memberRepository.findByEmail(email1);
         Member findMember2 = memberRepository.findByEmail(email2);
@@ -68,5 +74,16 @@ class MemberRepositoryTest {
         //then
         Assertions.assertThat(findMember1.getId()).isEqualTo(member1.getId());
         Assertions.assertThat(findMember2.getId()).isEqualTo(member2.getId());
+    }
+
+    @Test @DisplayName("Member - 회원 정보 수정")
+    public void updateMember() throws Exception {
+       //given
+
+       //when
+        int i = memberRepository.updateById(savedId2, "명현만", "powerpunch@gmail.com", member2.getPassword());
+
+        //then
+        Assertions.assertThat(i).isEqualTo(1);
     }
 }

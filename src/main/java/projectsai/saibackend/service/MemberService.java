@@ -49,4 +49,9 @@ public class MemberService {
     public Member findMember(Long id) {
         return memberRepository.findById(id);
     }
+
+    // 회원 정보 수정
+    public int updateMember(Long id, String name, String email, String password) {
+        return memberRepository.updateById(id, name, email, password);
+    }
 }
