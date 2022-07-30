@@ -53,4 +53,11 @@ public class MemberRepository {
                 .setParameter("id", id)
                 .executeUpdate();
     }
+
+    // DELETE
+    public int deleteById(Long id) {
+        return em.createQuery("update Member as m set m.visibility = false where m.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 }

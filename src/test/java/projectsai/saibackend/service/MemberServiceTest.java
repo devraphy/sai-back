@@ -35,7 +35,7 @@ class MemberServiceTest {
     }
 
     @Test @DisplayName("Member - 회원 가입")
-    void join() {
+    void join() throws Exception {
         // given
         Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), true);
 
@@ -47,7 +47,7 @@ class MemberServiceTest {
     }
 
     @Test @DisplayName("Member - 중복 이메일 검증")
-    void validateDuplication() {
+    void validateDuplication() throws Exception {
         // given
         Member newMember = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
 
@@ -61,7 +61,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void findAll() {
+    void findAll() throws Exception {
         // given
 
         // when
@@ -74,7 +74,7 @@ class MemberServiceTest {
     }
 
     @Test
-    void findMember() {
+    void findMember() throws Exception {
         // given
 
         // when
@@ -95,5 +95,17 @@ class MemberServiceTest {
 
         //then
         Assertions.assertEquals(i, 1);
+    }
+
+    @Test
+    public void deleteMember() throws Exception {
+        // given
+
+        // when
+        int i = memberService.deleteMember(savedMemberId1);
+
+        //then
+        Assertions.assertEquals(i, 1);
+
     }
 }

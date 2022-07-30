@@ -1,5 +1,6 @@
 package projectsai.saibackend.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ import java.util.List;
 
 
 @SpringBootTest
-@Transactional
+@Transactional @Slf4j
 class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
@@ -36,7 +37,7 @@ class MemberRepositoryTest {
     }
 
     @Test @DisplayName("Member - 전체 검색")
-    public void findAllMember() throws  Exception {
+    public void findAllMember() throws Exception {
         // given
 
         // when
@@ -85,5 +86,20 @@ class MemberRepositoryTest {
 
         //then
         Assertions.assertThat(i).isEqualTo(1);
+    }
+
+    @Test @DisplayName("Member - 회원 삭제") @Rollback(false)
+    public void deleteMember() throws Exception {
+        // given
+
+        // when
+        int i = memberRepository.deleteById(savedId2);
+        em.flush();
+        em.clear();
+
+        // then
+        Assertions.assertThat(1).isEqualTo(1);
+        log.info("Visibility => " + em.find(Member.class, savedId2).getVisibility() + " | " + em.find(Member.class, savedId2).getName());
+        Assertions.assertThat(em.find(Member.class, savedId2).getVisibility()).isEqualTo(Boolean.FALSE);
     }
 }

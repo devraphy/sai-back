@@ -51,7 +51,14 @@ public class MemberService {
     }
 
     // 회원 정보 수정
+    @Transactional
     public int updateMember(Long id, String name, String email, String password) {
         return memberRepository.updateById(id, name, email, password);
+    }
+
+    // 회원 탈퇴
+    @Transactional
+    public int deleteMember(Long id) {
+        return memberRepository.deleteById(id);
     }
 }
