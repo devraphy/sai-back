@@ -46,9 +46,10 @@ public class MemberApiController {
 
         if(memberService.updateValidation(request.getEmail())) {
             // 의문 1 - id 값을 이용해서 회원정보를 update 하는데, id 값은 어디에 저장하지? => 안보이는 태그에 저장하면 된다.
-            // 의문 2 - id 값을 가지고 update 하는 것이 안정적 & 안전한 프로세스인가?
+            // 의문 2 - id 값을 가지고 update 하는 것이 안정적 & 안전한 프로세스인가? Id 값은 어떻게 가져올 것인가?
             // => 보통의 웹사이트에서는 회원 정보 접근할때 비밀번호 재입력을 요구하는 방식을 사용하는데,
             //    그 이유가 비밀번호 재입력을 통해서 회원정보를 다시 땡겨오기 위함이라고 생각한다.
+            //    비밀번호 재입력 과정을 통해서 email을 이용하여 id 값을 가져오면 된다.
             memberService.updateMember(request.getId(), request.getName(), request.getEmail(), request.getPassword());
             return new UpdateMemberResponse(Boolean.TRUE);
         }
