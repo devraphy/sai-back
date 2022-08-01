@@ -65,10 +65,17 @@ public class MemberService {
     }
 
     // 회원 정보 수정 - 아이디 변경 시, 중복 검증
-    public boolean updateValidation(String email) {
+    public boolean updateValidation(Long id, String email) {
         try {
-            // 중복 이메일 검증
+            // 사용자가 메일 주소를 변경한다면, 변경한 이메일이 존재하는지 검증
             Member findMember = memberRepository.findByEmail(email);
+
+            // 만약 사용자가 메일 주소를 변경하지 않았다면, 검색된 대상의 id와 email 값이
+            // 매개변수로 들어온 id, email 값과 동일하다.
+            // => 이런 로직을 짜는 이유는 update 쿼리에서 애초에 다 update 하기 때문이다.
+            if(findMember.getId().equals(id) && findMember.getEmail().equals(email)) {
+                return true;
+            }
 
         } catch (EmptyResultDataAccessException e) { // 중복 없는 경우에 오류 발생(검색 결과가 없으니까)
             return true;

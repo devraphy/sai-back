@@ -118,6 +118,31 @@ class MemberServiceTest {
 
         //then
         Assertions.assertEquals(i, 1);
+    }
 
+    @Test @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함
+    public void loginValidation() throws Exception {
+       //given
+        String email = member1.getEmail();
+        String password = member1.getPassword();
+
+       //when
+        boolean result = memberService.loginValidation(email, password);
+
+        //then
+        Assertions.assertEquals(true, result);
+    }
+
+    @Test @DisplayName("Member - 회원 정보 업데이트 유효성 검증")
+    public void updateValidation() throws Exception {
+       //given
+        Long id = member1.getId();
+        String email = member1.getEmail();
+
+       //when
+        boolean result = memberService.updateValidation(id, email);
+
+        //then
+        Assertions.assertEquals(true, result);
     }
 }
