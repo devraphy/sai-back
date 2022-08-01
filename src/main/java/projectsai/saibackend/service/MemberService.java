@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 
@@ -21,23 +22,21 @@ public class MemberService {
     // 회원 가입
     @Transactional
     public Long join(Member member) {
-        validateDuplicate(member);
         memberRepository.save(member);
         return member.getId();
     }
 
     // 회원 가입 - email 중복 검사
-    private void validateDuplicate(Member member) {
+    public Boolean emailValidation(String email) {
         try {
-            Member findMember = memberRepository.findByEmail(member.getEmail());
-            if(findMember != null) {
-                throw new IllegalStateException("이미 존재하는 이메일입니다.");
-            }
+            Member findMember = memberRepository.findByEmail(email);
         }
+        // 검색 결과가 없어야(null) 신규 이메일이다.
         catch (EmptyResultDataAccessException e) {
-            log.info("해당 이메일은 존재하지 않는 신규 이메일입니다.");
-            return;
+            log.info("신규 이메일입니다.");
+            return true;
         }
+        return false;
     }
 
     // 전체 회원 검색
@@ -57,9 +56,14 @@ public class MemberService {
 
     // 로그인 - email & password 검증
     public boolean loginValidation(String email, String password) {
-        Member findMember = memberRepository.findByEmail(email);
-        if(findMember.getEmail().equals(email) && findMember.getPassword().equals(password)) {
-            return true;
+        try {
+            Member findMember = memberRepository.findByEmail(email);
+            if(findMember.getEmail().equals(email) && findMember.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        catch(EmptyResultDataAccessException e) {
+            return false;
         }
         return false;
     }
@@ -70,14 +74,16 @@ public class MemberService {
             // 사용자가 메일 주소를 변경한다면, 변경한 이메일이 존재하는지 검증
             Member findMember = memberRepository.findByEmail(email);
 
+            if(findMember.getVisibility().equals(Boolean.FALSE)) return false;
+
             // 만약 사용자가 메일 주소를 변경하지 않았다면, 검색된 대상의 id와 email 값이
             // 매개변수로 들어온 id, email 값과 동일하다.
             // => 이런 로직을 짜는 이유는 update 쿼리에서 애초에 다 update 하기 때문이다.
             if(findMember.getId().equals(id) && findMember.getEmail().equals(email)) {
                 return true;
             }
-
-        } catch (EmptyResultDataAccessException e) { // 중복 없는 경우에 오류 발생(검색 결과가 없으니까)
+        } // 중복 없는 경우에 오류 발생(검색 결과가 없으니까)
+        catch (EmptyResultDataAccessException e) {
             return true;
         }
         return false;
