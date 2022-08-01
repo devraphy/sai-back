@@ -7,5 +7,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SearchMemberRequest {
     @NotNull
-    String email;
+    private String email;
+    @NotNull
+    private String password;
 }

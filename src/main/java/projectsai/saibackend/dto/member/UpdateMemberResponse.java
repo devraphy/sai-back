@@ -8,5 +8,5 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 public class UpdateMemberResponse {
-    Boolean result;
+    private Boolean result;
 }

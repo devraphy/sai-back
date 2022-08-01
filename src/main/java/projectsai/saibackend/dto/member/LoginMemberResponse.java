@@ -7,10 +7,10 @@ import java.time.LocalDate;
 
 @Data @AllArgsConstructor
 public class LoginMemberResponse {
-    Long id;
-    String email;
-    String name;
-    String password;
-    LocalDate signUpDate;
-    Boolean result;
+    private Long id;
+    private String email;
+    private String name;
+    private String password;
+    private LocalDate signUpDate;
+    private Boolean result;
 }

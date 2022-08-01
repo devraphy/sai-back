@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class JoinMemberResponse {
     private Long id;
+    private Boolean result;
 }
