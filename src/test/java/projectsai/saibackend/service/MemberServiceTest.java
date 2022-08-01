@@ -114,7 +114,7 @@ class MemberServiceTest {
         // given
 
         // when
-        int i = memberService.deleteMember(savedMemberId1);
+        int i = memberService.deleteMember("abc@gmail.com");
 
         //then
         Assertions.assertEquals(i, 1);

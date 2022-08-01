@@ -55,9 +55,10 @@ public class MemberRepository {
     }
 
     // DELETE
-    public int deleteById(Long id) {
-        return em.createQuery("update Member as m set m.visibility = false where m.id = :id")
-                .setParameter("id", id)
+    public int deleteByEmail(String email) {
+        return em.createQuery("update Member as m set m.visibility = :visibility where m.email = :email")
+                .setParameter("visibility", Boolean.FALSE)
+                .setParameter("email", email)
                 .executeUpdate();
     }
 }

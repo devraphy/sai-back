@@ -8,5 +8,5 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DeleteMemberRequest {
     @NotNull
-    Long id;
+    String email;
 }

@@ -30,7 +30,7 @@ class MemberRepositoryTest {
 
     @BeforeEach
     public void createMember() {
-        member1 = new Member("이근형","abc@gamil.com", "abcde", LocalDate.now(), true);
+        member1 = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), true);
         member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), true);
         savedId1 = memberRepository.save(member1);
         savedId2 = memberRepository.save(member2);
@@ -88,18 +88,14 @@ class MemberRepositoryTest {
         Assertions.assertThat(i).isEqualTo(1);
     }
 
-    @Test @DisplayName("Member - 회원 삭제") @Rollback(false)
+    @Test @DisplayName("Member - 회원 삭제")
     public void deleteMember() throws Exception {
         // given
 
         // when
-        int i = memberRepository.deleteById(savedId2);
-        em.flush();
-        em.clear();
+        int i = memberRepository.deleteByEmail(member1.getEmail());
 
         // then
-        Assertions.assertThat(1).isEqualTo(1);
-        log.info("Visibility => " + em.find(Member.class, savedId2).getVisibility() + " | " + em.find(Member.class, savedId2).getName());
-        Assertions.assertThat(em.find(Member.class, savedId2).getVisibility()).isEqualTo(Boolean.FALSE);
+        Assertions.assertThat(i).isEqualTo(1);
     }
 }

@@ -55,6 +55,27 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
+    // 로그인 - email & password 검증
+    public boolean loginValidation(String email, String password) {
+        Member findMember = memberRepository.findByEmail(email);
+        if(findMember.getEmail().equals(email) && findMember.getPassword().equals(password)) {
+            return true;
+        }
+        return false;
+    }
+
+    // 회원 정보 수정 - 아이디 변경 시, 중복 검증
+    public boolean updateValidation(String email) {
+        try {
+            // 중복 이메일 검증
+            Member findMember = memberRepository.findByEmail(email);
+
+        } catch (EmptyResultDataAccessException e) { // 중복 없는 경우에 오류 발생(검색 결과가 없으니까)
+            return true;
+        }
+        return false;
+    }
+
     // 회원 정보 수정
     @Transactional
     public int updateMember(Long id, String name, String email, String password) {
@@ -63,7 +84,7 @@ public class MemberService {
 
     // 회원 탈퇴
     @Transactional
-    public int deleteMember(Long id) {
-        return memberRepository.deleteById(id);
+    public int deleteMember(String email) {
+        return memberRepository.deleteByEmail(email);
     }
 }
