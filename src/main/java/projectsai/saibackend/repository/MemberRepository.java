@@ -30,8 +30,7 @@ public class MemberRepository {
 
     public Member findByEmail(String email) {
         return em.createQuery("select m from Member m " +
-                        "where m.email = :email " +
-                        "and m.visibility = true", Member.class)
+                        "where m.email = :email", Member.class)
                 .setParameter("email", email)
                 .getSingleResult();
     }

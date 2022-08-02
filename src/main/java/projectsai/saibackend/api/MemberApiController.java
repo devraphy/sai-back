@@ -11,14 +11,6 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
-    // *************** 현재 고쳐야하는 문제점
-    // ==> 회원가입할 때, Visibility == False 되어있는 이메일과 동일한 이메일이 입력되면
-    // email validation 과정에서 해당 이메일 검색이 안되므로 문제가 발생함.
-    // 그러므로 Repository의 입장에서는 필요한 Query Method에 한해서 Visibility 상관없이 검색 되도록 해야함.
-    // 그러나 이는 회원가입 과정에서 사용되는 Query Method 에만 한정됨
-    // 왜냐면 다수 데이터를 검색하는 곳에서 Visibility를 상관없이 검색 결과를 추출하면
-    // 후처리 작업에서 자원을 너무 많이 사용할 위험성이 있음.
-
     // 여기서부터는 프론트랑 같이 가져가자. 양쪽에 띄워놓고 하자.(입력값 REGEX 검증 해야함)
     // 검증 과정 Service에서 해야하나? 어디에서 하는거지? 여튼 검증과정 리뷰해야함.
     // 로그인 및 검증과정 준우 Repository에 todo-spring 코드 읽어보기

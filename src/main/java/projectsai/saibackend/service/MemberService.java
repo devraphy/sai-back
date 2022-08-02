@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 
 
@@ -30,10 +29,10 @@ public class MemberService {
     public Boolean emailValidation(String email) {
         try {
             Member findMember = memberRepository.findByEmail(email);
-        }
-        // 검색 결과가 없어야(null) 신규 이메일이다.
-        catch (EmptyResultDataAccessException e) {
-            log.info("신규 이메일입니다.");
+            // 탈퇴한 사용자의 이메일은 재사용 불가
+            if(findMember.getVisibility().equals(Boolean.FALSE)) return false;
+
+        } catch (EmptyResultDataAccessException e){
             return true;
         }
         return false;
@@ -58,7 +57,11 @@ public class MemberService {
     public boolean loginValidation(String email, String password) {
         try {
             Member findMember = memberRepository.findByEmail(email);
-            if(findMember.getEmail().equals(email) && findMember.getPassword().equals(password)) {
+
+            if(findMember.getVisibility().equals(Boolean.FALSE)) {
+                return false;
+            }
+            else if(findMember.getEmail().equals(email) && findMember.getPassword().equals(password)) {
                 return true;
             }
         }
