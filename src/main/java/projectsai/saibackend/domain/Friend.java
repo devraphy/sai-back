@@ -39,21 +39,17 @@ public class Friend {
     private String memo;
 
     @Nullable
-    private LocalDate lastContact;
-
-    @Nullable
     private LocalDate birthDate;
 
     public Friend() {}
 
     public Friend(String name, RelationType type, RelationStatus status, int score,
-                  @Nullable String memo, @Nullable LocalDate lastContact, @Nullable LocalDate birthDate) {
+                  @Nullable String memo, @Nullable LocalDate birthDate) {
         this.name = name;
         this.type = type;
         this.status = status;
         this.score = score;
         this.memo = memo;
-        this.lastContact = lastContact;
         this.birthDate = birthDate;
     }
 
@@ -72,12 +68,11 @@ public class Friend {
                 && Objects.equals(getOwner(), friend.getOwner())
                 && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
                 && Objects.equals(getMemo(), friend.getMemo())
-                && Objects.equals(getLastContact(), friend.getLastContact())
                 && Objects.equals(getBirthDate(), friend.getBirthDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getLastContact(), getBirthDate());
+        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getBirthDate());
     }
 }

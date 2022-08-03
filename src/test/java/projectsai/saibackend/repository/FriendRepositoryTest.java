@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
@@ -33,9 +32,9 @@ public class FriendRepositoryTest {
     @BeforeEach
     public void createMemberAndFriend() {
         owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
-        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
-        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
+        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
+        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
         owner.addFriend(friend1);
         owner.addFriend(friend2);
         owner.addFriend(friend3);
@@ -45,7 +44,7 @@ public class FriendRepositoryTest {
     @Test @DisplayName("Friend - 친구 저장")
     public void save() throws Exception {
         // given
-        Friend newFriend = new Friend("테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend newFriend = new Friend("테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
 
         // when
         Long savedFriendId = friendRepository.save(owner, newFriend);

@@ -43,7 +43,7 @@ public class MemberRepository {
 
     // UPDATE
     public int updateById(Long id, String name, String email, String password) {
-        return em.createQuery("update Member as m " +
+        int result = em.createQuery("update Member as m " +
                         "set m.name = :name, m.email = :email, m.password = :password " +
                         "where m.id = :id")
                 .setParameter("name", name)
@@ -51,13 +51,21 @@ public class MemberRepository {
                 .setParameter("password", password)
                 .setParameter("id", id)
                 .executeUpdate();
+
+        em.clear();
+
+        return result;
     }
 
     // DELETE
     public int deleteByEmail(String email) {
-        return em.createQuery("update Member as m set m.visibility = :visibility where m.email = :email")
+        int result = em.createQuery("update Member as m set m.visibility = :visibility where m.email = :email")
                 .setParameter("visibility", Boolean.FALSE)
                 .setParameter("email", email)
                 .executeUpdate();
+
+        em.clear();
+
+        return result;
     }
 }

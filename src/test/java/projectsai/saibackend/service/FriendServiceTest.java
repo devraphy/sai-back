@@ -41,7 +41,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 친구 등록")
     void add() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
 
         // when
         Long savedFriendId = friendRepository.save(owner, friend1);
@@ -53,12 +53,12 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 모든 친구 검색")
     void findAll() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-        Friend friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-        Friend friend3 = new Friend("친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-        Friend business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
-        Friend business2 = new Friend("동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
-        Friend business3 = new Friend("동료3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend friend3 = new Friend("친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Friend business2 = new Friend("동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Friend business3 = new Friend("동료3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
 
         List<Friend> friendList = new ArrayList<>();
         friendList.add(friend1);
@@ -84,7 +84,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - ID로 검색")
     void findById() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId = friendRepository.save(owner, friend1);
 
         // when
@@ -97,8 +97,8 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 이름으로 검색")
     void findByName() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-        Friend friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId1 = friendRepository.save(owner, friend1);
         Long savedFriendId2 = friendRepository.save(owner, friend2);
 
@@ -114,7 +114,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 관계 종류로 검색")
     void findByType() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
@@ -129,7 +129,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 관계 상태로 검색")
     void findByStatus() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
@@ -144,7 +144,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 친구 정보 수정")
     void updateById() {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
@@ -157,7 +157,7 @@ class FriendServiceTest {
     @Test @DisplayName("Friend = 단일 친구 삭제")
     public void deleteFriend() throws Exception {
         // given
-        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
