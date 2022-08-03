@@ -3,7 +3,8 @@ package projectsai.saibackend.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.dto.member.*;
+import projectsai.saibackend.dto.member.requestDto.*;
+import projectsai.saibackend.dto.member.responseDto.*;
 import projectsai.saibackend.service.MemberService;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ public class MemberApiController {
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
         if(memberService.emailValidation(request.getEmail())) {
-            Member member = new Member(request.getName(), request.getEmail(), request.getPassword(), request.getSignUpDate(), true);
+            Member member = new Member(request.getName(), request.getEmail(), request.getPassword(), request.getSignUpDate(), Boolean.TRUE);
             Long savedMemberId = memberService.join(member);
             return new JoinMemberResponse(savedMemberId, Boolean.TRUE);
         }
