@@ -1,4 +1,4 @@
-package projectsai.saibackend.dto.member;
+package projectsai.saibackend.dto.member.requestDto;
 
 import lombok.Data;
 
