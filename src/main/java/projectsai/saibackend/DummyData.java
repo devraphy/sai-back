@@ -39,10 +39,10 @@ public class DummyData {
             Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", "abcabc", LocalDate.now(), Boolean.TRUE);
             em.persist(member1);
 
-            Friend friend1 = new Friend("아인", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-            Friend friend2 = new Friend("쯔바이", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
-            Friend friend3 = new Friend("드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 60, null, null, null);
-            Friend friend4 = new Friend("피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 40, null, null, null);
+            Friend friend1 = new Friend("아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
+            Friend friend2 = new Friend("쯔바이", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+            Friend friend3 = new Friend("드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 60, null, null);
+            Friend friend4 = new Friend("피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 40, null, null);
 
             member1.addFriend(friend1);
             member1.addFriend(friend2);
@@ -66,10 +66,10 @@ public class DummyData {
             Member member2 = new Member("David Lee" ,"devRaphy@gmali.com", "123123", LocalDate.of(2022, 8, 8), Boolean.TRUE);
             em.persist(member2);
 
-            Friend friend7 = new Friend("지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
-            Friend friend8 = new Friend("아크트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
-            Friend friend9 = new Friend("노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 60, null, null, null);
-            Friend friend10 = new Friend("첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 40, null, null, null);
+            Friend friend7 = new Friend("지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+            Friend friend8 = new Friend("아크트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+            Friend friend9 = new Friend("노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 60, null, null);
+            Friend friend10 = new Friend("첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 40, null, null);
 
             member2.addFriend(friend7);
             member2.addFriend(friend8);
