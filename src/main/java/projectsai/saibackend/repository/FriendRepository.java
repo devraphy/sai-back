@@ -8,6 +8,7 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -65,5 +66,35 @@ public class FriendRepository {
                 .setParameter("ownerId", ownerId)
                 .setParameter("status", status)
                 .getResultList();
+    }
+
+    public int updateById(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
+        int result = em.createQuery("update Friend f " +
+                        "set f.name = :name, f.birthDate = :birthDate, f.memo = :memo, f.type = :friendType " +
+                        "where f.owner.id = :ownerId and f.id = :friendId")
+                .setParameter("name", name)
+                .setParameter("birthDate", birthDate)
+                .setParameter("memo", memo)
+                .setParameter("friendType", friendType)
+                .setParameter("ownerId", ownerId)
+                .setParameter("friendId", friendId)
+                .executeUpdate();
+
+        em.clear();
+
+        return result;
+    }
+
+    public int deleteById(Long ownerId, Long friendId) {
+        int result = em.createQuery("delete from Friend f " +
+                        "where f.owner.id = :ownerId " +
+                        "and f.id = :friendId")
+                .setParameter("ownerId", ownerId)
+                .setParameter("friendId", friendId)
+                .executeUpdate();
+
+        em.clear();
+
+        return result;
     }
 }

@@ -50,7 +50,7 @@ class FriendServiceTest {
         Assertions.assertEquals(friend1, friendRepository.findById(owner.getId(), savedFriendId));
     }
 
-    @Test
+    @Test @DisplayName("Friend - 모든 친구 검색")
     void findAll() {
         // given
         Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -81,7 +81,7 @@ class FriendServiceTest {
         }
     }
 
-    @Test
+    @Test @DisplayName("Friend - ID로 검색")
     void findById() {
         // given
         Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -94,7 +94,7 @@ class FriendServiceTest {
         Assertions.assertEquals(findFriend, friend1);
     }
 
-    @Test
+    @Test @DisplayName("Friend - 이름으로 검색")
     void findByName() {
         // given
         Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -111,7 +111,7 @@ class FriendServiceTest {
         }
     }
 
-    @Test
+    @Test @DisplayName("Friend - 관계 종류로 검색")
     void findByType() {
         // given
         Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -126,7 +126,7 @@ class FriendServiceTest {
         }
     }
 
-    @Test
+    @Test @DisplayName("Friend - 관계 상태로 검색")
     void findByStatus() {
         // given
         Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
@@ -139,5 +139,31 @@ class FriendServiceTest {
         for(Friend friend : findFriendList) {
             Assertions.assertEquals(friend.getStatus(), friend1.getStatus());
         }
+    }
+
+    @Test @DisplayName("Friend - 친구 정보 수정")
+    void updateById() {
+        // given
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Long savedFriendId1 = friendRepository.save(owner, friend1);
+
+        // when
+        int result = friendRepository.updateById(owner.getId(), savedFriendId1, "서비스바꾼이름", null, null, RelationType.FRIEND);
+
+        // then
+        Assertions.assertEquals(result, 1);
+    }
+
+    @Test @DisplayName("Friend = 단일 친구 삭제")
+    public void deleteFriend() throws Exception {
+        // given
+        Friend friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
+        Long savedFriendId1 = friendRepository.save(owner, friend1);
+
+        // when
+        int result = friendRepository.deleteById(owner.getId(), friend1.getId());
+
+        // then
+        Assertions.assertEquals(result, 1);
     }
 }

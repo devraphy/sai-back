@@ -9,6 +9,7 @@ import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 import projectsai.saibackend.repository.FriendRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -47,5 +48,15 @@ public class FriendService {
     // 친구 상태 검색
     public List<Friend> findByStatus(Long ownerId, RelationStatus status) {
         return friendRepository.findByStatus(ownerId, status);
+    }
+
+    @Transactional
+    public int updateFriend(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
+        return friendRepository.updateById(ownerId, friendId, name, birthDate, memo, friendType);
+    }
+
+    @Transactional
+    public int deleteFriend(Long ownerId, Long friendId) {
+        return friendRepository.deleteById(ownerId, friendId);
     }
 }

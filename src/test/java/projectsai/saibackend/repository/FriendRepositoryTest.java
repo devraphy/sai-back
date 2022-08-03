@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
@@ -121,6 +122,28 @@ public class FriendRepositoryTest {
             log.info("이름: " + friend1.getName() + " / status => " + friend1.getStatus());
             Assertions.assertThat(friend1.getStatus()).isEqualTo(status);
         }
+    }
+
+    @Test @DisplayName("Friend - 정보 수정")
+    public void updateById() throws Exception {
+       //given
+
+       //when
+        int i = friendRepository.updateById(owner.getId(), friend1.getId(), "바꾼이름", null, null, RelationType.FRIEND);
+
+        //then
+        Assertions.assertThat(i).isEqualTo(1);
+    }
+
+    @Test @DisplayName("Friend - 삭제")
+    public void deleteFriend() throws Exception {
+       //given
+
+       //when
+        int result = friendRepository.deleteById(owner.getId(), friend1.getId());
+
+        //then
+        Assertions.assertThat(result).isEqualTo(1);
     }
 
 
