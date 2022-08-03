@@ -25,27 +25,27 @@ public class FriendService {
     }
 
     // 친구 전체 검색
-    public List<Friend> findAll(Member member) {
-        return friendRepository.findAll(member);
+    public List<Friend> findAll(Long ownerId) {
+        return friendRepository.findAll(ownerId);
     }
 
     // 친구 ID 검색
-    public Friend findById(Member member, Long id) {
-        return friendRepository.findById(member, id);
+    public Friend findById(Long ownerId, Long id) {
+        return friendRepository.findById(ownerId, id);
     }
 
     // 친구 이름 검색
-    public List<Friend> findByName(Member member, String name) {
-        return friendRepository.findByName(member, name);
+    public List<Friend> findByName(Long ownerId, String name) {
+        return friendRepository.findByName(ownerId, name);
     }
 
     // 친구 종류 검색
-    public List<Friend> findByType(Member member, RelationType type) {
-        return friendRepository.findByType(member, type);
+    public List<Friend> findByType(Long ownerId, RelationType type) {
+        return friendRepository.findByType(ownerId, type);
     }
 
     // 친구 상태 검색
-    public List<Friend> findByStatus(Member member, RelationStatus status) {
-        return friendRepository.findByStatus(member, status);
+    public List<Friend> findByStatus(Long ownerId, RelationStatus status) {
+        return friendRepository.findByStatus(ownerId, status);
     }
 }

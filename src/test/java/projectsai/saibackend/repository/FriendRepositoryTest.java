@@ -31,7 +31,7 @@ public class FriendRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), null);
+        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null, null);
         friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null, null);
@@ -58,7 +58,7 @@ public class FriendRepositoryTest {
         // given
 
         // when
-        List<Friend> friendList = friendRepository.findAll(owner);
+        List<Friend> friendList = friendRepository.findAll(owner.getId());
 
         // then
         for(Friend friend1 : friendList) {
@@ -67,13 +67,24 @@ public class FriendRepositoryTest {
         }
     }
 
+    @Test @DisplayName("Friend - Id 검색")
+    public void findById() throws Exception {
+       //given
+
+       //when
+        Friend findFriend = friendRepository.findById(owner.getId(), friend1.getId());
+
+        //then
+        Assertions.assertThat(findFriend.getId()).isEqualTo(friend1.getId());
+    }
+
     @Test @DisplayName("Friend - 이름으로 검색")
     public void findByName() throws Exception {
         // given
         String name = "친구1";
 
         // when
-        List<Friend> friendList = friendRepository.findByName(owner, name);
+        List<Friend> friendList = friendRepository.findByName(owner.getId(), name);
 
         // then
         for(Friend friend1 : friendList) {
@@ -88,7 +99,7 @@ public class FriendRepositoryTest {
         RelationType type = RelationType.FRIEND;
 
         // when
-        List<Friend> friendList = friendRepository.findByType(owner, type);
+        List<Friend> friendList = friendRepository.findByType(owner.getId(), type);
 
         // then
         for(Friend friend1 : friendList) {
@@ -103,7 +114,7 @@ public class FriendRepositoryTest {
         RelationStatus status = RelationStatus.NORMAL;
 
         // when
-        List<Friend> friendList = friendRepository.findByStatus(owner, status);
+        List<Friend> friendList = friendRepository.findByStatus(owner.getId(), status);
 
         // then
         for(Friend friend1 : friendList) {

@@ -34,7 +34,7 @@ class FriendServiceTest {
 
     @BeforeEach
     private void createMember() {
-        owner = new Member("라파파", "rapapa@gmail.com", "abcde", LocalDate.now(), null);
+        owner = new Member("라파파", "rapapa@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
         em.persist(owner);
     }
 
@@ -47,7 +47,7 @@ class FriendServiceTest {
         Long savedFriendId = friendRepository.save(owner, friend1);
 
         // then
-        Assertions.assertEquals(friend1, friendRepository.findById(owner, savedFriendId));
+        Assertions.assertEquals(friend1, friendRepository.findById(owner.getId(), savedFriendId));
     }
 
     @Test
@@ -73,7 +73,7 @@ class FriendServiceTest {
         }
 
         // when
-        List<Friend> allFriends = friendRepository.findAll(owner);
+        List<Friend> allFriends = friendRepository.findAll(owner.getId());
 
         // then
         for(Friend friend : allFriends) {
@@ -88,7 +88,7 @@ class FriendServiceTest {
         Long savedFriendId = friendRepository.save(owner, friend1);
 
         // when
-        Friend findFriend = friendRepository.findById(owner, savedFriendId);
+        Friend findFriend = friendRepository.findById(owner.getId(), savedFriendId);
 
         // then
         Assertions.assertEquals(findFriend, friend1);
@@ -103,7 +103,7 @@ class FriendServiceTest {
         Long savedFriendId2 = friendRepository.save(owner, friend2);
 
         // when
-        List<Friend> findFriendList = friendRepository.findByName(owner, "친구1");
+        List<Friend> findFriendList = friendRepository.findByName(owner.getId(), "친구1");
 
         // then
         for(Friend friend : findFriendList) {
@@ -118,7 +118,7 @@ class FriendServiceTest {
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
-        List<Friend> findFriendList = friendRepository.findByType(owner, RelationType.FRIEND);
+        List<Friend> findFriendList = friendRepository.findByType(owner.getId(), RelationType.FRIEND);
 
         // then
         for(Friend friend : findFriendList) {
@@ -133,7 +133,7 @@ class FriendServiceTest {
         Long savedFriendId1 = friendRepository.save(owner, friend1);
 
         // when
-        List<Friend> findFriendList = friendRepository.findByStatus(owner, RelationStatus.NORMAL);
+        List<Friend> findFriendList = friendRepository.findByStatus(owner.getId(), RelationStatus.NORMAL);
 
         // then
         for(Friend friend : findFriendList) {
