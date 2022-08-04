@@ -1,5 +1,16 @@
 package projectsai.saibackend.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum RelationStatus {
-    STRONG, POSITIVE, NORMAL, NEGATIVE, BAD
+    @JsonProperty("STRONG")
+    STRONG,
+    @JsonProperty("POSITIVE")
+    POSITIVE,
+    @JsonProperty("NORMAL")
+    NORMAL,
+    @JsonProperty("NEGATIVE")
+    NEGATIVE,
+    @JsonProperty("BAD")
+    BAD
 }

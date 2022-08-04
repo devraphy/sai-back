@@ -1,5 +1,10 @@
 package projectsai.saibackend.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum EventPurpose {
-    BUSINESS, CHILL
+    @JsonProperty("BUSINESS")
+    BUSINESS,
+    @JsonProperty("CHILL")
+    CHILL
 }
