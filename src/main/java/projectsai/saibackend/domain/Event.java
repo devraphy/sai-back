@@ -29,7 +29,7 @@ public class Event {
     @Enumerated(EnumType.STRING) @NotNull
     private EventPurpose purpose;
 
-    @Column(name = "event_name") @Nullable
+    @Column(name = "event_name") @NotNull
     private String name;
 
     @Enumerated(EnumType.STRING) @NotNull
