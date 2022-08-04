@@ -48,7 +48,7 @@ public class Event {
 
     public Event() {}
 
-    public Event(LocalDate date, EventPurpose purpose, @Nullable String name, EventEvaluation evaluation, List<Friend> participants) {
+    public Event(LocalDate date, EventPurpose purpose, String name, EventEvaluation evaluation, List<Friend> participants) {
         this.date = date;
         this.purpose = purpose;
         this.name = name;
