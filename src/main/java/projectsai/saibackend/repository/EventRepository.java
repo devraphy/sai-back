@@ -18,15 +18,18 @@ public class EventRepository {
     @PersistenceContext
     private EntityManager em;
 
-    // CREATE
+    // *********************************** CREATE
+
+    // CREATE - 새로운 Event 객체 영속화
     public Long save(Member owner, Event event) {
         owner.addEvent(event);
         em.persist(owner);
         return event.getId();
     }
 
-    // READ
+    // *********************************** READ화
 
+    // READ - Event ID로 검색
     public Event findById(Long ownerId, Long eventId) {
         return em.createQuery("select e from Event e " +
                         "where e.owner.id = :ownerId " +
@@ -36,6 +39,7 @@ public class EventRepository {
                 .getSingleResult();
     }
 
+    // READ - Member ID로 검색
     public List<Event> findAll(Long ownerId) {
         return em.createQuery("select e from Event e " +
                         "where e.owner.id = :ownerId", Event.class)
@@ -43,8 +47,9 @@ public class EventRepository {
                 .getResultList();
     }
 
+    // READ - 참가자로 검색
     public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
-        return em.createQuery("select e from Event e " +
+        return em.createQuery("select distinct e from Event e " +
                         "join e.participants p " +
                         "where e.owner.id = :ownerId " +
                         "and p in :friendList", Event.class)
@@ -53,6 +58,7 @@ public class EventRepository {
                 .getResultList();
     }
 
+    // READ - Event 이름으로 검색
     public List<Event> findByEventName(Long ownerId, String eventName) {
         return em.createQuery("select e from Event e " +
                         "where e.owner.id = :ownerId " +
@@ -62,6 +68,7 @@ public class EventRepository {
                 .getResultList();
     }
 
+    // READ - 날짜로 검색
     public List<Event> findByDate(Long ownerId, LocalDate date) {
         return em.createQuery("select e from Event e " +
                         "where e.owner.id = :ownerId " +
@@ -71,6 +78,7 @@ public class EventRepository {
                 .getResultList();
     }
 
+    // READ - 목적으로 검색
     public List<Event> findByPurpose(Long ownerId, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
                                 "where e.owner.id = :ownerId " +
@@ -80,6 +88,7 @@ public class EventRepository {
                 .getResultList();
     }
 
+    // READ - 평가로 검색
     public List<Event> findByEvaluation(Long ownerId, EventEvaluation evaluation) {
         return em.createQuery("select e from Event e " +
                                 "where e.owner.id = :ownerId " +
@@ -88,4 +97,8 @@ public class EventRepository {
                 .setParameter("evaluation", evaluation)
                 .getResultList();
     }
+
+    // *********************************** Update
+
+    // *********************************** Delete
 }
