@@ -27,64 +27,64 @@ public class EventRepository {
 
     // READ
 
-    public Event findById(Member owner, Long id) {
+    public Event findById(Long ownerId, Long eventId) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner = :owner " +
-                        "and e.id = :id", Event.class)
-                .setParameter("owner", owner)
-                .setParameter("id", id)
+                        "where e.owner.id = :ownerId " +
+                        "and e.id = :eventId", Event.class)
+                .setParameter("ownerId", ownerId)
+                .setParameter("eventId", eventId)
                 .getSingleResult();
     }
 
-    public List<Event> findAll(Member owner) {
+    public List<Event> findAll(Long ownerId) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner = :owner", Event.class)
-                .setParameter("owner", owner)
+                        "where e.owner.id = :ownerId", Event.class)
+                .setParameter("ownerId", ownerId)
                 .getResultList();
     }
 
-    public List<Event> findByParticipants(Member owner, List<Friend> friendList) {
+    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
         return em.createQuery("select e from Event e " +
                         "join e.participants p " +
-                        "where e.owner = :owner " +
+                        "where e.owner.id = :ownerId " +
                         "and p in :friendList", Event.class)
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .setParameter("friendList", friendList)
                 .getResultList();
     }
 
-    public List<Event> findByEventName(Member owner, String eventName) {
+    public List<Event> findByEventName(Long ownerId, String eventName) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner = :owner " +
+                        "where e.owner.id = :ownerId " +
                         "and e.name = :eventName", Event.class)
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .setParameter("eventName", eventName)
                 .getResultList();
     }
 
-    public List<Event> findByDate(Member owner, LocalDate date) {
+    public List<Event> findByDate(Long ownerId, LocalDate date) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner = :owner " +
+                        "where e.owner.id = :ownerId " +
                         "and e.date = :date", Event.class)
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .setParameter("date", date)
                 .getResultList();
     }
 
-    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
+    public List<Event> findByPurpose(Long ownerId, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner = :owner " +
+                                "where e.owner.id = :ownerId " +
                                 "and e.purpose = :purpose", Event.class)
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .setParameter("purpose", purpose)
                 .getResultList();
     }
 
-    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
+    public List<Event> findByEvaluation(Long ownerId, EventEvaluation evaluation) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner = :owner " +
+                                "where e.owner.id = :ownerId " +
                                 "and e.evaluation = :evaluation", Event.class)
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .setParameter("evaluation", evaluation)
                 .getResultList();
     }

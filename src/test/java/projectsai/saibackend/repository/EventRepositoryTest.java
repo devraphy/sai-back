@@ -35,7 +35,7 @@ class EventRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), null);
+        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), Boolean.TRUE);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
@@ -59,18 +59,18 @@ class EventRepositoryTest {
 
     public List<Friend> findFriends() {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner =: owner " +
+                        "where f.owner.id =: ownerId " +
                         "and f.type = :relationType", Friend.class)
-                .setParameter("owner", this.owner)
+                .setParameter("ownerId", this.owner.getId())
                 .setParameter("relationType", RelationType.FRIEND)
                 .getResultList();
     }
 
     public List<Friend> findBusiness() {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner =: owner " +
+                        "where f.owner.id =: ownerId " +
                         "and f.type = :relationType", Friend.class)
-                .setParameter("owner", this.owner)
+                .setParameter("ownerId", this.owner.getId())
                 .setParameter("relationType", RelationType.BUSINESS)
                 .getResultList();
     }
@@ -80,7 +80,7 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> allEvent = eventRepository.findAll(owner);
+        List<Event> allEvent = eventRepository.findAll(owner.getId());
 
         //then
         for(Event event : allEvent) {
@@ -95,8 +95,8 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> friendEventList = eventRepository.findByParticipants(owner, friendList);
-        List<Event> businessEventList = eventRepository.findByParticipants(owner, businessList);
+        List<Event> friendEventList = eventRepository.findByParticipants(owner.getId(), friendList);
+        List<Event> businessEventList = eventRepository.findByParticipants(owner.getId(), businessList);
 
         //then
         for(Event event : friendEventList) {
@@ -117,7 +117,7 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> eventList = eventRepository.findByEventName(owner, "친구 모임");
+        List<Event> eventList = eventRepository.findByEventName(owner.getId(), "친구 모임");
 
         //then
         for(Event event: eventList) {
@@ -130,7 +130,7 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> eventList = eventRepository.findByDate(owner, LocalDate.now());
+        List<Event> eventList = eventRepository.findByDate(owner.getId(), LocalDate.now());
 
         //then
         for(Event event : eventList) {
@@ -143,8 +143,8 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> chillEvents = eventRepository.findByPurpose(owner, EventPurpose.CHILL);
-        List<Event> businessEvents = eventRepository.findByPurpose(owner, EventPurpose.BUSINESS);
+        List<Event> chillEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.CHILL);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.BUSINESS);
 
         //then
         for(Event event : chillEvents) {
@@ -161,8 +161,8 @@ class EventRepositoryTest {
         //given
 
         //when
-        List<Event> normalEvents = eventRepository.findByEvaluation(owner, EventEvaluation.NORMAL);
-        List<Event> positiveEvents = eventRepository.findByEvaluation(owner, EventEvaluation.POSITIVE);
+        List<Event> normalEvents = eventRepository.findByEvaluation(owner.getId(), EventEvaluation.NORMAL);
+        List<Event> positiveEvents = eventRepository.findByEvaluation(owner.getId(), EventEvaluation.POSITIVE);
 
         //then
         for(Event event : normalEvents) {

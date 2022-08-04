@@ -40,7 +40,7 @@ class EventServiceTest {
 
     @BeforeEach
     void createMemberFriendEvent() {
-        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now(), null);
+        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now(), Boolean.TRUE);
         friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend3 = new Friend("친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
@@ -78,7 +78,7 @@ class EventServiceTest {
         Long savedEventId = eventRepository.save(owner, event1);
 
         // when
-        Event findEvent = eventRepository.findById(owner, savedEventId);
+        Event findEvent = eventRepository.findById(owner.getId(), savedEventId);
 
         // then
         Assertions.assertEquals(savedEventId, findEvent.getId());
@@ -92,7 +92,7 @@ class EventServiceTest {
         Long savedEventId3 = eventRepository.save(owner, event3);
 
         // when
-        List<Event> findEventList = eventRepository.findAll(owner);
+        List<Event> findEventList = eventRepository.findAll(owner.getId());
 
         // then
         if(findEventList.isEmpty()) {
@@ -119,7 +119,7 @@ class EventServiceTest {
         eventRepository.save(owner, event3);
 
         // when
-        List<Event> findEventList = eventRepository.findByParticipants(owner, friendList);
+        List<Event> findEventList = eventRepository.findByParticipants(owner.getId(), friendList);
 
         // then
         if(findEventList.isEmpty()) {
@@ -137,7 +137,7 @@ class EventServiceTest {
         eventRepository.save(owner, event1);
 
         // when
-        List<Event> findEventList = eventRepository.findByEventName(owner, "오늘 코딩");
+        List<Event> findEventList = eventRepository.findByEventName(owner.getId(), "오늘 코딩");
 
         // then
         if(findEventList.isEmpty()) {
@@ -158,7 +158,7 @@ class EventServiceTest {
         eventRepository.save(owner, event4);
 
         // when
-        List<Event> findEventList = eventRepository.findByDate(owner, LocalDate.of(2022,7,29));
+        List<Event> findEventList = eventRepository.findByDate(owner.getId(), LocalDate.now());
 
         // then
         if(findEventList.isEmpty()) {
@@ -179,8 +179,8 @@ class EventServiceTest {
         eventRepository.save(owner, event4);
 
         // when
-        List<Event> chillEvents = eventRepository.findByPurpose(owner, EventPurpose.CHILL);
-        List<Event> businessEvents = eventRepository.findByPurpose(owner, EventPurpose.BUSINESS);
+        List<Event> chillEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.CHILL);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.BUSINESS);
 
         // then
         if(chillEvents.isEmpty()) {
@@ -211,8 +211,8 @@ class EventServiceTest {
         eventRepository.save(owner, event4);
 
         // when
-        List<Event> normalEvents = eventRepository.findByEvaluation(owner, EventEvaluation.NORMAL);
-        List<Event> positiveEvents = eventRepository.findByEvaluation(owner, EventEvaluation.POSITIVE);
+        List<Event> normalEvents = eventRepository.findByEvaluation(owner.getId(), EventEvaluation.NORMAL);
+        List<Event> positiveEvents = eventRepository.findByEvaluation(owner.getId(), EventEvaluation.POSITIVE);
 
         // then
 

@@ -27,37 +27,37 @@ public class EventService {
     }
 
     // 이벤트 ID 검색
-    public Event findById(Member member, Long id) {
-        return eventRepository.findById(member, id);
+    public Event findById(Long ownerId, Long id) {
+        return eventRepository.findById(ownerId, id);
     }
 
     // 이벤트 전체 검색
-    public List<Event> findAll(Member member) {
-        return eventRepository.findAll(member);
+    public List<Event> findAll(Long ownerId) {
+        return eventRepository.findAll(ownerId);
     }
 
     // 이벤트 참가자로 검색
-    public List<Event> findByParticipants(Member member, List<Friend> friendList) {
-        return eventRepository.findByParticipants(member, friendList);
+    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
+        return eventRepository.findByParticipants(ownerId, friendList);
     }
 
     // 이벤트 이름 검색
-    public List<Event> findByName(Member member, String name) {
-        return eventRepository.findByEventName(member, name);
+    public List<Event> findByName(Long ownerId, String name) {
+        return eventRepository.findByEventName(ownerId, name);
     }
 
     // 이벤트 날짜 검색
-    public List<Event> findByDate(Member member, LocalDate date) {
-        return eventRepository.findByDate(member, date);
+    public List<Event> findByDate(Long ownerId, LocalDate date) {
+        return eventRepository.findByDate(ownerId, date);
     }
 
     // 이벤트 목적 검색
-    public List<Event> findByPurpose(Member member, EventPurpose purpose) {
-        return eventRepository.findByPurpose(member, purpose);
+    public List<Event> findByPurpose(Long ownerId, EventPurpose purpose) {
+        return eventRepository.findByPurpose(ownerId, purpose);
     }
 
     // 이벤트 평가 검색
-    public List<Event> findByEvaluation(Member member, EventEvaluation evaluation) {
-        return eventRepository.findByEvaluation(member, evaluation);
+    public List<Event> findByEvaluation(Long ownerId, EventEvaluation evaluation) {
+        return eventRepository.findByEvaluation(ownerId, evaluation);
     }
 }
