@@ -1,6 +1,8 @@
 package projectsai.saibackend.dto.friend.requestDto;
 
 import lombok.Data;
+import projectsai.saibackend.domain.enums.RelationStatus;
+import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -12,9 +14,9 @@ public class AddFriendRequest {
     @NotNull
     private String name;
     @NotNull
-    private String relationType;
+    private RelationType relationType;
     @NotNull
-    private String relationStatus;
+    private RelationStatus relationStatus;
     private String memo;
     private LocalDate birthDate;
 }
