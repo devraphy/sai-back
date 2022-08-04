@@ -41,8 +41,8 @@ public class DummyData {
 
             Friend friend1 = new Friend("아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
             Friend friend2 = new Friend("쯔바이", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-            Friend friend3 = new Friend("드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 60, null, null);
-            Friend friend4 = new Friend("피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 40, null, null);
+            Friend friend3 = new Friend("드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 70, null, null);
+            Friend friend4 = new Friend("피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 30, null, null);
 
             member1.addFriend(friend1);
             member1.addFriend(friend2);
@@ -68,8 +68,8 @@ public class DummyData {
 
             Friend friend7 = new Friend("지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
             Friend friend8 = new Friend("아크트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-            Friend friend9 = new Friend("노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 60, null, null);
-            Friend friend10 = new Friend("첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 40, null, null);
+            Friend friend9 = new Friend("노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 70, null, null);
+            Friend friend10 = new Friend("첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 30, null, null);
 
             member2.addFriend(friend7);
             member2.addFriend(friend8);
@@ -82,10 +82,10 @@ public class DummyData {
             friendList2.add(friend9);
             friendList2.add(friend10);
 
-            Event event1 = new Event(LocalDate.now(), EventPurpose.BUSINESS, "첫번째회의", EventEvaluation.GREAT, friendList2);
+            Event event1 = new Event(LocalDate.now(), EventPurpose.WORK, "첫번째회의", EventEvaluation.GREAT, friendList2);
             member2.addEvent(event1);
 
-            Event event2 = new Event(LocalDate.now(), EventPurpose.BUSINESS, "두번째회의", EventEvaluation.GREAT, friendList2.subList(2, 4));
+            Event event2 = new Event(LocalDate.now(), EventPurpose.WORK, "두번째회의", EventEvaluation.GREAT, friendList2.subList(2, 4));
             member2.addEvent(event2);
         }
     }
