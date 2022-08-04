@@ -57,8 +57,8 @@ class EventServiceTest {
 
         event1 = new Event(LocalDate.now(), EventPurpose.CHILL, "오늘 코딩", EventEvaluation.POSITIVE, friendList);
         event2 = new Event(LocalDate.of(2022, 07, 10), EventPurpose.CHILL, "알고리즘 스터디", EventEvaluation.POSITIVE, friendList);
-        event3 = new Event(LocalDate.of(2022, 6, 6), EventPurpose.BUSINESS, "6월 결산 회의", EventEvaluation.NORMAL, friendList);
-        event4 = new Event(LocalDate.of(2022, 7, 7), EventPurpose.BUSINESS, "7월 결산 회의", EventEvaluation.NORMAL, friendList);
+        event3 = new Event(LocalDate.of(2022, 6, 6), EventPurpose.WORK, "6월 결산 회의", EventEvaluation.NORMAL, friendList);
+        event4 = new Event(LocalDate.of(2022, 7, 7), EventPurpose.WORK, "7월 결산 회의", EventEvaluation.NORMAL, friendList);
     }
 
     @Test

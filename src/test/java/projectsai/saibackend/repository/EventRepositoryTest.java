@@ -52,7 +52,7 @@ class EventRepositoryTest {
         friendList = findFriends();
         businessList = findBusiness();
         Event friendEvent = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
-        Event businessEvent = new Event(LocalDate.now(), EventPurpose.BUSINESS, "비지니스 모임", EventEvaluation.POSITIVE, businessList);
+        Event businessEvent = new Event(LocalDate.now(), EventPurpose.WORK, "비지니스 모임", EventEvaluation.POSITIVE, businessList);
         owner.addEvent(friendEvent);
         owner.addEvent(businessEvent);
     }

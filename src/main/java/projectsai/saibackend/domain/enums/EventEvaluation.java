@@ -3,14 +3,14 @@ package projectsai.saibackend.domain.enums;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum EventEvaluation {
-    @JsonProperty("GREAT")
+    @JsonProperty("great")
     GREAT,
-    @JsonProperty("POSITIVE")
+    @JsonProperty("positive")
     POSITIVE,
-    @JsonProperty("NORMAL")
+    @JsonProperty("normal")
     NORMAL,
-    @JsonProperty("NEGATIVE")
+    @JsonProperty("negative")
     NEGATIVE,
-    @JsonProperty("BAD")
+    @JsonProperty("bad")
     BAD
 }

@@ -3,8 +3,8 @@ package projectsai.saibackend.domain.enums;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum RelationType {
-    @JsonProperty("FRIEND")
+    @JsonProperty("friend")
     FRIEND,
-    @JsonProperty("BUSINESS")
+    @JsonProperty("business")
     BUSINESS
 }
