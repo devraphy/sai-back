@@ -17,22 +17,27 @@ public class FriendRepository {
     @PersistenceContext
     private EntityManager em;
 
-    // CREATE
+    // *********************************** CREATE
+
+    // CREATE - Friend 객체 영속화
     public Long save(Member owner, Friend friend) {
         owner.addFriend(friend);
         em.persist(owner);
         return friend.getId();
     }
 
-    // READ
-    public List<Friend> findAll(Long ownerId) { // Member ID 값을 이용한 검색
+    // *********************************** READ
+
+    // READ - Member ID로 검색
+    public List<Friend> findAll(Long ownerId) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId", Friend.class)
                 .setParameter("ownerId", ownerId)
                 .getResultList();
     }
 
-    public Friend findById(Long ownerId, Long id) { // Member ID 값과 Friend ID를 이용한 검색
+    // READ - 단일 Friend ID로 검색
+    public Friend findById(Long ownerId, Long id) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId " +
                         "and f.id = :id", Friend.class)
@@ -41,7 +46,8 @@ public class FriendRepository {
                 .getSingleResult();
     }
 
-    public List<Friend> findByName(Long ownerId, String name) { // Member ID, 친구의 이름을 이용한 검색
+    // READ - 이름으로 검색
+    public List<Friend> findByName(Long ownerId, String name) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId " +
                         "and f.name = :name ", Friend.class)
@@ -50,7 +56,8 @@ public class FriendRepository {
                 .getResultList();
     }
 
-    public List<Friend> findByType(Long ownerId, RelationType type) { // Member ID, 관계 종류를 이용한 검색
+    // READ - 관계 종류로 검색
+    public List<Friend> findByType(Long ownerId, RelationType type) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId " +
                         "and f.type = :type", Friend.class)
@@ -59,7 +66,8 @@ public class FriendRepository {
                 .getResultList();
     }
 
-    public List<Friend> findByStatus(Long ownerId, RelationStatus status) { // Member ID, 관계 상태를 이용한 검색
+    // READ - 관계 상태로 검색
+    public List<Friend> findByStatus(Long ownerId, RelationStatus status) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId " +
                         "and f.status = :status", Friend.class)
@@ -68,6 +76,19 @@ public class FriendRepository {
                 .getResultList();
     }
 
+    // READ - 다수의 Friend ID로 다중 검색
+    public List<Friend> findFriends(List<Long> friendIds, Long ownerId) {
+        return em.createQuery("select f from Friend f " +
+                        "where f.owner.id = :ownerId " +
+                        "and f.id in :friendIds", Friend.class)
+                .setParameter("ownerId", ownerId)
+                .setParameter("friendIds", friendIds)
+                .getResultList();
+    }
+
+    // *********************************** UPDATE
+
+    // UPDATE - Friend 객체의 전체 속성 수정
     public int updateById(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
         int result = em.createQuery("update Friend f " +
                         "set f.name = :name, f.birthDate = :birthDate, f.memo = :memo, f.type = :friendType " +
@@ -85,6 +106,9 @@ public class FriendRepository {
         return result;
     }
 
+    // DELETE
+
+    // DELETE - Friend 객체 삭제
     public int deleteById(Long ownerId, Long friendId) {
         int result = em.createQuery("delete from Friend f " +
                         "where f.owner.id = :ownerId " +
