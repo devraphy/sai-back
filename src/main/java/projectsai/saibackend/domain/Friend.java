@@ -2,6 +2,7 @@ package projectsai.saibackend.domain;
 
 import lombok.Getter;
 import org.springframework.lang.Nullable;
+import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 
@@ -53,11 +54,28 @@ public class Friend {
         this.birthDate = birthDate;
     }
 
-    // 연관 관계 메서드
-    public void setOwner(Member member) { // Setter 대신 사용하는 비즈니스 메서드
+    // Setter 대신 사용하는 비즈니스 메서드
+    public void setOwner(Member member) {
         this.owner = member;
     }
 
+    public void calcScore(EventEvaluation evaluation) {
+        if(evaluation.equals(EventEvaluation.BAD)) this.score -= 10;
+        if(evaluation.equals(EventEvaluation.NEGATIVE)) this.score -= 5;
+        if(evaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
+        if(evaluation.equals(EventEvaluation.POSITIVE)) this.score += 5;
+        if(evaluation.equals(EventEvaluation.GREAT)) this.score += 10;
+    }
+
+    public void calcStatus(int score) {
+        if(score <= 20) this.status = RelationStatus.BAD;
+        else if(score > 20 && score <= 40) this.status = RelationStatus.NEGATIVE;
+        else if(score > 40 && score <= 60) this.status = RelationStatus.NORMAL;
+        else if(score > 60 && score <= 80) this.status = RelationStatus.POSITIVE;
+        else if(score > 80) this.status = RelationStatus.GREAT;
+    }
+
+    // Equals & HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
