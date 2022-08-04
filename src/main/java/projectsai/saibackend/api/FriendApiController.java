@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.RelationType;
 import projectsai.saibackend.dto.friend.requestDto.AddFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.SearchFriendRequest;
@@ -30,18 +29,16 @@ public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
-    private final EventService eventService;
+    private final EventService eventService; // Event Service => 삭제 메서드에서 필요하다.
 
     @PostMapping("/friend/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
 
         int score = stringToScore(request.getRelationStatus());
-        RelationType relationType = stringToType(request.getRelationType());
-        RelationStatus relationStatus = stringToStatus(request.getRelationStatus());
 
         Member owner = em.find(Member.class, request.getOwnerId());
-        Friend friend = new Friend(request.getName(), relationType,
-                relationStatus, score, request.getMemo(), request.getBirthDate());
+        Friend friend = new Friend(request.getName(), request.getRelationType(),
+                request.getRelationStatus(), score, request.getMemo(), request.getBirthDate());
 
         try {
             friendService.addFriend(owner, friend);
@@ -64,17 +61,16 @@ public class FriendApiController {
 
     @PutMapping("/friend") // 친구 수정
     public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
-        RelationType relationType = stringToType(request.getRelationType());
-
         int result = friendService.updateFriend(request.getOwnerId(), request.getFriendId(), request.getName(),
-                request.getBirthDate(), request.getMemo(), relationType);
+                request.getBirthDate(), request.getMemo(), request.getRelationType());
 
         if(result == 1) return new UpdateFriendResponse(Boolean.TRUE);
         else return new UpdateFriendResponse(Boolean.FALSE);
     }
 
-    @DeleteMapping("/friend") // 친구 삭제 => Event와 연관된 문제 발생
+    @DeleteMapping("/friend")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
+        // ************ 친구 삭제하기 전에 Event 부터 삭제해야함.
         int result = friendService.deleteFriend(request.getOwnerId(), request.getFriendId());
 
         if(result == 1) return new DeleteFriendResponse(Boolean.TRUE);
@@ -82,25 +78,11 @@ public class FriendApiController {
     }
 
     // 최초 친구 추가 시점에서 String 타입의 관계 상태를 int score 로 변환
-    private int stringToScore(String status) {
-        if(status.equals("BAD")) return 10;
-        else if(status.equals("NEGATIVE")) return 30;
-        else if(status.equals("NORMAL")) return 50;
-        else if(status.equals("POSITIVE")) return 70;
+    private int stringToScore(RelationStatus status) {
+        if(status.equals(RelationStatus.BAD)) return 10;
+        else if(status.equals(RelationStatus.NEGATIVE)) return 30;
+        else if(status.equals(RelationStatus.NORMAL)) return 50;
+        else if(status.equals(RelationStatus.POSITIVE)) return 70;
         else return 90;
-    }
-
-    // 최초 친구 추가 시점에서 String 타입의 관계 상태를 RelationStatus 로 변환
-    private RelationStatus stringToStatus(String status) {
-        if(status.equals("BAD")) return RelationStatus.BAD;
-        else if(status.equals("NEGATIVE")) return RelationStatus.NEGATIVE;
-        else if(status.equals("NORMAL")) return RelationStatus.NORMAL;
-        else if(status.equals("POSITIVE")) return RelationStatus.POSITIVE;
-        else return RelationStatus.STRONG;
-    }
-
-    private RelationType stringToType(String type) {
-        if(type.equals("FRIEND")) return RelationType.FRIEND;
-        else return RelationType.BUSINESS;
     }
 }
