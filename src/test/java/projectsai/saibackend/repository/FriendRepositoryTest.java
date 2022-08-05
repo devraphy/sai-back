@@ -16,6 +16,7 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -123,6 +124,23 @@ public class FriendRepositoryTest {
         }
     }
 
+    @Test @DisplayName("Friend - 다중 ID 검색")
+    public void findFriends() throws Exception {
+        //given
+        List<Long> friendIds = new ArrayList<>();
+        friendIds.add(friend1.getId());
+        friendIds.add(friend2.getId());
+        friendIds.add(friend3.getId());
+
+        //when
+        List<Friend> friends = friendRepository.findFriends(owner.getId(), friendIds);
+
+        //then
+        for(Friend one : friends) {
+            Assertions.assertThat(one.getName()).isIn("친구1", "친구2", "친구3");
+        }
+    }
+
     @Test @DisplayName("Friend - 정보 수정")
     public void updateById() throws Exception {
        //given
@@ -144,6 +162,4 @@ public class FriendRepositoryTest {
         //then
         Assertions.assertThat(result).isEqualTo(1);
     }
-
-
 }

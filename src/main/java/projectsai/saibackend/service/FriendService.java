@@ -50,11 +50,17 @@ public class FriendService {
         return friendRepository.findByStatus(ownerId, status);
     }
 
+    public List<Friend> findFriends(Long ownerId, List<Long> friendIds) {
+        return friendRepository.findFriends(ownerId, friendIds);
+    }
+
+    // 친구 정보 수정
     @Transactional
     public int updateFriend(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
         return friendRepository.updateById(ownerId, friendId, name, birthDate, memo, friendType);
     }
 
+    // 친구 삭제 ==> 실행 이전에 event 삭제 작업부터 실행되어야 한다.
     @Transactional
     public int deleteFriend(Long ownerId, Long friendId) {
         return friendRepository.deleteById(ownerId, friendId);

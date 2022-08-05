@@ -77,7 +77,7 @@ public class FriendRepository {
     }
 
     // READ - 다수의 Friend ID로 다중 검색
-    public List<Friend> findFriends(List<Long> friendIds, Long ownerId) {
+    public List<Friend> findFriends(Long ownerId, List<Long> friendIds) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner.id = :ownerId " +
                         "and f.id in :friendIds", Friend.class)
@@ -106,7 +106,7 @@ public class FriendRepository {
         return result;
     }
 
-    // DELETE
+    // *********************************** DELETE
 
     // DELETE - Friend 객체 삭제
     public int deleteById(Long ownerId, Long friendId) {
@@ -122,3 +122,8 @@ public class FriendRepository {
         return result;
     }
 }
+// [현재 진행중인 작업]
+// 1. FriendRepository - 새로 작성한 다중 id 검색 메서드 테스트하고 Service 작성 및 테스트할 것
+// 2. EventRepository - update, delete
+// 3. EventApiController - update, delete
+// 4. FriendApiController - delete
