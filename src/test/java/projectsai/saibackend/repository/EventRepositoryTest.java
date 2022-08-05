@@ -144,7 +144,7 @@ class EventRepositoryTest {
 
         //when
         List<Event> chillEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.CHILL);
-        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.BUSINESS);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.WORK);
 
         //then
         for(Event event : chillEvents) {
@@ -152,7 +152,7 @@ class EventRepositoryTest {
         }
 
         for(Event event : businessEvents) {
-            Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.BUSINESS);
+            Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.WORK);
         }
     }
 

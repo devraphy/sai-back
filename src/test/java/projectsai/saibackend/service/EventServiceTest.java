@@ -180,7 +180,7 @@ class EventServiceTest {
 
         // when
         List<Event> chillEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.CHILL);
-        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.BUSINESS);
+        List<Event> businessEvents = eventRepository.findByPurpose(owner.getId(), EventPurpose.WORK);
 
         // then
         if(chillEvents.isEmpty()) {
@@ -198,7 +198,7 @@ class EventServiceTest {
 
         for(Event event : businessEvents) {
             log.info("business event name => " + event.getName());
-            org.assertj.core.api.Assertions.assertThat(event.getPurpose()).isIn(EventPurpose.BUSINESS);
+            org.assertj.core.api.Assertions.assertThat(event.getPurpose()).isIn(EventPurpose.WORK);
         }
     }
 
