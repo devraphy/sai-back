@@ -46,20 +46,6 @@ class MemberServiceTest {
         Assertions.assertEquals(newMember, memberRepository.findById(savedMemberId));
     }
 
-    @Test @DisplayName("Member - 중복 이메일 검증")
-    void validateDuplication() throws Exception {
-        // given
-        Member newMember = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
-
-        // when
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            Long savedMemberId = memberService.join(newMember);
-        });
-
-        // then
-        log.info("중복 이메일 검증이 올바르게 작동합니다.");
-    }
-
     @Test @DisplayName("Member - 전체 검색")
     void findAll() throws Exception {
         // given
@@ -98,28 +84,6 @@ class MemberServiceTest {
         Assertions.assertEquals(findMember.getEmail(), email1);
     }
 
-    @Test @DisplayName("Member - 수정")
-    public void updateMember() throws Exception {
-       //given
-
-       //when
-        int i = memberService.updateMember(savedMemberId2, "이태백", "leemountain@gmail.com", "mountain");
-
-        //then
-        Assertions.assertEquals(i, 1);
-    }
-
-    @Test @DisplayName("Member - 비활성화")
-    public void deleteMember() throws Exception {
-        // given
-
-        // when
-        int i = memberService.deleteMember("abc@gmail.com");
-
-        //then
-        Assertions.assertEquals(i, 1);
-    }
-
     @Test @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함
     public void loginValidation() throws Exception {
        //given
@@ -133,16 +97,14 @@ class MemberServiceTest {
         Assertions.assertEquals(true, result);
     }
 
-    @Test @DisplayName("Member - 회원 정보 업데이트 유효성 검증")
-    public void updateValidation() throws Exception {
+    @Test @DisplayName("Member - 회원 정보 수정")
+    public void updateMember() throws Exception {
        //given
-        Long id = member1.getId();
-        String email = member1.getEmail();
 
        //when
-        boolean result = memberService.updateValidation(id, email);
+        memberService.updateMember(savedMemberId1, "바꾼이름", "바꾼이메일", "바꾼비밀번호");
 
-        //then
-        Assertions.assertEquals(true, result);
+       //then
+        Assertions.assertEquals(memberService.findMember(savedMemberId1).getEmail(), "바꾼이메일");
     }
 }

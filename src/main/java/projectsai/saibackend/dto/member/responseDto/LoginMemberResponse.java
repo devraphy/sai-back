@@ -10,7 +10,6 @@ public class LoginMemberResponse {
     private Long id;
     private String email;
     private String name;
-    private String password;
     private LocalDate signUpDate;
     private Boolean result;
 }

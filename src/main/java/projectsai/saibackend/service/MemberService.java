@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor @Slf4j
 public class MemberService {
 
+    @PersistenceContext EntityManager em;
     private final MemberRepository memberRepository;
 
     // 회원 가입
@@ -71,36 +74,20 @@ public class MemberService {
         return false;
     }
 
-    // 회원 정보 수정 - 아이디 변경 시, 중복 검증
-    public boolean updateValidation(Long id, String email) {
-        try {
-            // 사용자가 메일 주소를 변경한다면, 변경한 이메일이 존재하는지 검증
-            Member findMember = memberRepository.findByEmail(email);
-
-            if(findMember.getVisibility().equals(Boolean.FALSE)) return false;
-
-            // 만약 사용자가 메일 주소를 변경하지 않았다면, 검색된 대상의 id와 email 값이
-            // 매개변수로 들어온 id, email 값과 동일하다.
-            // => 이런 로직을 짜는 이유는 update 쿼리에서 애초에 다 update 하기 때문이다.
-            if(findMember.getId().equals(id) && findMember.getEmail().equals(email)) {
-                return true;
-            }
-        } // 중복 없는 경우에 오류 발생(검색 결과가 없으니까)
-        catch (EmptyResultDataAccessException e) {
-            return true;
-        }
-        return false;
-    }
 
     // 회원 정보 수정
     @Transactional
-    public int updateMember(Long id, String name, String email, String password) {
-        return memberRepository.updateById(id, name, email, password);
-    }
-
-    // 회원 탈퇴
-    @Transactional
-    public int deleteMember(String email) {
-        return memberRepository.deleteByEmail(email);
+    public boolean updateMember(Long id, String name, String email, String password) {
+        try {
+            Member byEmail = memberRepository.findByEmail(email);
+        }
+        catch(EmptyResultDataAccessException e) {
+            Member findMember = memberRepository.findById(id);
+            findMember.updateInfo(name, email, password);
+            em.flush();
+            em.clear();
+            return true;
+        }
+        return false;
     }
 }

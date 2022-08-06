@@ -46,36 +46,4 @@ public class MemberRepository {
                         "where m.visibility = true", Member.class)
                 .getResultList();
     }
-
-    // *********************************** UPDATE
-
-    // UPDATE - Member 객체의 전체 속성 수정
-    public int updateById(Long id, String name, String email, String password) {
-        int result = em.createQuery("update Member as m " +
-                        "set m.name = :name, m.email = :email, m.password = :password " +
-                        "where m.id = :id")
-                .setParameter("name", name)
-                .setParameter("email", email)
-                .setParameter("password", password)
-                .setParameter("id", id)
-                .executeUpdate();
-
-        em.clear();
-
-        return result;
-    }
-
-    // *********************************** DELETE
-
-    // DELETE - visibility를 수정하여 검색이 되지 않도록 함.
-    public int deleteByEmail(String email) {
-        int result = em.createQuery("update Member as m set m.visibility = :visibility where m.email = :email")
-                .setParameter("visibility", Boolean.FALSE)
-                .setParameter("email", email)
-                .executeUpdate();
-
-        em.clear();
-
-        return result;
-    }
 }

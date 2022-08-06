@@ -1,7 +1,6 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -42,9 +41,22 @@ public class Member {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Event> eventList = new ArrayList<>();
 
+
+    // 비지니스 메서드
+
     public void addEvent(Event event) {
         this.eventList.add(event);
         event.setOwner(this);
+    }
+
+    public void updateInfo(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public void deleteMember(Boolean visibility) {
+        this.visibility = visibility;
     }
 
     public Member() {}

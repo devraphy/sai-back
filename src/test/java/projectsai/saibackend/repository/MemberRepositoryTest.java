@@ -75,26 +75,4 @@ class MemberRepositoryTest {
         Assertions.assertThat(findMember1.getId()).isEqualTo(member1.getId());
         Assertions.assertThat(findMember2.getId()).isEqualTo(member2.getId());
     }
-
-    @Test @DisplayName("Member - 회원 정보 수정")
-    public void updateMember() throws Exception {
-       //given
-
-       //when
-        int i = memberRepository.updateById(savedId2, "명현만", "powerpunch@gmail.com", member2.getPassword());
-
-        //then
-        Assertions.assertThat(i).isEqualTo(1);
-    }
-
-    @Test @DisplayName("Member - 회원 삭제")
-    public void deleteMember() throws Exception {
-        // given
-
-        // when
-        int i = memberRepository.deleteByEmail(member1.getEmail());
-
-        // then
-        Assertions.assertThat(i).isEqualTo(1);
-    }
 }
