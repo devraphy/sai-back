@@ -3,7 +3,6 @@ package projectsai.saibackend.dto.member.requestDto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Data
 public class JoinMemberRequest {
@@ -13,6 +12,4 @@ public class JoinMemberRequest {
     private String name;
     @NotNull
     private String password;
-    @NotNull
-    private LocalDate signUpDate;
 }

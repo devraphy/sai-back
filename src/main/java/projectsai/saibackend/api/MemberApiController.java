@@ -10,6 +10,7 @@ import projectsai.saibackend.service.MemberService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +21,8 @@ public class MemberApiController {
 
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
-
         if(memberService.emailValidation(request.getEmail())) {
-            Member member = new Member(request.getName(), request.getEmail(), request.getPassword(), request.getSignUpDate(), Boolean.TRUE);
+            Member member = new Member(request.getName(), request.getEmail(), request.getPassword(), LocalDate.now(), Boolean.TRUE);
             Long savedMemberId = memberService.join(member);
             return new JoinMemberResponse(savedMemberId, Boolean.TRUE);
         }
@@ -31,12 +31,11 @@ public class MemberApiController {
 
     @PostMapping("/login") // 회원 - 로그인
     public LoginMemberResponse loginMember(@RequestBody @Valid LoginMemberRequest request) {
-
         if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
             Member findMember = memberService.findByEmail(request.getEmail());
-            new LoginMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getName(), findMember.getSignUpDate(), Boolean.TRUE);
+            return new LoginMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getName(),
+                    findMember.getSignUpDate(), Boolean.TRUE);
         }
-
         return new LoginMemberResponse(null, null, null, null, Boolean.FALSE);
     }
 
@@ -48,7 +47,6 @@ public class MemberApiController {
                     findMember.getName(), findMember.getPassword(), findMember.getSignUpDate(), Boolean.TRUE);
         }
         return new SearchMemberResponse(null, null, null, null, null, Boolean.FALSE);
-
     }
 
     @PutMapping("/profile/update") // 회원 - 정보 수정
@@ -60,12 +58,9 @@ public class MemberApiController {
 
     @PutMapping("/profile/resign") // 회원 - 탈퇴
     public DeleteMemberResponse deleteMember(@RequestBody @Valid DeleteMemberRequest request) {
-        Member findMember = memberService.findByEmail(request.getEmail());
-        try {
-            em.remove(findMember);
-        } catch(Exception e) {
-            return new DeleteMemberResponse(Boolean.FALSE);
+        if(memberService.deleteMember(request.getEmail())) {
+            return new DeleteMemberResponse(Boolean.TRUE);
         }
-        return new DeleteMemberResponse(Boolean.TRUE);
+        return new DeleteMemberResponse(Boolean.FALSE);
     }
 }

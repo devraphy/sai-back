@@ -55,8 +55,8 @@ public class Member {
         this.password = password;
     }
 
-    public void deleteMember(Boolean visibility) {
-        this.visibility = visibility;
+    public void deleteMember() {
+        this.visibility = Boolean.FALSE;
     }
 
     public Member() {}
