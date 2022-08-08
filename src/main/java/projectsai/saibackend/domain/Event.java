@@ -41,7 +41,7 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<Friend> participants = new ArrayList<>();
 
-    // 연관 관계 메서드
+    // Setter 대신 사용하는 비즈니스 메서드
     public void setOwner(Member member) {
         this.owner = member;
     }
