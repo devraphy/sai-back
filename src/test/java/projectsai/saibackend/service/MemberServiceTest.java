@@ -43,7 +43,7 @@ class MemberServiceTest {
         Long savedMemberId = memberService.join(newMember);
 
         // then
-        Assertions.assertEquals(newMember, memberRepository.findById(savedMemberId));
+        Assertions.assertEquals(memberRepository.findById(savedMemberId), newMember);
     }
 
     @Test @DisplayName("Member - 전체 검색")
@@ -81,7 +81,7 @@ class MemberServiceTest {
         Member findMember = memberRepository.findByEmail(email1);
 
         // then
-        Assertions.assertEquals(findMember.getEmail(), email1);
+        Assertions.assertEquals(email1, findMember.getEmail());
     }
 
     @Test @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함
@@ -105,6 +105,6 @@ class MemberServiceTest {
         memberService.updateMember(savedMemberId1, "바꾼이름", "바꾼이메일", "바꾼비밀번호");
 
        //then
-        Assertions.assertEquals(memberService.findMember(savedMemberId1).getEmail(), "바꾼이메일");
+        Assertions.assertEquals("바꾼이메일", memberService.findMember(savedMemberId1).getEmail());
     }
 }

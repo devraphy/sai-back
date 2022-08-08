@@ -33,6 +33,8 @@ class MemberRepositoryTest {
         member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), true);
         savedId1 = memberRepository.save(member1);
         savedId2 = memberRepository.save(member2);
+        em.flush();
+        em.clear();
     }
 
     @Test @DisplayName("Member - 전체 검색")
