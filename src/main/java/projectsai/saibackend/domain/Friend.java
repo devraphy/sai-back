@@ -34,7 +34,7 @@ public class Friend {
     private RelationStatus status;
 
     @NotNull
-    private int score; // 최초 친구 등록시 status에 따라서 점수가 정해짐
+    private int score;
 
     @Nullable
     private String memo;
@@ -57,6 +57,14 @@ public class Friend {
     // Setter 대신 사용하는 비즈니스 메서드
     public void setOwner(Member member) {
         this.owner = member;
+    }
+
+    public void updateInfo(String name, RelationType type, RelationStatus status, String memo, LocalDate birthDate) {
+        this.name = name;
+        this.type = type;
+        this.status = status;
+        this.memo = memo;
+        this.birthDate = birthDate;
     }
 
     public void calcScore(EventEvaluation evaluation) {

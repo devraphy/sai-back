@@ -8,7 +8,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -37,11 +36,9 @@ public class FriendRepository {
     }
 
     // READ - 단일 Friend ID로 검색
-    public Friend findById(Long ownerId, Long id) {
+    public Friend findById(Long id) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId " +
-                        "and f.id = :id", Friend.class)
-                .setParameter("ownerId", ownerId)
+                        "where f.id = :id", Friend.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }
@@ -85,45 +82,4 @@ public class FriendRepository {
                 .setParameter("friendIds", friendIds)
                 .getResultList();
     }
-
-    // *********************************** UPDATE
-
-    // UPDATE - Friend 객체의 전체 속성 수정
-    public int updateById(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
-        int result = em.createQuery("update Friend f " +
-                        "set f.name = :name, f.birthDate = :birthDate, f.memo = :memo, f.type = :friendType " +
-                        "where f.owner.id = :ownerId and f.id = :friendId")
-                .setParameter("name", name)
-                .setParameter("birthDate", birthDate)
-                .setParameter("memo", memo)
-                .setParameter("friendType", friendType)
-                .setParameter("ownerId", ownerId)
-                .setParameter("friendId", friendId)
-                .executeUpdate();
-
-        em.clear();
-
-        return result;
-    }
-
-    // *********************************** DELETE
-
-    // DELETE - Friend 객체 삭제
-    public int deleteById(Long ownerId, Long friendId) {
-        int result = em.createQuery("delete from Friend f " +
-                        "where f.owner.id = :ownerId " +
-                        "and f.id = :friendId")
-                .setParameter("ownerId", ownerId)
-                .setParameter("friendId", friendId)
-                .executeUpdate();
-
-        em.clear();
-
-        return result;
-    }
 }
-// [현재 진행중인 작업]
-// 1. FriendRepository - 새로 작성한 다중 id 검색 메서드 테스트하고 Service 작성 및 테스트할 것
-// 2. EventRepository - update, delete
-// 3. EventApiController - update, delete
-// 4. FriendApiController - delete

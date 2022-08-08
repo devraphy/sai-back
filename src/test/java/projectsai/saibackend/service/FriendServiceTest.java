@@ -31,6 +31,7 @@ class FriendServiceTest {
 
     @PersistenceContext EntityManager em;
     @Autowired FriendRepository friendRepository;
+    @Autowired FriendService friendService;
 
     private Member owner;
     private Friend friend1, friend2, friend3, business1, business2, business3;
@@ -94,10 +95,10 @@ class FriendServiceTest {
         // given
 
         // when
-        Friend findFriend = friendRepository.findById(owner.getId(), friend1.getId());
+        Friend findFriend = friendRepository.findById(friend1.getId());
 
         // then
-        Assertions.assertEquals(findFriend, friend1);
+        Assertions.assertEquals(friend1, findFriend);
     }
 
     @Test @DisplayName("Friend - 이름으로 검색")
@@ -109,7 +110,7 @@ class FriendServiceTest {
 
         // then
         for(Friend friend : findFriendList) {
-            Assertions.assertEquals(friend.getName(), friend1.getName());
+            Assertions.assertEquals(friend1.getName(), friend.getName());
         }
     }
 
@@ -122,7 +123,7 @@ class FriendServiceTest {
 
         // then
         for(Friend friend : findFriendList) {
-            Assertions.assertEquals(friend.getType(), friend1.getType());
+            Assertions.assertEquals(friend1.getType(), friend.getType());
         }
     }
 
@@ -135,7 +136,7 @@ class FriendServiceTest {
 
         // then
         for(Friend friend : findFriendList) {
-            Assertions.assertEquals(friend.getStatus(), friend1.getStatus());
+            Assertions.assertEquals(friend1.getStatus(), friend.getStatus());
         }
     }
 
@@ -152,7 +153,7 @@ class FriendServiceTest {
 
         //then
         List<Long> ids = friends.stream().map(o -> o.getId()).collect(Collectors.toList());
-        Assertions.assertEquals(ids, friendIds);
+        Assertions.assertEquals(friendIds, ids);
     }
 
     @Test @DisplayName("Friend - 친구 정보 수정")
@@ -162,20 +163,23 @@ class FriendServiceTest {
         Long savedFriendId1 = friendRepository.save(owner, testFriend);
 
         // when
-        int result = friendRepository.updateById(owner.getId(), savedFriendId1, "서비스바꾼이름", null, null, RelationType.FRIEND);
+        boolean result = friendService.updateFriend(savedFriendId1, "바꾼이름", RelationType.FRIEND, RelationStatus.POSITIVE, null, null);
 
         // then
-        Assertions.assertEquals(result, 1);
+        Assertions.assertEquals( "바꾼이름", testFriend.getName());
+
     }
 
     @Test @DisplayName("Friend = 단일 친구 삭제")
     public void deleteFriend() throws Exception {
         // given
+        Friend testFriend = new Friend("테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Long savedFriendId1 = friendRepository.save(owner, testFriend);
 
         // when
-        int result = friendRepository.deleteById(owner.getId(), friend1.getId());
+        boolean result = friendService.deleteFriend(savedFriendId1);
 
         // then
-        Assertions.assertEquals(1,result);
+        Assertions.assertEquals(true, result);
     }
 }

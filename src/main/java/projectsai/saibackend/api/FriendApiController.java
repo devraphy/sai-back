@@ -13,7 +13,6 @@ import projectsai.saibackend.dto.friend.responseDto.AddFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.DeleteFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.SearchFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.UpdateFriendResponse;
-import projectsai.saibackend.service.EventService;
 import projectsai.saibackend.service.FriendService;
 
 import javax.persistence.EntityManager;
@@ -29,7 +28,6 @@ public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
-    private final EventService eventService; // Event Service => 삭제 메서드에서 필요하다.
 
     @PostMapping("/friend/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
@@ -61,20 +59,22 @@ public class FriendApiController {
 
     @PutMapping("/friend") // 친구 수정
     public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
-        int result = friendService.updateFriend(request.getOwnerId(), request.getFriendId(), request.getName(),
-                request.getBirthDate(), request.getMemo(), request.getRelationType());
-
-        if(result == 1) return new UpdateFriendResponse(Boolean.TRUE);
-        else return new UpdateFriendResponse(Boolean.FALSE);
+        try {
+            friendService.updateFriend(request.getFriendId(), request.getName(), request.getType(),
+                    request.getStatus(), request.getMemo(), request.getBirthDate());
+        } catch(Exception e) {
+            return new UpdateFriendResponse(Boolean.FALSE);
+        }
+        return new UpdateFriendResponse(Boolean.TRUE);
     }
 
     @DeleteMapping("/friend")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
-        // ************ 친구 삭제하기 전에 Event 부터 삭제해야함.
-        int result = friendService.deleteFriend(request.getOwnerId(), request.getFriendId());
-
-        if(result == 1) return new DeleteFriendResponse(Boolean.TRUE);
-        else return new DeleteFriendResponse(Boolean.FALSE);
+        boolean result = friendService.deleteFriend(request.getFriendId());
+        if(result) {
+            return new DeleteFriendResponse(Boolean.TRUE);
+        }
+        return new DeleteFriendResponse(Boolean.FALSE);
     }
 
     // 최초 친구 추가 시점에서 String 타입의 관계 상태를 int score 로 변환

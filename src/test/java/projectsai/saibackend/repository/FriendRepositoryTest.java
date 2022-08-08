@@ -24,8 +24,8 @@ import java.util.List;
 @SpringBootTest @Slf4j
 public class FriendRepositoryTest {
 
-    @Autowired FriendRepository friendRepository;
     @PersistenceContext EntityManager em;
+    @Autowired FriendRepository friendRepository;
 
     private Friend friend1, friend2, friend3;
     private Member owner;
@@ -46,6 +46,7 @@ public class FriendRepositoryTest {
     public void save() throws Exception {
         // given
         Friend newFriend = new Friend("테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+
 
         // when
         Long savedFriendId = friendRepository.save(owner, newFriend);
@@ -73,7 +74,7 @@ public class FriendRepositoryTest {
        //given
 
        //when
-        Friend findFriend = friendRepository.findById(owner.getId(), friend1.getId());
+        Friend findFriend = friendRepository.findById(friend1.getId());
 
         //then
         Assertions.assertThat(findFriend.getId()).isEqualTo(friend1.getId());
@@ -141,25 +142,4 @@ public class FriendRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Friend - 정보 수정")
-    public void updateById() throws Exception {
-       //given
-
-       //when
-        int i = friendRepository.updateById(owner.getId(), friend1.getId(), "바꾼이름", null, null, RelationType.FRIEND);
-
-        //then
-        Assertions.assertThat(i).isEqualTo(1);
-    }
-
-    @Test @DisplayName("Friend - 삭제")
-    public void deleteFriend() throws Exception {
-       //given
-
-       //when
-        int result = friendRepository.deleteById(owner.getId(), friend1.getId());
-
-        //then
-        Assertions.assertThat(result).isEqualTo(1);
-    }
 }

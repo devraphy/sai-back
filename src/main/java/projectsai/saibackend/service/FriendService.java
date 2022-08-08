@@ -1,6 +1,8 @@
 package projectsai.saibackend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
@@ -9,14 +11,17 @@ import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 import projectsai.saibackend.repository.FriendRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
+@Service @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FriendService {
 
+    @PersistenceContext EntityManager em;
     private final FriendRepository friendRepository;
 
     // 친구 저장
@@ -31,8 +36,8 @@ public class FriendService {
     }
 
     // 친구 ID 검색
-    public Friend findById(Long ownerId, Long id) {
-        return friendRepository.findById(ownerId, id);
+    public Friend findById(Long id) {
+        return friendRepository.findById(id);
     }
 
     // 친구 이름 검색
@@ -56,13 +61,32 @@ public class FriendService {
 
     // 친구 정보 수정
     @Transactional
-    public int updateFriend(Long ownerId, Long friendId, String name, LocalDate birthDate, String memo, RelationType friendType) {
-        return friendRepository.updateById(ownerId, friendId, name, birthDate, memo, friendType);
+    public boolean updateFriend(Long friendId, String name, RelationType type, RelationStatus status,
+                             String memo, LocalDate birthDate) {
+        try {
+            Friend findFriend = friendRepository.findById(friendId);
+            findFriend.updateInfo(name, type, status, memo, birthDate);
+            em.flush();
+            em.clear();
+        } catch(EmptyResultDataAccessException e) {
+            log.info("updateFriend: 존재하지 않는 ID");
+            return false;
+        }
+        return true;
     }
 
-    // 친구 삭제 ==> 실행 이전에 event 삭제 작업부터 실행되어야 한다.
+    // 친구 삭제
     @Transactional
-    public int deleteFriend(Long ownerId, Long friendId) {
-        return friendRepository.deleteById(ownerId, friendId);
+    public boolean deleteFriend(Long friendId) {
+        try {
+            Friend findFriend = friendRepository.findById(friendId);
+            em.remove(findFriend);
+            em.flush();
+            em.clear();
+        } catch(EmptyResultDataAccessException e) {
+            log.warn("deleteFriend: 존재하지 않는 ID");
+            return false;
+        }
+        return true;
     }
 }
