@@ -44,8 +44,8 @@ public class Friend {
 
     public Friend() {}
 
-    public Friend(String name, RelationType type, RelationStatus status, int score,
-                  @Nullable String memo, @Nullable LocalDate birthDate) {
+    public Friend(Member owner, String name, RelationType type, RelationStatus status, int score, @Nullable String memo, @Nullable LocalDate birthDate) {
+        this.owner = owner;
         this.name = name;
         this.type = type;
         this.status = status;

@@ -45,11 +45,11 @@ public class FriendRepositoryTest {
     @Test @DisplayName("Friend - 친구 저장")
     public void save() throws Exception {
         // given
-        Friend newFriend = new Friend("테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend newFriend = new Friend(owner, "테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
 
 
         // when
-        Long savedFriendId = friendRepository.save(owner, newFriend);
+        Long savedFriendId = friendRepository.save(newFriend);
 
         // then
         Assertions.assertThat(savedFriendId).isEqualTo(newFriend.getId());

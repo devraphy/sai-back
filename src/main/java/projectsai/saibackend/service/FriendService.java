@@ -27,7 +27,7 @@ public class FriendService {
     // 친구 저장
     @Transactional
     public Long addFriend(Member member, Friend friend) {
-        return friendRepository.save(member, friend);
+        return friendRepository.save(friend);
     }
 
     // 친구 전체 검색

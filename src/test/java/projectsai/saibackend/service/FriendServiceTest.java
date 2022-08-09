@@ -44,27 +44,27 @@ class FriendServiceTest {
 
     @BeforeEach
     private void createFriends() {
-        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend3 = new Friend("친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        business2 = new Friend("동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        business3 = new Friend("동료3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        friendRepository.save(owner, friend1);
-        friendRepository.save(owner, friend2);
-        friendRepository.save(owner, friend3);
-        friendRepository.save(owner, business1);
-        friendRepository.save(owner, business2);
-        friendRepository.save(owner, business3);
+        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        friend3 = new Friend(owner, "친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        business1 = new Friend(owner,"동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        business2 = new Friend(owner,"동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        business3 = new Friend(owner,"동료3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        friendRepository.save(friend1);
+        friendRepository.save(friend2);
+        friendRepository.save(friend3);
+        friendRepository.save(business1);
+        friendRepository.save(business2);
+        friendRepository.save(business3);
     }
 
     @Test @DisplayName("Friend - 친구 등록")
     void add() {
         // given
-        Friend testFriend = new Friend("테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
 
         // when
-        Long savedFriendId = friendRepository.save(owner, testFriend);
+        Long savedFriendId = friendRepository.save(testFriend);
 
         // then
         Assertions.assertEquals(testFriend.getId(), savedFriendId);
@@ -159,8 +159,8 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 친구 정보 수정")
     void updateById() {
         // given
-        Friend testFriend = new Friend("테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        Long savedFriendId1 = friendRepository.save(owner, testFriend);
+        Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Long savedFriendId1 = friendRepository.save(testFriend);
 
         // when
         boolean result = friendService.updateFriend(savedFriendId1, "바꾼이름", RelationType.FRIEND, RelationStatus.POSITIVE, null, null);
@@ -173,8 +173,8 @@ class FriendServiceTest {
     @Test @DisplayName("Friend = 단일 친구 삭제")
     public void deleteFriend() throws Exception {
         // given
-        Friend testFriend = new Friend("테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        Long savedFriendId1 = friendRepository.save(owner, testFriend);
+        Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Long savedFriendId1 = friendRepository.save(testFriend);
 
         // when
         boolean result = friendService.deleteFriend(savedFriendId1);

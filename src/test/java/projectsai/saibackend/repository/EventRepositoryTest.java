@@ -36,25 +36,31 @@ class EventRepositoryTest {
     @BeforeEach
     public void createMemberAndFriend() {
         owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), Boolean.TRUE);
-        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
-        business1 = new Friend("동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        business2 = new Friend("동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        owner.addFriend(friend1);
-        owner.addFriend(friend2);
-        owner.addFriend(business1);
-        owner.addFriend(business2);
+        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
+        business1 = new Friend(owner, "동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        business2 = new Friend(owner, "동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
         em.persist(owner);
+        em.persist(friend1);
+        em.persist(friend2);
+        em.persist(business1);
+        em.persist(business2);
     }
 
     @BeforeEach
     public void createEvent() {
         friendList = findFriends();
         businessList = findBusiness();
-        Event friendEvent = new Event(LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friendList);
-        Event businessEvent = new Event(LocalDate.now(), EventPurpose.WORK, "비지니스 모임", EventEvaluation.POSITIVE, businessList);
-        owner.addEvent(friendEvent);
-        owner.addEvent(businessEvent);
+
+        Event friendEvent1 = new Event(owner, LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friend1);
+        Event friendEvent2 = new Event(owner, LocalDate.now(), EventPurpose.CHILL, "친구 모임", EventEvaluation.NORMAL, friend2);
+        eventRepository.save(friendEvent1);
+        eventRepository.save(friendEvent2);
+
+        Event businessEvent1 = new Event(owner, LocalDate.now(), EventPurpose.WORK, "비지니스 모임", EventEvaluation.POSITIVE, business1);
+        Event businessEvent2 = new Event(owner, LocalDate.now(), EventPurpose.WORK, "비지니스 모임", EventEvaluation.POSITIVE, business2);
+        eventRepository.save(businessEvent1);
+        eventRepository.save(businessEvent2);
     }
 
     public List<Friend> findFriends() {
@@ -84,9 +90,7 @@ class EventRepositoryTest {
 
         //then
         for(Event event : allEvent) {
-            for(Friend participant : event.getParticipants()) {
-                Assertions.assertThat(participant.getId()).isIn(friend1.getId(), friend2.getId(), business1.getId(), business2.getId());
-            }
+            Assertions.assertThat(event.getFriend()).isIn(friend1, friend2, business1, business2);
         }
     }
 
@@ -100,15 +104,11 @@ class EventRepositoryTest {
 
         //then
         for(Event event : friendEventList) {
-            for(Friend participant : event.getParticipants()) {
-                Assertions.assertThat(participant.getId()).isIn(friend1.getId(), friend2.getId());
-            }
+            Assertions.assertThat(event.getFriend()).isIn(friend1, friend2);
         }
 
         for(Event event : businessEventList) {
-            for(Friend participant : event.getParticipants()) {
-                Assertions.assertThat(participant.getId()).isIn(business1.getId(), business2.getId());
-            }
+            Assertions.assertThat(event.getFriend()).isIn(business1, business2);
         }
     }
 

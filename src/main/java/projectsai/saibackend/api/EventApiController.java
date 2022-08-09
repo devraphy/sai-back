@@ -50,7 +50,7 @@ public class EventApiController {
         }
 
         Event event = new Event(request.getDate(), request.getPurpose(), request.getName(),
-                request.getEvaluation(), participants);
+                request.getEvaluation());
 
         Long savedEventId;
 

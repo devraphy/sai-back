@@ -21,9 +21,8 @@ public class EventRepository {
     // *********************************** CREATE
 
     // CREATE - 새로운 Event 객체 영속화
-    public Long save(Member owner, Event event) {
-        owner.addEvent(event);
-        em.persist(owner);
+    public Long save(Event event) {
+        em.persist(event);
         return event.getId();
     }
 

@@ -28,8 +28,8 @@ public class EventService {
 
     // 이벤트 저장
     @Transactional
-    public Long addEvent(Member member, Event event) {
-        return eventRepository.save(member, event);
+    public Long addEvent(Event event) {
+        return eventRepository.save(event);
     }
 
     // 이벤트 ID 검색
@@ -68,28 +68,28 @@ public class EventService {
     }
 
     // 이벤트 정보 수정
-    public boolean updateEvent(Long eventId, String name, LocalDate date, EventEvaluation evaluation, List<Friend> participants) {
-        try {
-            Event findEvent = eventRepository.findById(eventId);
-            findEvent.updateInfo(name, date, evaluation, participants);
-        } catch(EmptyResultDataAccessException e) {
-            return false;
-        }
-        return true;
-    }
+//    public boolean updateEvent(Long eventId, String name, LocalDate date, EventEvaluation evaluation, List<Friend> participants) {
+//        try {
+//            Event findEvent = eventRepository.findById(eventId);
+//            findEvent.updateInfo(name, date, evaluation, participants);
+//        } catch(EmptyResultDataAccessException e) {
+//            return false;
+//        }
+//        return true;
+//    }
 
-    public boolean deleteEvent(Long eventId, Long friendId) {
-        Friend findFriend = friendRepository.findById(friendId);
-        Event findEvent = eventRepository.findByParticipant(eventId, findFriend);
-        System.out.println(findEvent.getName());
-        em.remove(findEvent);
-        em.flush();
-        em.clear();
-
-//        int result = em.createQuery("delete from Event e where e.owner.id = :ownerId and e.participants = :friendId")
-//                    .setParameter("ownerId", ownerId)
-//                    .setParameter("friendId", friendId)
-//                    .executeUpdate();
-        return true;
-    }
+//    public boolean deleteEvent(Long eventId, Long friendId) {
+//        Friend findFriend = friendRepository.findById(friendId);
+//        Event findEvent = eventRepository.findByParticipant(eventId, findFriend);
+//        System.out.println(findEvent.getName());
+//        em.remove(findEvent);
+//        em.flush();
+//        em.clear();
+//
+////        int result = em.createQuery("delete from Event e where e.owner.id = :ownerId and e.participants = :friendId")
+////                    .setParameter("ownerId", ownerId)
+////                    .setParameter("friendId", friendId)
+////                    .executeUpdate();
+//        return true;
+//    }
 }

@@ -16,7 +16,6 @@ public class SearchEventResponse {
     private LocalDate date;
     private String name;
     private EventEvaluation evaluation;
-    private List<Friend> participants;
 
     public SearchEventResponse(Event event) {
         this.eventId = event.getId();
@@ -24,6 +23,5 @@ public class SearchEventResponse {
         this.date = event.getDate();
         this.name = event.getName();
         this.evaluation = event.getEvaluation();
-        this.participants = event.getParticipants();
     }
 }

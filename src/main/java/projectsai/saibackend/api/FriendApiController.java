@@ -19,7 +19,6 @@ import projectsai.saibackend.service.FriendService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
