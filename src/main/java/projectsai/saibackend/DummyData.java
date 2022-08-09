@@ -87,6 +87,12 @@ public class DummyData {
 
             Event event2 = new Event(LocalDate.now(), EventPurpose.WORK, "두번째회의", EventEvaluation.GREAT, friendList2.subList(2, 4));
             member2.addEvent(event2);
+
+            Member member3 = new Member("test1" ,"test@gmail.com", "abcabc", LocalDate.of(2022, 8, 8), Boolean.TRUE);
+            em.persist(member3);
+
+            Member member4 = new Member("test2" ,"testVis@gmail.com", "123123", LocalDate.of(2022, 8, 8), Boolean.FALSE);
+            em.persist(member4);
         }
     }
 }

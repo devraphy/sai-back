@@ -14,9 +14,9 @@ public class AddFriendRequest {
     @NotNull
     private String name;
     @NotNull
-    private RelationType relationType;
+    private RelationType type;
     @NotNull
-    private RelationStatus relationStatus;
+    private RelationStatus status;
     private String memo;
     private LocalDate birthDate;
 }

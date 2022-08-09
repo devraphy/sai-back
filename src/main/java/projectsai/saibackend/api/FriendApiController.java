@@ -13,11 +13,13 @@ import projectsai.saibackend.dto.friend.responseDto.AddFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.DeleteFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.SearchFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.UpdateFriendResponse;
+import projectsai.saibackend.service.EventService;
 import projectsai.saibackend.service.FriendService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
@@ -28,15 +30,16 @@ public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
+    private final EventService eventService;
 
     @PostMapping("/friend/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
 
-        int score = stringToScore(request.getRelationStatus());
+        int score = stringToScore(request.getStatus());
 
         Member owner = em.find(Member.class, request.getOwnerId());
-        Friend friend = new Friend(request.getName(), request.getRelationType(),
-                request.getRelationStatus(), score, request.getMemo(), request.getBirthDate());
+        Friend friend = new Friend(request.getName(), request.getType(),
+                request.getStatus(), score, request.getMemo(), request.getBirthDate());
 
         try {
             friendService.addFriend(owner, friend);
@@ -70,6 +73,9 @@ public class FriendApiController {
 
     @DeleteMapping("/friend")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
+        // ==> 해당 Friend ID를 이용하여 이벤트 객체를 검색한다.
+        // ==> 검색된 Event 객체의 Participants의 length가 2 이상이면 participants에서 해당 Friend 객체를 삭제한다.
+        // ==> length가 1인 경우에는 그냥 삭제하면 된다.
         boolean result = friendService.deleteFriend(request.getFriendId());
         if(result) {
             return new DeleteFriendResponse(Boolean.TRUE);

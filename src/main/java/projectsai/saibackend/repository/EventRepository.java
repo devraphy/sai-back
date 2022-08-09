@@ -30,11 +30,9 @@ public class EventRepository {
     // *********************************** READ화
 
     // READ - Event ID로 검색
-    public Event findById(Long ownerId, Long eventId) {
+    public Event findById(Long eventId) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner.id = :ownerId " +
-                        "and e.id = :eventId", Event.class)
-                .setParameter("ownerId", ownerId)
+                        "where e.id = :eventId", Event.class)
                 .setParameter("eventId", eventId)
                 .getSingleResult();
     }
@@ -47,7 +45,7 @@ public class EventRepository {
                 .getResultList();
     }
 
-    // READ - 참가자로 검색
+    // READ - 다중 참가자로 검색
     public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
         return em.createQuery("select distinct e from Event e " +
                         "join e.participants p " +
@@ -56,6 +54,17 @@ public class EventRepository {
                 .setParameter("ownerId", ownerId)
                 .setParameter("friendList", friendList)
                 .getResultList();
+    }
+
+    // READ - 단일 참가자로 검색
+    public Event findByParticipant(Long eventId, Friend friend) {
+        return em.createQuery("select distinct e from Event e " +
+                        "join e.participants p " +
+                        "where e.id = :eventId " +
+                        "and p = :friend", Event.class)
+                .setParameter("eventId", eventId)
+                .setParameter("friend", friend)
+                .getSingleResult();
     }
 
     // READ - Event 이름으로 검색
@@ -97,8 +106,4 @@ public class EventRepository {
                 .setParameter("evaluation", evaluation)
                 .getResultList();
     }
-
-    // *********************************** Update
-
-    // *********************************** Delete
 }

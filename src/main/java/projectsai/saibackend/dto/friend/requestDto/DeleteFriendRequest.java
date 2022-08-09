@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class DeleteFriendRequest {
-
     @NotNull
     private Long ownerId;
     @NotNull

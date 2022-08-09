@@ -1,7 +1,6 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
-import org.springframework.lang.Nullable;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
 
@@ -35,20 +34,12 @@ public class Event {
     @Enumerated(EnumType.STRING) @NotNull
     private EventEvaluation evaluation;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "event_participants",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private List<Friend> participants = new ArrayList<>();
-
-    // Setter 대신 사용하는 비즈니스 메서드
-    public void setOwner(Member member) {
-        this.owner = member;
-    }
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<EventRecord> participants = new ArrayList<>();
 
     public Event() {}
 
-    public Event(LocalDate date, EventPurpose purpose, String name, EventEvaluation evaluation, List<Friend> participants) {
+    public Event(LocalDate date, EventPurpose purpose, String name, EventEvaluation evaluation, List<EventRecord> participants) {
         this.date = date;
         this.purpose = purpose;
         this.name = name;
@@ -72,4 +63,10 @@ public class Event {
     public int hashCode() {
         return Objects.hash(getId(), getOwner(), getDate(), getPurpose(), getName(), getEvaluation(), getParticipants());
     }
+
+    // Setter 대신 사용하는 비즈니스 메서드
+    public void setOwner(Member member) {
+        this.owner = member;
+    }
+
 }

@@ -9,8 +9,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity @Getter
@@ -56,6 +54,25 @@ public class Friend {
         this.birthDate = birthDate;
     }
 
+    // Equals & HashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Friend friend = (Friend) o;
+        return getScore() == friend.getScore()
+                && Objects.equals(getId(), friend.getId())
+                && Objects.equals(getOwner(), friend.getOwner())
+                && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
+                && Objects.equals(getMemo(), friend.getMemo())
+                && Objects.equals(getBirthDate(), friend.getBirthDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getBirthDate());
+    }
+
     // Setter 대신 사용하는 비즈니스 메서드
     public void setOwner(Member member) {
         this.owner = member;
@@ -83,24 +100,5 @@ public class Friend {
         else if(score > 40 && score <= 60) this.status = RelationStatus.NORMAL;
         else if(score > 60 && score <= 80) this.status = RelationStatus.POSITIVE;
         else if(score > 80) this.status = RelationStatus.GREAT;
-    }
-
-    // Equals & HashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Friend friend = (Friend) o;
-        return getScore() == friend.getScore()
-                && Objects.equals(getId(), friend.getId())
-                && Objects.equals(getOwner(), friend.getOwner())
-                && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
-                && Objects.equals(getMemo(), friend.getMemo())
-                && Objects.equals(getBirthDate(), friend.getBirthDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getBirthDate());
     }
 }

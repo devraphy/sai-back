@@ -36,10 +36,10 @@ public class FriendRepository {
     }
 
     // READ - 단일 Friend ID로 검색
-    public Friend findById(Long id) {
+    public Friend findById(Long friendId) {
         return em.createQuery("select f from Friend f " +
-                        "where f.id = :id", Friend.class)
-                .setParameter("id", id)
+                        "where f.id = :friendId", Friend.class)
+                .setParameter("friendId", friendId)
                 .getSingleResult();
     }
 

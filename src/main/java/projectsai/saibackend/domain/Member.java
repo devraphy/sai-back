@@ -33,11 +33,6 @@ public class Member {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Friend> friendList = new ArrayList<>();
 
-    public void addFriend(Friend friend) {
-        this.friendList.add(friend);
-        friend.setOwner(this);
-    }
-
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Event> eventList = new ArrayList<>();
 
@@ -45,6 +40,11 @@ public class Member {
     public void addEvent(Event event) {
         this.eventList.add(event);
         event.setOwner(this);
+    }
+
+    public void addFriend(Friend friend) {
+        this.friendList.add(friend);
+        friend.setOwner(this);
     }
 
     public void updateInfo(String name, String email, String password) {
