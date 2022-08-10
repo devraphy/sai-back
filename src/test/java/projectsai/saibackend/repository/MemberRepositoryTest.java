@@ -37,16 +37,27 @@ class MemberRepositoryTest {
         em.clear();
     }
 
+    @Test @DisplayName("Member - 회원 저장")
+    public void saveMember() throws Exception {
+        // given
+        member1 = new Member("저장테스트","save@gmail.com", "save", LocalDate.now(), true);
+
+        // when
+        Long savedMemberId = memberRepository.save(member1);
+
+        // then
+        Assertions.assertThat(savedMemberId).isEqualTo(member1.getId());
+    }
+
     @Test @DisplayName("Member - 전체 검색")
     public void findAllMember() throws Exception {
         // given
 
         // when
-        List<Member> all = memberRepository.findAll();
+        List<Member> allMember = memberRepository.findAll();
 
-        for(Member member : all) {
-            Assertions.assertThat(member.getId()).isIn(member1.getId(), member2.getId());
-        }
+        // then
+        Assertions.assertThat(allMember.size()).isEqualTo(2);
     }
 
     @Test @DisplayName("Member - ID로 검색")

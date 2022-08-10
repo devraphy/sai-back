@@ -9,7 +9,6 @@ import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -24,10 +23,13 @@ public class MemberService {
 
     // 회원 가입
     @Transactional
-    public Long join(Member member) {
-        memberRepository.save(member);
-        log.info("회원 가입 성공 => " + member.getEmail());
-        return member.getId();
+    public boolean signUp(Member member) {
+        if(emailValidation(member.getEmail())) {
+            memberRepository.save(member);
+            log.info("회원 가입 성공 => " + member.getEmail());
+            return true;
+        }
+        return false;
     }
 
     // 전체 회원 검색
@@ -45,22 +47,21 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
+
     // **************  Business Methods
 
     // 회원 가입 - email 중복 검사
     public Boolean emailValidation(String email) {
         try {
             Member findMember = memberRepository.findByEmail(email);
-            // 탈퇴한 사용자의 이메일은 재사용 불가
-            if(findMember.getVisibility().equals(Boolean.FALSE)) {
-                log.info("탈퇴한 사용자의 이메일 => " + email);
+            if(findMember.getVisibility().equals(Boolean.FALSE)) { // 탈퇴한 사용자의 이메일 사용 불가
+                log.warn("탈퇴한 사용자의 이메일 => " + email);
                 return false;
             }
-
-        } catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e){ // 검색 결과가 없음 == 신규 이메일
             return true;
         }
-        log.info("이미 존재하는 이메일 => " + email);
+        log.warn("이미 존재하는 이메일 => " + email);
         return false;
     }
 
@@ -98,23 +99,23 @@ public class MemberService {
             findMember = memberRepository.findByEmail(email);
 
             if(findMember.getVisibility().equals(Boolean.FALSE)) {
-                log.warn("updateMember Fail: 이미 탈퇴한 회원 => " + email);
+                log.warn("updateMember Fail: 탈퇴한 회원의 이메일 => " + email);
                 return false;
             }
             else if(findMember.getEmail().equals(email) && findMember.getId().equals(id)) {
                 findMember.updateInfo(name, email, password);
                 em.flush();
                 em.clear();
-                log.info("updateMember Success: 수정 성공(1)");
+                log.info("updateMember Success: 이메일 외 정보 수정 성공");
                 return true;
             }
         }
-        catch(EmptyResultDataAccessException exception) {
+        catch(EmptyResultDataAccessException e) {
             findMember = memberRepository.findById(id);
             findMember.updateInfo(name, email, password);
             em.flush();
             em.clear();
-            log.info("updateMember Success: 수정 성공(2)");
+            log.info("updateMember Success: 이메일 포함 정보 수정 성공");
             return true;
         }
         log.warn("updateMember Fail: 이미 존재하는 이메일 => " + email);

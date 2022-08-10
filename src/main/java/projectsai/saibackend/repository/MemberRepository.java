@@ -24,11 +24,11 @@ public class MemberRepository {
     // *********************************** READ
 
     // READ - ID로 검색
-    public Member findById(Long id) {
+    public Member findById(Long memberId) {
         return em.createQuery("select m from Member m " +
-                        "where m.id = :id " +
+                        "where m.id = :memberId " +
                         "and m.visibility = true", Member.class)
-                .setParameter("id", id)
+                .setParameter("memberId", memberId)
                 .getSingleResult();
     }
 

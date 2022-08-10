@@ -24,14 +24,13 @@ class MemberServiceTest {
     @Autowired MemberRepository memberRepository;
 
     private Member member1, member2;
-    private Long savedMemberId1, savedMemberId2;
 
     @BeforeEach
     void createMember() throws Exception {
         member1 = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
         member2 = new Member("박근형", "def@gmail.com", "abcdefg", LocalDate.now(), true);
-        savedMemberId1 = memberService.join(member1);
-        savedMemberId2 = memberService.join(member2);
+        memberService.signUp(member1);
+        memberService.signUp(member2);
     }
 
     @Test @DisplayName("Member - 회원 가입")
@@ -40,10 +39,10 @@ class MemberServiceTest {
         Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), true);
 
         // when
-        Long savedMemberId = memberService.join(newMember);
+        memberService.signUp(newMember);
 
         // then
-        Assertions.assertEquals(memberRepository.findById(savedMemberId), newMember);
+        Assertions.assertEquals(newMember.getId(), memberRepository.findByEmail("rapapa@gmail.com").getId());
     }
 
     @Test @DisplayName("Member - 전체 검색")
@@ -54,9 +53,7 @@ class MemberServiceTest {
         List<Member> allMembers = memberService.findAll();
 
         // then
-        for(Member member : allMembers) {
-            org.assertj.core.api.Assertions.assertThat(member).isIn(member1, member2);
-        }
+        Assertions.assertEquals(2, allMembers.size());
     }
 
     @Test @DisplayName("Member - ID 검색")
@@ -64,12 +61,12 @@ class MemberServiceTest {
         // given
 
         // when
-        Member findMember1 = memberService.findMember(savedMemberId1);
-        Member findMember2 = memberService.findMember(savedMemberId2);
+        Member findMember1 = memberService.findMember(member1.getId());
+        Member findMember2 = memberService.findMember(member2.getId());
 
         // then
-        Assertions.assertEquals(savedMemberId1, findMember1.getId());
-        Assertions.assertEquals(savedMemberId2, findMember2.getId());
+        Assertions.assertEquals(member1.getId(), findMember1.getId());
+        Assertions.assertEquals(member2.getId(), findMember2.getId());
     }
 
     @Test @DisplayName("Member - Email 검색")
@@ -102,9 +99,9 @@ class MemberServiceTest {
        //given
 
        //when
-        memberService.updateMember(savedMemberId1, "바꾼이름", "바꾼이메일", "바꾼비밀번호");
+        memberService.updateMember(member1.getId(), "바꾼이름", "바꾼이메일", "바꾼비밀번호");
 
        //then
-        Assertions.assertEquals("바꾼이메일", memberService.findMember(savedMemberId1).getEmail());
+        Assertions.assertEquals("바꾼이메일", memberService.findMember(member1.getId()).getEmail());
     }
 }

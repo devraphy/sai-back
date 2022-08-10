@@ -7,8 +7,6 @@ import projectsai.saibackend.dto.member.requestDto.*;
 import projectsai.saibackend.dto.member.responseDto.*;
 import projectsai.saibackend.service.MemberService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.time.LocalDate;
 
@@ -16,15 +14,15 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class MemberApiController {
 
-    @PersistenceContext EntityManager em;
     private final MemberService memberService;
 
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
-        if(memberService.emailValidation(request.getEmail())) {
-            Member member = new Member(request.getName(), request.getEmail(), request.getPassword(), LocalDate.now(), Boolean.TRUE);
-            Long savedMemberId = memberService.join(member);
-            return new JoinMemberResponse(savedMemberId, Boolean.TRUE);
+        Member member = new Member(request.getName(), request.getEmail(),
+                request.getPassword(), LocalDate.now(), Boolean.TRUE);
+
+        if(memberService.signUp(member)) {
+            return new JoinMemberResponse(member.getId(), Boolean.TRUE);
         }
         return new JoinMemberResponse(null, Boolean.FALSE);
     }
@@ -32,11 +30,9 @@ public class MemberApiController {
     @PostMapping("/login") // 회원 - 로그인
     public LoginMemberResponse loginMember(@RequestBody @Valid LoginMemberRequest request) {
         if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
-            Member findMember = memberService.findByEmail(request.getEmail());
-            return new LoginMemberResponse(findMember.getId(), findMember.getEmail(), findMember.getName(),
-                    findMember.getSignUpDate(), Boolean.TRUE);
+            return new LoginMemberResponse(request.getEmail(), Boolean.TRUE);
         }
-        return new LoginMemberResponse(null, null, null, null, Boolean.FALSE);
+        return new LoginMemberResponse(null, Boolean.FALSE);
     }
 
     @PostMapping("/profile") // 회원 - 정보 조회
@@ -49,14 +45,14 @@ public class MemberApiController {
         return new SearchMemberResponse(null, null, null, null, null, Boolean.FALSE);
     }
 
-    @PutMapping("/profile/update") // 회원 - 정보 수정
+    @PutMapping("/profile") // 회원 - 정보 수정
     public UpdateMemberResponse updateMember(@RequestBody @Valid UpdateMemberRequest request) {
         boolean result = memberService.updateMember(request.getId(), request.getName(), request.getEmail(), request.getPassword());
         if(result) return new UpdateMemberResponse(Boolean.TRUE);
         else return new UpdateMemberResponse(Boolean.FALSE);
     }
 
-    @PutMapping("/profile/resign") // 회원 - 탈퇴
+    @DeleteMapping("/profile") // 회원 - 탈퇴
     public DeleteMemberResponse deleteMember(@RequestBody @Valid DeleteMemberRequest request) {
         if(memberService.deleteMember(request.getEmail())) {
             return new DeleteMemberResponse(Boolean.TRUE);
