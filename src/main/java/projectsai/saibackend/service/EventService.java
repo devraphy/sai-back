@@ -38,33 +38,33 @@ public class EventService {
     }
 
     // 이벤트 전체 검색
-    public List<Event> findAll(Long ownerId) {
-        return eventRepository.findAll(ownerId);
+    public List<Event> findAll(Member owner) {
+        return eventRepository.findAll(owner);
     }
 
     // 이벤트 참가자로 검색
-    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
-        return eventRepository.findByParticipants(ownerId, friendList);
-    }
+//    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
+//        return eventRepository.findByParticipants(ownerId, friendList);
+//    }
 
     // 이벤트 이름 검색
-    public List<Event> findByName(Long ownerId, String name) {
-        return eventRepository.findByEventName(ownerId, name);
+    public List<Event> findByName(Member owner, String name) {
+        return eventRepository.findByEventName(owner, name);
     }
 
     // 이벤트 날짜 검색
-    public List<Event> findByDate(Long ownerId, LocalDate date) {
-        return eventRepository.findByDate(ownerId, date);
+    public List<Event> findByDate(Member owner, LocalDate date) {
+        return eventRepository.findByDate(owner, date);
     }
 
     // 이벤트 목적 검색
-    public List<Event> findByPurpose(Long ownerId, EventPurpose purpose) {
-        return eventRepository.findByPurpose(ownerId, purpose);
+    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
+        return eventRepository.findByPurpose(owner, purpose);
     }
 
     // 이벤트 평가 검색
-    public List<Event> findByEvaluation(Long ownerId, EventEvaluation evaluation) {
-        return eventRepository.findByEvaluation(ownerId, evaluation);
+    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
+        return eventRepository.findByEvaluation(owner, evaluation);
     }
 
     // 이벤트 정보 수정

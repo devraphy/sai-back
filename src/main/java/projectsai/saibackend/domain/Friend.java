@@ -75,7 +75,7 @@ public class Friend {
         return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getBirthDate());
     }
 
-    // Setter 대신 사용하는 비즈니스 메서드
+    // Business Methods
     public void setOwner(Member member) {
         this.owner = member;
     }

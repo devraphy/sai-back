@@ -2,7 +2,6 @@ package projectsai.saibackend.repository;
 
 import org.springframework.stereotype.Repository;
 import projectsai.saibackend.domain.Event;
-import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
@@ -36,72 +35,50 @@ public class EventRepository {
                 .getSingleResult();
     }
 
-    // READ - Member ID로 검색
-    public List<Event> findAll(Long ownerId) {
+    // READ - Member ID 검색
+    public List<Event> findAll(Member owner) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner.id = :ownerId", Event.class)
-                .setParameter("ownerId", ownerId)
+                        "where e.owner = :owner", Event.class)
+                .setParameter("owner", owner)
                 .getResultList();
-    }
-
-    // READ - 다중 참가자로 검색
-    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
-        return em.createQuery("select distinct e from Event e " +
-                        "join e.participants p " +
-                        "where e.owner.id = :ownerId " +
-                        "and p in :friendList", Event.class)
-                .setParameter("ownerId", ownerId)
-                .setParameter("friendList", friendList)
-                .getResultList();
-    }
-
-    // READ - 단일 참가자로 검색
-    public Event findByParticipant(Long eventId, Friend friend) {
-        return em.createQuery("select distinct e from Event e " +
-                        "join e.participants p " +
-                        "where e.id = :eventId " +
-                        "and p = :friend", Event.class)
-                .setParameter("eventId", eventId)
-                .setParameter("friend", friend)
-                .getSingleResult();
     }
 
     // READ - Event 이름으로 검색
-    public List<Event> findByEventName(Long ownerId, String eventName) {
+    public List<Event> findByEventName(Member owner, String eventName) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner.id = :ownerId " +
+                        "where e.owner = :owner " +
                         "and e.name = :eventName", Event.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("eventName", eventName)
                 .getResultList();
     }
 
     // READ - 날짜로 검색
-    public List<Event> findByDate(Long ownerId, LocalDate date) {
+    public List<Event> findByDate(Member owner, LocalDate date) {
         return em.createQuery("select e from Event e " +
-                        "where e.owner.id = :ownerId " +
+                        "where e.owner = :owner " +
                         "and e.date = :date", Event.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("date", date)
                 .getResultList();
     }
 
     // READ - 목적으로 검색
-    public List<Event> findByPurpose(Long ownerId, EventPurpose purpose) {
+    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner.id = :ownerId " +
+                                "where e.owner = :owner " +
                                 "and e.purpose = :purpose", Event.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("purpose", purpose)
                 .getResultList();
     }
 
     // READ - 평가로 검색
-    public List<Event> findByEvaluation(Long ownerId, EventEvaluation evaluation) {
+    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner.id = :ownerId " +
+                                "where e.owner = :owner " +
                                 "and e.evaluation = :evaluation", Event.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("evaluation", evaluation)
                 .getResultList();
     }

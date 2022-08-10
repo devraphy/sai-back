@@ -57,7 +57,7 @@ public class Member {
         return Objects.hash(getId(), getName(), getEmail(), getPassword(), getSignUpDate(), getVisibility());
     }
 
-    // Setter 대신 사용하는 비즈니스 메서드
+    // Business Methods
     public void updateInfo(String name, String email, String password) {
         this.name = name;
         this.email = email;
