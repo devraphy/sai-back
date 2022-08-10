@@ -27,10 +27,10 @@ public class FriendRepository {
     // *********************************** READ
 
     // READ - Member ID로 검색
-    public List<Friend> findAll(Long ownerId) {
+    public List<Friend> findAll(Member owner) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId", Friend.class)
-                .setParameter("ownerId", ownerId)
+                        "where f.owner = :owner", Friend.class)
+                .setParameter("owner", owner)
                 .getResultList();
     }
 
@@ -43,41 +43,41 @@ public class FriendRepository {
     }
 
     // READ - 이름으로 검색
-    public List<Friend> findByName(Long ownerId, String name) {
+    public List<Friend> findByName(Member owner, String name) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId " +
+                        "where f.owner = :owner " +
                         "and f.name = :name ", Friend.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("name", name)
                 .getResultList();
     }
 
     // READ - 관계 종류로 검색
-    public List<Friend> findByType(Long ownerId, RelationType type) {
+    public List<Friend> findByType(Member owner, RelationType type) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId " +
+                        "where f.owner = :owner " +
                         "and f.type = :type", Friend.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("type", type)
                 .getResultList();
     }
 
     // READ - 관계 상태로 검색
-    public List<Friend> findByStatus(Long ownerId, RelationStatus status) {
+    public List<Friend> findByStatus(Member owner, RelationStatus status) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId " +
+                        "where f.owner = :owner " +
                         "and f.status = :status", Friend.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("status", status)
                 .getResultList();
     }
 
     // READ - 다수의 Friend ID로 다중 검색
-    public List<Friend> findFriends(Long ownerId, List<Long> friendIds) {
+    public List<Friend> findFriends(Member owner, List<Long> friendIds) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner.id = :ownerId " +
+                        "where f.owner = :owner " +
                         "and f.id in :friendIds", Friend.class)
-                .setParameter("ownerId", ownerId)
+                .setParameter("owner", owner)
                 .setParameter("friendIds", friendIds)
                 .getResultList();
     }

@@ -26,13 +26,21 @@ public class FriendService {
 
     // 친구 저장
     @Transactional
-    public Long addFriend(Member member, Friend friend) {
-        return friendRepository.save(friend);
+    public boolean addFriend(Friend friend) {
+        try {
+            friendRepository.save(friend);
+            log.info("add Friend Success");
+            return true;
+        }
+        catch (Exception e) {
+            log.error("add Friend Fail => " + e.getMessage());
+            return false;
+        }
     }
 
     // 친구 전체 검색
-    public List<Friend> findAll(Long ownerId) {
-        return friendRepository.findAll(ownerId);
+    public List<Friend> findAll(Member owner) {
+        return friendRepository.findAll(owner);
     }
 
     // 친구 ID 검색
@@ -41,22 +49,22 @@ public class FriendService {
     }
 
     // 친구 이름 검색
-    public List<Friend> findByName(Long ownerId, String name) {
-        return friendRepository.findByName(ownerId, name);
+    public List<Friend> findByName(Member owner, String name) {
+        return friendRepository.findByName(owner, name);
     }
 
     // 친구 종류 검색
-    public List<Friend> findByType(Long ownerId, RelationType type) {
-        return friendRepository.findByType(ownerId, type);
+    public List<Friend> findByType(Member owner, RelationType type) {
+        return friendRepository.findByType(owner, type);
     }
 
     // 친구 상태 검색
-    public List<Friend> findByStatus(Long ownerId, RelationStatus status) {
-        return friendRepository.findByStatus(ownerId, status);
+    public List<Friend> findByStatus(Member owner, RelationStatus status) {
+        return friendRepository.findByStatus(owner, status);
     }
 
-    public List<Friend> findFriends(Long ownerId, List<Long> friendIds) {
-        return friendRepository.findFriends(ownerId, friendIds);
+    public List<Friend> findFriends(Member owner, List<Long> friendIds) {
+        return friendRepository.findFriends(owner, friendIds);
     }
 
     // 친구 정보 수정
@@ -69,9 +77,10 @@ public class FriendService {
             em.flush();
             em.clear();
         } catch(EmptyResultDataAccessException e) {
-            log.info("updateFriend: 존재하지 않는 ID");
+            log.info("updateFriend Fail: 존재하지 않는 ID");
             return false;
         }
+        log.info("updateFriend Success: 정보 수정 완료");
         return true;
     }
 
@@ -84,9 +93,10 @@ public class FriendService {
             em.flush();
             em.clear();
         } catch(EmptyResultDataAccessException e) {
-            log.warn("deleteFriend: 존재하지 않는 ID");
+            log.warn("deleteFriend Fail: 존재하지 않는 ID");
             return false;
         }
+        log.warn("deleteFriend Success: 삭제 완료");
         return true;
     }
 }

@@ -33,20 +33,20 @@ public class FriendRepositoryTest {
     @BeforeEach
     public void createMemberAndFriend() {
         owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
-        friend1 = new Friend("친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend2 = new Friend("친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
-        friend3 = new Friend("친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        owner.addFriend(friend1);
-        owner.addFriend(friend2);
-        owner.addFriend(friend3);
+        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
+        friend3 = new Friend(owner, "친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
         em.persist(owner);
+        friendRepository.save(friend1);
+        friendRepository.save(friend2);
+        friendRepository.save(friend3);
     }
 
     @Test @DisplayName("Friend - 친구 저장")
     public void save() throws Exception {
         // given
-        Friend newFriend = new Friend(owner, "테스트친구", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-
+        Friend newFriend = new Friend(owner, "테스트친구", RelationType.FRIEND, RelationStatus.NORMAL,
+                50, null, null);
 
         // when
         Long savedFriendId = friendRepository.save(newFriend);
@@ -60,13 +60,11 @@ public class FriendRepositoryTest {
         // given
 
         // when
-        List<Friend> friendList = friendRepository.findAll(owner.getId());
+        List<Friend> friendList = friendRepository.findAll(owner);
 
         // then
-        for(Friend friend1 : friendList) {
-            log.info("ID: " + friend1.getId() + " " + friend1.getName());
-            Assertions.assertThat(friend1.getOwner().getId()).isEqualTo(owner.getId());
-        }
+        Assertions.assertThat(friendList.size()).isEqualTo(3);
+
     }
 
     @Test @DisplayName("Friend - Id 검색")
@@ -86,11 +84,10 @@ public class FriendRepositoryTest {
         String name = "친구1";
 
         // when
-        List<Friend> friendList = friendRepository.findByName(owner.getId(), name);
+        List<Friend> friendList = friendRepository.findByName(owner, name);
 
         // then
         for(Friend friend1 : friendList) {
-            log.info("이름: " + friend1.getName());
             Assertions.assertThat(friend1.getName()).isEqualTo(name);
         }
     }
@@ -101,11 +98,10 @@ public class FriendRepositoryTest {
         RelationType type = RelationType.FRIEND;
 
         // when
-        List<Friend> friendList = friendRepository.findByType(owner.getId(), type);
+        List<Friend> friendList = friendRepository.findByType(owner, type);
 
         // then
         for(Friend friend1 : friendList) {
-            log.info("이름: " + friend1.getName() + " / type =>" + friend1.getType());
             Assertions.assertThat(friend1.getType()).isEqualTo(type);
         }
     }
@@ -116,11 +112,10 @@ public class FriendRepositoryTest {
         RelationStatus status = RelationStatus.NORMAL;
 
         // when
-        List<Friend> friendList = friendRepository.findByStatus(owner.getId(), status);
+        List<Friend> friendList = friendRepository.findByStatus(owner, status);
 
         // then
         for(Friend friend1 : friendList) {
-            log.info("이름: " + friend1.getName() + " / status => " + friend1.getStatus());
             Assertions.assertThat(friend1.getStatus()).isEqualTo(status);
         }
     }
@@ -134,7 +129,7 @@ public class FriendRepositoryTest {
         friendIds.add(friend3.getId());
 
         //when
-        List<Friend> friends = friendRepository.findFriends(owner.getId(), friendIds);
+        List<Friend> friends = friendRepository.findFriends(owner, friendIds);
 
         //then
         for(Friend one : friends) {

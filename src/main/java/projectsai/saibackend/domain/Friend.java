@@ -42,9 +42,11 @@ public class Friend {
     @Nullable
     private LocalDate birthDate;
 
+    // Constructor
     public Friend() {}
 
-    public Friend(Member owner, String name, RelationType type, RelationStatus status, int score, @Nullable String memo, @Nullable LocalDate birthDate) {
+    public Friend(Member owner, String name, RelationType type, RelationStatus status,
+                  int score, @Nullable String memo, @Nullable LocalDate birthDate) {
         this.owner = owner;
         this.name = name;
         this.type = type;
@@ -60,10 +62,10 @@ public class Friend {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Friend friend = (Friend) o;
-        return getScore() == friend.getScore()
-                && Objects.equals(getId(), friend.getId())
+        return getScore() == friend.getScore() && Objects.equals(getId(), friend.getId())
                 && Objects.equals(getOwner(), friend.getOwner())
-                && Objects.equals(getName(), friend.getName()) && getType() == friend.getType() && getStatus() == friend.getStatus()
+                && Objects.equals(getName(), friend.getName())
+                && getType() == friend.getType() && getStatus() == friend.getStatus()
                 && Objects.equals(getMemo(), friend.getMemo())
                 && Objects.equals(getBirthDate(), friend.getBirthDate());
     }

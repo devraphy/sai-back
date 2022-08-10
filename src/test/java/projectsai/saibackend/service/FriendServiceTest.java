@@ -82,7 +82,7 @@ class FriendServiceTest {
         friendList.add(business3);
 
         // when
-        List<Friend> allFriends = friendRepository.findAll(owner.getId());
+        List<Friend> allFriends = friendRepository.findAll(owner);
 
         // then
         for(Friend friend : allFriends) {
@@ -106,7 +106,7 @@ class FriendServiceTest {
         // given
 
         // when
-        List<Friend> findFriendList = friendRepository.findByName(owner.getId(), "친구1");
+        List<Friend> findFriendList = friendRepository.findByName(owner, "친구1");
 
         // then
         for(Friend friend : findFriendList) {
@@ -119,7 +119,7 @@ class FriendServiceTest {
         // given
 
         // when
-        List<Friend> findFriendList = friendRepository.findByType(owner.getId(), RelationType.FRIEND);
+        List<Friend> findFriendList = friendRepository.findByType(owner, RelationType.FRIEND);
 
         // then
         for(Friend friend : findFriendList) {
@@ -132,7 +132,7 @@ class FriendServiceTest {
         // given
 
         // when
-        List<Friend> findFriendList = friendRepository.findByStatus(owner.getId(), RelationStatus.NORMAL);
+        List<Friend> findFriendList = friendRepository.findByStatus(owner, RelationStatus.NORMAL);
 
         // then
         for(Friend friend : findFriendList) {
@@ -149,7 +149,7 @@ class FriendServiceTest {
         friendIds.add(friend3.getId());
 
        //when
-        List<Friend> friends = friendRepository.findFriends(owner.getId(), friendIds);
+        List<Friend> friends = friendRepository.findFriends(owner, friendIds);
 
         //then
         List<Long> ids = friends.stream().map(o -> o.getId()).collect(Collectors.toList());
@@ -170,7 +170,7 @@ class FriendServiceTest {
 
     }
 
-    @Test @DisplayName("Friend = 단일 친구 삭제")
+    @Test @DisplayName("Friend - 단일 친구 삭제")
     public void deleteFriend() throws Exception {
         // given
         Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);

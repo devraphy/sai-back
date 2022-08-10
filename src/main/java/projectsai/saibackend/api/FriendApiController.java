@@ -37,21 +37,19 @@ public class FriendApiController {
         int score = stringToScore(request.getStatus());
 
         Member owner = em.find(Member.class, request.getOwnerId());
-        Friend friend = new Friend(request.getName(), request.getType(),
+        Friend friend = new Friend(owner, request.getName(), request.getType(),
                 request.getStatus(), score, request.getMemo(), request.getBirthDate());
 
-        try {
-            friendService.addFriend(owner, friend);
+        if(friendService.addFriend(friend)) {
+            return new AddFriendResponse(Boolean.TRUE);
         }
-        catch (Exception e) {
-            return new AddFriendResponse(Boolean.FALSE);
-        }
-        return new AddFriendResponse(Boolean.TRUE);
+        return new AddFriendResponse(Boolean.FALSE);
     }
 
     @PostMapping("/friend") // 모든 친구 검색
     public List<SearchFriendResponse> findAll(@RequestBody @Valid SearchFriendRequest request) {
-        List<Friend> allFriends = friendService.findAll(request.getOwnerId());
+        Member owner = em.find(Member.class, request.getOwnerId());
+        List<Friend> allFriends = friendService.findAll(owner);
 
         List<SearchFriendResponse> result = allFriends.stream()
                 .map(o -> new SearchFriendResponse(o)).collect(toList());
@@ -72,9 +70,7 @@ public class FriendApiController {
 
     @DeleteMapping("/friend")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
-        // ==> 해당 Friend ID를 이용하여 이벤트 객체를 검색한다.
-        // ==> 검색된 Event 객체의 Participants의 length가 2 이상이면 participants에서 해당 Friend 객체를 삭제한다.
-        // ==> length가 1인 경우에는 그냥 삭제하면 된다.
+        // event 기록부터 삭제해야한다.
         boolean result = friendService.deleteFriend(request.getFriendId());
         if(result) {
             return new DeleteFriendResponse(Boolean.TRUE);
