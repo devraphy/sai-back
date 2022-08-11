@@ -61,5 +61,10 @@ public class Event {
 
 
     // Business Methods
-
+    public void updateInfo(String name, LocalDate date, EventPurpose purpose, EventEvaluation evaluation){
+        this.name = name;
+        this.date = date;
+        this.purpose = purpose;
+        this.evaluation = evaluation;
+    }
 }
