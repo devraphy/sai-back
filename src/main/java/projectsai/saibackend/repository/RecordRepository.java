@@ -20,21 +20,35 @@ public class RecordRepository {
     }
 
     public List<Record> findAllParticipants(Event event) {
-        return em.createQuery("select r from Record r where r.event = :event", Record.class)
+        return em.createQuery("select r from Record r " +
+                        "where r.event = :event", Record.class)
                 .setParameter("event", event)
                 .getResultList();
     }
 
     public List<Record> findByParticipant(Friend friend) {
-        return em.createQuery("select r from Record r where r.friend = :friend", Record.class)
+        return em.createQuery("select r from Record r " +
+                        "where r.friend = :friend", Record.class)
                 .setParameter("friend", friend)
                 .getResultList();
     }
 
     public Record findOneRecord(Event event, Friend friend) {
-        return em.createQuery("select r from Record r where r.event = :event and r.friend = :friend", Record.class)
+        return em.createQuery("select r from Record r " +
+                        "where r.event = :event " +
+                        "and r.friend = :friend", Record.class)
                 .setParameter("event", event)
                 .setParameter("friend", friend)
                 .getSingleResult();
+    }
+
+    public int deleteAllRecord(Event event) {
+        return em.createQuery("delete from Record r where r.event = :event")
+                .setParameter("event", event)
+                .executeUpdate();
+    }
+
+    public void deleteRecordById(Record record) {
+        em.remove(record);
     }
 }

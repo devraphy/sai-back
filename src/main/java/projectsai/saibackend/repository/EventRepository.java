@@ -1,6 +1,7 @@
 package projectsai.saibackend.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
@@ -81,5 +82,12 @@ public class EventRepository {
                 .setParameter("owner", owner)
                 .setParameter("evaluation", evaluation)
                 .getResultList();
+    }
+
+    // DELETE - 특정 이벤트 삭제
+    public void deleteEvent(Event event) {
+        em.remove(event);
+        em.flush();
+        em.clear();
     }
 }

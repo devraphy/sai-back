@@ -1,6 +1,7 @@
 package projectsai.saibackend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,21 +11,19 @@ import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
 import projectsai.saibackend.repository.EventRepository;
-import projectsai.saibackend.repository.FriendRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
+@Service @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventService {
 
     @PersistenceContext EntityManager em;
     private final EventRepository eventRepository;
-    private final FriendRepository friendRepository;
 
     // 이벤트 저장
     @Transactional
@@ -41,11 +40,6 @@ public class EventService {
     public List<Event> findAll(Member owner) {
         return eventRepository.findAll(owner);
     }
-
-    // 이벤트 참가자로 검색
-//    public List<Event> findByParticipants(Long ownerId, List<Friend> friendList) {
-//        return eventRepository.findByParticipants(ownerId, friendList);
-//    }
 
     // 이벤트 이름 검색
     public List<Event> findByName(Member owner, String name) {
@@ -68,28 +62,24 @@ public class EventService {
     }
 
     // 이벤트 정보 수정
-//    public boolean updateEvent(Long eventId, String name, LocalDate date, EventEvaluation evaluation, List<Friend> participants) {
-//        try {
-//            Event findEvent = eventRepository.findById(eventId);
-//            findEvent.updateInfo(name, date, evaluation, participants);
-//        } catch(EmptyResultDataAccessException e) {
-//            return false;
-//        }
-//        return true;
-//    }
+    public boolean updateEvent(Long eventId, String name, LocalDate date, EventPurpose purpose, EventEvaluation evaluation) {
+        try {
+            Event findEvent = eventRepository.findById(eventId);
+            findEvent.updateInfo(name, date, purpose, evaluation);
+        } catch(EmptyResultDataAccessException e) {
+            return false;
+        }
+        return true;
+    }
 
-//    public boolean deleteEvent(Long eventId, Long friendId) {
-//        Friend findFriend = friendRepository.findById(friendId);
-//        Event findEvent = eventRepository.findByParticipant(eventId, findFriend);
-//        System.out.println(findEvent.getName());
-//        em.remove(findEvent);
-//        em.flush();
-//        em.clear();
-//
-////        int result = em.createQuery("delete from Event e where e.owner.id = :ownerId and e.participants = :friendId")
-////                    .setParameter("ownerId", ownerId)
-////                    .setParameter("friendId", friendId)
-////                    .executeUpdate();
-//        return true;
-//    }
+    @Transactional
+    public boolean deleteEvent(Event event) {
+        try {
+            eventRepository.deleteEvent(event);
+        } catch(Exception e) {
+            log.warn("deleteEvent Fail: 이벤트 삭제 실패 => " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 }

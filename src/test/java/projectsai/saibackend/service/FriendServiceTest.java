@@ -177,7 +177,7 @@ class FriendServiceTest {
         Long savedFriendId1 = friendRepository.save(testFriend);
 
         // when
-        boolean result = friendService.deleteFriend(savedFriendId1);
+        boolean result = friendService.deleteFriendById(testFriend);
 
         // then
         Assertions.assertEquals(true, result);

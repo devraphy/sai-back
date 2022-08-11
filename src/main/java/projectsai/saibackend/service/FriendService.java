@@ -86,17 +86,14 @@ public class FriendService {
 
     // 친구 삭제
     @Transactional
-    public boolean deleteFriend(Long friendId) {
+    public boolean deleteFriendById(Friend friend) {
         try {
-            Friend findFriend = friendRepository.findById(friendId);
-            em.remove(findFriend);
-            em.flush();
-            em.clear();
-        } catch(EmptyResultDataAccessException e) {
-            log.warn("deleteFriend Fail: 존재하지 않는 ID");
+            friendRepository.deleteFriendById(friend);
+        } catch(Exception e) {
+            log.warn("deleteFriend Fail: 친구 삭제 실패 => " + e.getMessage());
             return false;
         }
-        log.warn("deleteFriend Success: 삭제 완료");
+        log.warn("deleteFriend Success: 친구 삭제 완료");
         return true;
     }
 }

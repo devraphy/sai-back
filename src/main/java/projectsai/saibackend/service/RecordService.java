@@ -48,6 +48,26 @@ public class RecordService {
         return recordRepository.findOneRecord(event, friend);
     }
 
+    // 연관된 Event의 모든 기록을 삭제
+    @Transactional
+    public boolean deleteAllRecord(Event event) {
+        int result = recordRepository.deleteAllRecord(event);
+        if(result > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public boolean deleteRecordById(Record record) {
+        try {
+            recordRepository.deleteRecordById(record);
+        } catch(Exception e) {
+            log.warn("deleteRecordById Fail: 기록 삭제 실패 => " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 //    SELECT * FROM MEMBER ;
 //    SELECT * FROM FRIEND  ;
 //    SELECT * FROM EVENT  ;

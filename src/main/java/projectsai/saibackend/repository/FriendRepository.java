@@ -81,4 +81,10 @@ public class FriendRepository {
                 .setParameter("friendIds", friendIds)
                 .getResultList();
     }
+
+    public void deleteFriendById(Friend friend) {
+        em.remove(friend);
+        em.flush();
+        em.clear();
+    }
 }
