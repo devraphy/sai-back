@@ -31,8 +31,8 @@ class MemberRepositoryTest {
     public void createMember() {
         member1 = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), true);
         member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), true);
-        savedId1 = memberRepository.save(member1);
-        savedId2 = memberRepository.save(member2);
+        savedId1 = memberRepository.addMember(member1);
+        savedId2 = memberRepository.addMember(member2);
         em.flush();
         em.clear();
     }
@@ -43,7 +43,7 @@ class MemberRepositoryTest {
         member1 = new Member("저장테스트","save@gmail.com", "save", LocalDate.now(), true);
 
         // when
-        Long savedMemberId = memberRepository.save(member1);
+        Long savedMemberId = memberRepository.addMember(member1);
 
         // then
         Assertions.assertThat(savedMemberId).isEqualTo(member1.getId());

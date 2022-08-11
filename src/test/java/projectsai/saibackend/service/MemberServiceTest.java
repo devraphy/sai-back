@@ -1,13 +1,11 @@
 package projectsai.saibackend.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
@@ -17,7 +15,7 @@ import java.util.List;
 
 
 @SpringBootTest
-@Transactional @Slf4j
+@Transactional
 class MemberServiceTest {
 
     @Autowired MemberService memberService;
@@ -34,7 +32,7 @@ class MemberServiceTest {
     }
 
     @Test @DisplayName("Member - 회원 가입")
-    void join() throws Exception {
+    void signUp() throws Exception {
         // given
         Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), true);
 
@@ -53,11 +51,11 @@ class MemberServiceTest {
         List<Member> allMembers = memberService.findAll();
 
         // then
-        Assertions.assertEquals(2, allMembers.size());
+        Assertions.assertEquals(5, allMembers.size());
     }
 
     @Test @DisplayName("Member - ID 검색")
-    void findById() throws Exception {
+    void findMember() throws Exception {
         // given
 
         // when
@@ -75,10 +73,22 @@ class MemberServiceTest {
         String email1 = member1.getEmail();
 
         // when
-        Member findMember = memberRepository.findByEmail(email1);
+        Member findMember = memberService.findByEmail(email1);
 
         // then
         Assertions.assertEquals(email1, findMember.getEmail());
+    }
+
+    @Test @DisplayName("Member - Email 중복 검증")
+    void emailValidation() throws Exception {
+        // given
+        String email = member1.getEmail();
+
+        // when
+        Boolean result = memberService.emailValidation(email);
+
+        // then
+        Assertions.assertEquals(Boolean.FALSE, result);
     }
 
     @Test @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함

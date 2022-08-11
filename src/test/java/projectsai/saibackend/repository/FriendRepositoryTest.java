@@ -37,19 +37,19 @@ public class FriendRepositoryTest {
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         friend3 = new Friend(owner, "친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
         em.persist(owner);
-        friendRepository.save(friend1);
-        friendRepository.save(friend2);
-        friendRepository.save(friend3);
+        friendRepository.addFriend(friend1);
+        friendRepository.addFriend(friend2);
+        friendRepository.addFriend(friend3);
     }
 
     @Test @DisplayName("Friend - 친구 저장")
-    public void save() throws Exception {
+    public void addFriend() throws Exception {
         // given
         Friend newFriend = new Friend(owner, "테스트친구", RelationType.FRIEND, RelationStatus.NORMAL,
                 50, null, null);
 
         // when
-        Long savedFriendId = friendRepository.save(newFriend);
+        Long savedFriendId = friendRepository.addFriend(newFriend);
 
         // then
         Assertions.assertThat(savedFriendId).isEqualTo(newFriend.getId());
@@ -129,7 +129,7 @@ public class FriendRepositoryTest {
         friendIds.add(friend3.getId());
 
         //when
-        List<Friend> friends = friendRepository.findFriends(owner, friendIds);
+        List<Friend> friends = friendRepository.findByIds(owner, friendIds);
 
         //then
         for(Friend one : friends) {

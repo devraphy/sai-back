@@ -3,6 +3,7 @@ package projectsai.saibackend.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +26,47 @@ class RecordRepositoryTest {
     @PersistenceContext EntityManager em;
     @Autowired RecordRepository recordRepository;
 
+    private Event event;
+    private Friend friend;
+    private Record record;
+
+    @BeforeEach
+    void createEventFriendRecord() {
+        event = em.find(Event.class, Long.valueOf(6));
+        friend = em.find(Friend.class, Long.valueOf(14));
+        record = new Record(event, friend);
+    }
+
     @Test @DisplayName("Record - 기록 저장")
-    void save() {
+    void addRecord() throws Exception {
         // given
-        Event event = em.find(Event.class, Long.valueOf(6));
-        Friend friend = em.find(Friend.class, Long.valueOf(14));
-        Record record = new Record(event, friend);
 
         // when
-        Long savedRecordId = recordRepository.save(record);
+        Long savedRecordId = recordRepository.addRecord(record);
 
         // then
         Assertions.assertThat(savedRecordId).isEqualTo(record.getId());
     }
 
+    @Test @DisplayName("Record - Id로 기록 검색")
+    public void findById() throws Exception {
+        //given
+        Long savedRecordId = recordRepository.addRecord(record);
+
+        //when
+        Record findRecord = recordRepository.findById(savedRecordId);
+
+        //then
+        Assertions.assertThat(findRecord).isEqualTo(record);
+
+    }
+
     @Test @DisplayName("Record - 이벤트로 모든 기록 검색")
-    void findAllRecord() {
+    void findAll() throws Exception {
         // given
-        Event event = em.find(Event.class, Long.valueOf(6));
 
         // when
-        List<Record> allRecord = recordRepository.findAllParticipants(event);
+        List<Record> allRecord = recordRepository.findAll(event);
 
         // then
         for (Record record : allRecord) {
@@ -54,12 +75,10 @@ class RecordRepositoryTest {
     }
 
     @Test @DisplayName("Record - 단일 참가자로 기록 검색")
-    void findByParticipant() {
+    void findByParticipant() throws Exception {
         // given
-        Friend friend = em.find(Friend.class, Long.valueOf(14));
 
         // when
-        log.warn("친구 이름 = > " + friend.getName());
         List<Record> allRecord = recordRepository.findByParticipant(friend);
 
         // then
@@ -69,17 +88,39 @@ class RecordRepositoryTest {
     }
 
     @Test @DisplayName("Record - 특정 기록 검색")
-    void findOneRecord() {
+    void findOne() throws Exception {
         // given
-        Event event = em.find(Event.class, Long.valueOf(6));
-        Friend friend = em.find(Friend.class, Long.valueOf(14));
-        Record record = new Record(event, friend);
-        em.persist(record);
+        recordRepository.addRecord(record);
 
         // when
-        Record oneRecord = recordRepository.findOneRecord(event, friend);
+        Record oneRecord = recordRepository.findOne(event, friend);
 
         // then
         Assertions.assertThat(oneRecord.getId()).isEqualTo(record.getId());
+    }
+
+    @Test @DisplayName("Record - 이벤트로 모든 기록 삭제")
+    public void deleteAllRecord() throws Exception {
+        //given
+
+        //when
+        recordRepository.deleteAllRecord(event);
+
+        //then
+        Assertions.assertThat(recordRepository.findAll(event).size()).isEqualTo(0);
+
+    }
+
+    @Test @DisplayName("Record - 특정 기록 삭제")
+    public void deleteRecord() throws Exception {
+        //given
+        Long savedRecordId = recordRepository.addRecord(record);
+
+        //when
+        recordRepository.deleteRecord(record);
+
+        //then
+        Assertions.assertThat(recordRepository.findById(savedRecordId)).isEqualTo(null);
+
     }
 }
