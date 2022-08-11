@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.dto.friend.requestDto.AddFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
@@ -13,8 +14,8 @@ import projectsai.saibackend.dto.friend.responseDto.AddFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.DeleteFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.SearchFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.UpdateFriendResponse;
-import projectsai.saibackend.service.EventService;
 import projectsai.saibackend.service.FriendService;
+import projectsai.saibackend.service.RecordService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,7 +30,7 @@ public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
-    private final EventService eventService;
+    private final RecordService recordService;
 
     @PostMapping("/friend/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
@@ -70,8 +71,15 @@ public class FriendApiController {
 
     @DeleteMapping("/friend")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
-        // event 기록부터 삭제해야한다.
-        boolean result = friendService.deleteFriend(request.getFriendId());
+        Friend friend = friendService.findById(request.getFriendId());
+        List<Record> recordList = recordService.findByParticipant(friend);
+
+        for (Record record : recordList) {
+            recordService.deleteRecord(record);
+        }
+
+        boolean result = friendService.deleteFriend(friend);
+
         if(result) {
             return new DeleteFriendResponse(Boolean.TRUE);
         }
