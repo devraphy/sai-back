@@ -5,6 +5,5 @@ import lombok.Data;
 
 @Data @AllArgsConstructor
 public class AddEventResponse {
-    private Long eventId;
     private Boolean result;
 }

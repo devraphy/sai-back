@@ -4,10 +4,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
-@Data
+@Data @NotNull
 public class DeleteFriendRequest {
-    @NotNull
     private Long ownerId;
-    @NotNull
     private Long friendId;
 }

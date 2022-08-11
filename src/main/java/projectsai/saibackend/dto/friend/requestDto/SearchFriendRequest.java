@@ -4,8 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
-@Data
+@Data @NotNull
 public class SearchFriendRequest {
-    @NotNull
     private Long ownerId;
 }

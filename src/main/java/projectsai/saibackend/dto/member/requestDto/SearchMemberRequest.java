@@ -4,10 +4,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
-@Data
+@Data @NotNull
 public class SearchMemberRequest {
-    @NotNull
     private String email;
-    @NotNull
     private String password;
 }
