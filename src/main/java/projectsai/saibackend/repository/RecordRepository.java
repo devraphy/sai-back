@@ -46,7 +46,7 @@ public class RecordRepository {
                 .getSingleResult();
     }
 
-    public int deleteAllRecord(Event event) {
+    public int deleteAllRecords(Event event) {
         int result = em.createQuery("delete from Record r where r.event = :event")
                 .setParameter("event", event)
                 .executeUpdate();

@@ -76,8 +76,8 @@ public class RecordService {
 
     // 특정 이벤트의 모든 참가자 기록을 삭제
     @Transactional
-    public boolean deleteAllRecord(Event event) {
-        int result = recordRepository.deleteAllRecord(event);
+    public boolean deleteAllRecords(Event event) {
+        int result = recordRepository.deleteAllRecords(event);
         if(result == 0) {
             log.warn("deleteAllRecord() Fail: 기록 삭제 실패 => 삭제된 데이터가 없음");
             return false;

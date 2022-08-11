@@ -104,7 +104,7 @@ class RecordRepositoryTest {
         //given
 
         //when
-        recordRepository.deleteAllRecord(event);
+        recordRepository.deleteAllRecords(event);
 
         //then
         Assertions.assertThat(recordRepository.findAll(event).size()).isEqualTo(0);

@@ -131,7 +131,7 @@ public class EventApiController {
     public DeleteEventResponse deleteEvent(@RequestBody @Valid DeleteEventRequest request) {
         try {
             Event event = em.find(Event.class, request.getEventId());
-            recordService.deleteAllRecord(event);
+            recordService.deleteAllRecords(event);
             eventService.deleteEvent(event);
             log.info("deleteEvent Success: 이벤트 삭제 성공");
             return new DeleteEventResponse(Boolean.TRUE);
