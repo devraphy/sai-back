@@ -28,7 +28,7 @@ public class FriendService {
     @Transactional
     public boolean addFriend(Friend friend) {
         try {
-            friendRepository.save(friend);
+            friendRepository.addFriend(friend);
             log.info("addFriend() Success: 친구 저장 성공");
             return true;
         }
@@ -105,7 +105,7 @@ public class FriendService {
 
     public List<Friend> findFriends(Member owner, List<Long> friendIds) {
         try {
-            List<Friend> friendList = friendRepository.findFriends(owner, friendIds);
+            List<Friend> friendList = friendRepository.findByIds(owner, friendIds);
             log.info("findFriends() Success: 다수의 친구 아이디로 검색 성공");
             return friendList;
         }

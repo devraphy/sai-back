@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
-import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
@@ -29,7 +28,7 @@ public class EventService {
     @Transactional
     public Long addEvent(Event event) {
         try {
-            Long savedEventId = eventRepository.save(event);
+            Long savedEventId = eventRepository.addEvent(event);
             log.info("addEvent() Success: 이벤트 저장 성공");
             return savedEventId;
         }

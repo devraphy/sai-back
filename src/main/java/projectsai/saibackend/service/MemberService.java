@@ -25,7 +25,7 @@ public class MemberService {
     @Transactional
     public boolean signUp(Member member) {
         if(emailValidation(member.getEmail())) {
-            memberRepository.save(member);
+            memberRepository.addMember(member);
             log.info("signUp() Success: 회원 가입 성공");
             return true;
         }

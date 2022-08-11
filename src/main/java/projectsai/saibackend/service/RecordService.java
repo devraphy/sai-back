@@ -25,7 +25,7 @@ public class RecordService {
     // 이벤트 참가자 기록 저장
     public boolean addRecord(Record record) {
         try {
-            recordRepository.save(record);
+            recordRepository.addRecord(record);
             log.info("addRecord() Success: 기록 저장 완료");
             return true;
         }
@@ -36,9 +36,9 @@ public class RecordService {
     }
 
     // 특정 이벤트의 모든 참가자 기록을 검색
-    public List<Record> findAllParticipants(Event event) {
+    public List<Record> findAll(Event event) {
         try {
-            List<Record> recordList = recordRepository.findAllParticipants(event);
+            List<Record> recordList = recordRepository.findAll(event);
             log.info("findAllParticipants() Success: 특정 이벤트의 모든 참가자 기록을 검색 성공");
             return recordList;
         }
@@ -62,9 +62,9 @@ public class RecordService {
     }
 
     // 특정한 기록을 검색
-    public Record findOneRecord(Event event, Friend friend) {
+    public Record findOne(Event event, Friend friend) {
         try {
-            Record record = recordRepository.findOneRecord(event, friend);
+            Record record = recordRepository.findOne(event, friend);
             log.info("findOneRecord() Success: 특정 기록 검색 성공");
             return record;
         }
@@ -88,9 +88,9 @@ public class RecordService {
 
     // 특정 기록을 삭제
     @Transactional
-    public boolean deleteRecordById(Record record) {
+    public boolean deleteRecord(Record record) {
         try {
-            recordRepository.deleteRecordById(record);
+            recordRepository.deleteRecord(record);
             log.info("deleteRecordById() Success: 기록 삭제 성공");
             return true;
         }
