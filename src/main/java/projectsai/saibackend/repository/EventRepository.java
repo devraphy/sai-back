@@ -1,7 +1,6 @@
 package projectsai.saibackend.repository;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
@@ -21,7 +20,7 @@ public class EventRepository {
     // *********************************** CREATE
 
     // CREATE - 새로운 Event 객체 영속화
-    public Long save(Event event) {
+    public Long addEvent(Event event) {
         em.persist(event);
         return event.getId();
     }
@@ -30,10 +29,7 @@ public class EventRepository {
 
     // READ - Event ID로 검색
     public Event findById(Long eventId) {
-        return em.createQuery("select e from Event e " +
-                        "where e.id = :eventId", Event.class)
-                .setParameter("eventId", eventId)
-                .getSingleResult();
+        return em.find(Event.class, eventId);
     }
 
     // READ - Member ID 검색

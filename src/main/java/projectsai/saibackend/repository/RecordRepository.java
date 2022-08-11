@@ -14,12 +14,16 @@ public class RecordRepository {
 
     @PersistenceContext EntityManager em;
 
-    public Long save(Record record) {
+    public Long addRecord(Record record) {
         em.persist(record);
         return record.getId();
     }
 
-    public List<Record> findAllParticipants(Event event) {
+    public Record findById(Long recordId) {
+        return em.find(Record.class, recordId);
+    }
+
+    public List<Record> findAll(Event event) {
         return em.createQuery("select r from Record r " +
                         "where r.event = :event", Record.class)
                 .setParameter("event", event)
@@ -33,7 +37,7 @@ public class RecordRepository {
                 .getResultList();
     }
 
-    public Record findOneRecord(Event event, Friend friend) {
+    public Record findOne(Event event, Friend friend) {
         return em.createQuery("select r from Record r " +
                         "where r.event = :event " +
                         "and r.friend = :friend", Record.class)
@@ -43,12 +47,18 @@ public class RecordRepository {
     }
 
     public int deleteAllRecord(Event event) {
-        return em.createQuery("delete from Record r where r.event = :event")
+        int result = em.createQuery("delete from Record r where r.event = :event")
                 .setParameter("event", event)
                 .executeUpdate();
+
+        em.flush();
+        em.clear();
+        return result;
     }
 
-    public void deleteRecordById(Record record) {
+    public void deleteRecord(Record record) {
         em.remove(record);
+        em.flush();
+        em.clear();
     }
 }

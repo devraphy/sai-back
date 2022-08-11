@@ -19,7 +19,7 @@ public class FriendRepository {
     // *********************************** CREATE
 
     // CREATE - Friend 객체 영속화
-    public Long save(Friend friend) {
+    public Long addFriend(Friend friend) {
         em.persist(friend);
         return friend.getId();
     }
@@ -73,7 +73,7 @@ public class FriendRepository {
     }
 
     // READ - 다수의 Friend ID로 다중 검색
-    public List<Friend> findFriends(Member owner, List<Long> friendIds) {
+    public List<Friend> findByIds(Member owner, List<Long> friendIds) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner = :owner " +
                         "and f.id in :friendIds", Friend.class)

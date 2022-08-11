@@ -16,7 +16,7 @@ public class MemberRepository {
     // *********************************** CREATE
 
     // CREATE - Member 객체 영속화
-    public Long save(Member member) {
+    public Long addMember(Member member) {
         em.persist(member);
         return member.getId();
     }
