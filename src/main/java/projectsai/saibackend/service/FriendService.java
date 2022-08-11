@@ -135,9 +135,9 @@ public class FriendService {
 
     // 친구 삭제
     @Transactional
-    public boolean deleteFriendById(Friend friend) {
+    public boolean deleteFriend(Friend friend) {
         try {
-            friendRepository.deleteFriendById(friend);
+            friendRepository.deleteFriend(friend);
             log.warn("deleteFriend() Success: 친구 삭제 완료");
             return true;
         }

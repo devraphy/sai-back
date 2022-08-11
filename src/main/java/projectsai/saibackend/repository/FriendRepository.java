@@ -82,7 +82,7 @@ public class FriendRepository {
                 .getResultList();
     }
 
-    public void deleteFriendById(Friend friend) {
+    public void deleteFriend(Friend friend) {
         em.remove(friend);
         em.flush();
         em.clear();
