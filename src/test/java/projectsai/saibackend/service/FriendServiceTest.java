@@ -134,7 +134,7 @@ class FriendServiceTest {
         List<Long> friendIds = Arrays.asList(friend1.getId(), friend2.getId(), friend3.getId());
 
        //when
-        List<Friend> findFriends = friendService.findFriends(owner, friendIds);
+        List<Friend> findFriends = friendService.findFriends(friendIds);
 
         //then
         List<Long> ids = findFriends.stream().map(o -> o.getId()).collect(Collectors.toList());

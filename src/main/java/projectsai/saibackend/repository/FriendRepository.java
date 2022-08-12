@@ -73,11 +73,9 @@ public class FriendRepository {
     }
 
     // READ - 다수의 Friend ID로 다중 검색
-    public List<Friend> findByIds(Member owner, List<Long> friendIds) {
+    public List<Friend> findByIds(List<Long> friendIds) {
         return em.createQuery("select f from Friend f " +
-                        "where f.owner = :owner " +
-                        "and f.id in :friendIds", Friend.class)
-                .setParameter("owner", owner)
+                        "where f.id in :friendIds", Friend.class)
                 .setParameter("friendIds", friendIds)
                 .getResultList();
     }

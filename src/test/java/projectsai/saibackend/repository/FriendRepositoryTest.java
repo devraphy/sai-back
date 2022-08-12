@@ -129,7 +129,7 @@ public class FriendRepositoryTest {
         friendIds.add(friend3.getId());
 
         //when
-        List<Friend> friends = friendRepository.findByIds(owner, friendIds);
+        List<Friend> friends = friendRepository.findByIds(friendIds);
 
         //then
         for(Friend one : friends) {

@@ -105,9 +105,9 @@ public class FriendService {
     }
 
     // 다수의 Id를 이용한 친구 검색
-    public List<Friend> findFriends(Member owner, List<Long> friendIds) {
+    public List<Friend> findFriends(List<Long> friendIds) {
         try {
-            List<Friend> friendList = friendRepository.findByIds(owner, friendIds);
+            List<Friend> friendList = friendRepository.findByIds(friendIds);
             log.info("Friend | findFriends() Success: 검색 성공");
             return friendList;
         }
