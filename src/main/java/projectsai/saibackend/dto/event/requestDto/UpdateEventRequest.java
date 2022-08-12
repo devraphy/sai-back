@@ -16,5 +16,5 @@ public class UpdateEventRequest {
     private LocalDate date;
     private EventPurpose purpose;
     private EventEvaluation evaluation;
-    private List<Friend> participants;
+    private List<Long> participants;
 }
