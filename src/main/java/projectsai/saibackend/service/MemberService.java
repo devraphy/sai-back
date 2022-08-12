@@ -24,23 +24,28 @@ public class MemberService {
     // 회원 가입
     @Transactional
     public boolean signUp(Member member) {
-        if(emailValidation(member.getEmail())) {
-            memberRepository.addMember(member);
-            log.info("signUp() Success: 회원 가입 성공");
+        try {
+            if(emailValidation(member.getEmail())) {
+                memberRepository.addMember(member);
+            }
+            log.info("Member | signUp() Success: 저장 성공");
             return true;
         }
-        log.warn("signUp() Fail: 회원 가입 실패 => emailValidation() 실패 | " + member.getEmail());
-        return false;
+        catch(Exception e) {
+            log.warn("Member | signUp() Fail: 에러 발생 => " + e.getMessage());
+            return false;
+        }
     }
 
     // 전체 회원 검색
     public List<Member> findAll() {
         try {
             List<Member> memberList = memberRepository.findAll();
-            log.info("findAll() Success: 모든 회원 검색 성공");
+            log.info("Member | findAll() Success: 검색 성공");
             return memberList;
-        } catch (Exception e) {
-            log.warn("findAll() Fail: 모든 회원 검색 실패 => " + e.getMessage());
+        }
+        catch (EmptyResultDataAccessException e) {
+            log.warn("Member | findAll() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -49,10 +54,11 @@ public class MemberService {
     public Member findMember(Long id) {
         try {
             Member member = memberRepository.findById(id);
-            log.info("findMember() Success: id로 특정 회원 검색 성공");
+            log.info("Member | findMember() Success: 검색 성공");
             return member;
-        } catch (EmptyResultDataAccessException e) {
-            log.warn("findMember() Fail: id로 특정 회원 검색 실패 => " + e.getMessage());
+        }
+        catch (EmptyResultDataAccessException e) {
+            log.warn("Member | findMember() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -61,10 +67,11 @@ public class MemberService {
     public Member findByEmail(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
-            log.info("findByEmail() Success: email로 특정 회원 검색 성공");
+            log.info("Member | findByEmail() Success: 검색 성공");
             return member;
-        } catch (EmptyResultDataAccessException e) {
-            log.warn("findByEmail() Fail: email로 특정 회원 검색 실패 => " + e.getMessage());
+        }
+        catch (EmptyResultDataAccessException e) {
+            log.warn("Member | findByEmail() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -74,15 +81,15 @@ public class MemberService {
         try {
             Member findMember = memberRepository.findByEmail(email);
             if(findMember.getVisibility().equals(Boolean.FALSE)) {
-                log.warn("emailValidation() Fail: 탈퇴 사용자의 이메일 => " + email);
+                log.warn("Member | emailValidation() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
         }
         catch (EmptyResultDataAccessException e) {
-            log.info("emailValidation() Success: 신규 이메일=> " + email);
+            log.info("Member | emailValidation() Success: 신규 이메일 => " + email);
             return true;
         }
-        log.warn("emailValidation() Fail: 중복 이메일 => " + email);
+        log.warn("Member | emailValidation() Fail: 사용중인 이메일 => " + email);
         return false;
     }
 
@@ -91,20 +98,20 @@ public class MemberService {
         try {
             Member member = memberRepository.findByEmail(email);
             if(member.getVisibility().equals(Boolean.FALSE)) {
-                log.warn("loginValidation() Fail: 탈퇴한 회원의 이메일 => " + email);
+                log.warn("Member | loginValidation() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
 
             else if(member.getEmail().equals(email) && member.getPassword().equals(password)) {
-                log.info("loginValidation() Success: 로그인 성공 => " + email);
+                log.info("Member | loginValidation() Success: 로그인 성공 => " + email);
                 return true;
             }
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("loginValidation() Fail: 존재하지 않는 이메일 => " + e.getMessage());
+            log.warn("Member | loginValidation() Fail: 존재하지 않는 회원 => " + e.getMessage());
             return false;
         }
-        log.warn("loginValidation() Fail: 비밀번호 불일치");
+        log.warn("Member | loginValidation() Fail: 비밀번호 불일치");
         return false;
     }
 
@@ -115,14 +122,14 @@ public class MemberService {
             Member member = memberRepository.findByEmail(email);
 
             if(member.getVisibility().equals(Boolean.FALSE)) {
-                log.warn("updateMember() Fail: 탈퇴한 회원의 이메일 => " + email);
+                log.warn("Member | updateMember() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
             else if(member.getEmail().equals(email) && member.getId().equals(id)) {
                 member.updateInfo(name, email, password);
                 em.flush();
                 em.clear();
-                log.info("updateMember() Success: 이메일 외 정보 수정 성공");
+                log.info("Member | updateMember() Success: 이메일 외 정보 수정 성공");
                 return true;
             }
         }
@@ -131,10 +138,10 @@ public class MemberService {
             findMember.updateInfo(name, email, password);
             em.flush();
             em.clear();
-            log.info("updateMember() Success: 이메일 포함 정보 수정 성공");
+            log.info("Member | updateMember() Success: 이메일 포함 정보 수정 성공");
             return true;
         }
-        log.warn("updateMember() Fail: 중복 이메일 => " + email);
+        log.warn("Member | updateMember() Fail: 사용중인 이메일 => " + email);
         return false;
     }
 
@@ -144,19 +151,19 @@ public class MemberService {
         try {
             Member member = memberRepository.findByEmail(email);
             if(member.getVisibility().equals(Boolean.FALSE)) {
-                log.warn("deleteMember() Fail: 이미 탈퇴한 회원 => " + email);
+                log.warn("Member | deleteMember() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
             else {
                 member.deleteMember();
-                log.info("deleteMember() Success: 탈퇴 성공 => " + email);
+                log.info("Member | deleteMember() Success: 탈퇴 성공 => " + email);
                 em.flush();
                 em.clear();
                 return true;
             }
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("deleteMember() Fail: 존재하지 않는 회원 => " + e.getMessage());
+            log.warn("Member | deleteMember() Fail: 존재하지 않는 회원 => " + e.getMessage());
             return false;
         }
     }

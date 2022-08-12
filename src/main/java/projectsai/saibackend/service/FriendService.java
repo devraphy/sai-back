@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 import projectsai.saibackend.repository.FriendRepository;
@@ -103,6 +104,7 @@ public class FriendService {
         }
     }
 
+    // 다수의 Id를 이용한 친구 검색
     public List<Friend> findFriends(Member owner, List<Long> friendIds) {
         try {
             List<Friend> friendList = friendRepository.findByIds(owner, friendIds);
@@ -115,7 +117,7 @@ public class FriendService {
         }
     }
 
-    // 친구 정보 수정
+    // 단일 친구 정보 수정
     @Transactional
     public boolean updateFriend(Long friendId, String name, RelationType type, RelationStatus status,
                              String memo, LocalDate birthDate) {
@@ -129,6 +131,37 @@ public class FriendService {
         }
         catch(EmptyResultDataAccessException e) {
             log.info("updateFriend() Fail: 존재하지 않는 ID => " + e.getMessage());
+            return false;
+        }
+    }
+
+    // 다수의 친구 점수를 복구(수정)
+    public boolean restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) {
+        try {
+            for (Friend friend : prevParticipants) {
+                friend.restoreScore(prevEvaluation);
+            }
+            log.info("restoreScore() Success: 친구의 점수 복구 성공");
+            return true;
+        }
+        catch(Exception e) {
+            log.warn("restoreScore() Fail: 친구의 점수 복구 실패 => " + e.getMessage());
+            return false;
+        }
+    }
+
+    // 다수의 친구 점수 및 상태를 갱신(수정)
+    public boolean renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) {
+        try {
+            for (Friend friend : curnParticipants) {
+                friend.calcScore(curnEvaluation);
+                friend.calcStatus(friend.getScore());
+            }
+            log.info("renewMultipleScore() Success: 친구의 점수 갱신 성공");
+            return true;
+        }
+        catch (Exception e) {
+            log.warn("renewMultipleScore() Success: 친구의 점수 갱신 실패 => " + e.getMessage());
             return false;
         }
     }

@@ -22,15 +22,30 @@ public class RecordService {
     @PersistenceContext EntityManager em;
     private final RecordRepository recordRepository;
 
-    // 이벤트 참가자 기록 저장
+    // 단일 이벤트 참가자 기록 저장
     public boolean addRecord(Record record) {
         try {
             recordRepository.addRecord(record);
-            log.info("addRecord() Success: 기록 저장 완료");
+            log.info("Record | addRecord() Success: 저장 성공");
             return true;
         }
         catch(Exception e) {
-            log.warn("addRecord() Fail: 기록 저장 실패 => " + e.getMessage());
+            log.warn("Record | addRecord() Fail: 에러 발생 => " + e.getMessage());
+            return false;
+        }
+    }
+
+    // 다수의 이벤트 참가자 기록 저장
+    public boolean addMultipleRecords(Event event, List<Friend> curnParticipants) {
+        try {
+            for (Friend friend : curnParticipants) {
+                recordRepository.addRecord(new Record(event, friend));
+            }
+            log.info("Record | addMultipleRecords() Success: 저장 성공");
+            return true;
+        }
+        catch (Exception e) {
+            log.warn("Record | addMultipleRecords() Fail: 에러 발생 => " + e.getMessage());
             return false;
         }
     }
@@ -39,11 +54,11 @@ public class RecordService {
     public List<Record> findAll(Event event) {
         try {
             List<Record> recordList = recordRepository.findAll(event);
-            log.info("findAllParticipants() Success: 특정 이벤트의 모든 참가자 기록을 검색 성공");
+            log.info("Record | findAllParticipants() Success: 검색 성공");
             return recordList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("findAllParticipants() Fail: 특정 이벤트의 모든 참가자 기록 검색 실패 => " + e.getMessage());
+            log.warn("Record | findAllParticipants() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -52,11 +67,11 @@ public class RecordService {
     public List<Record> findByParticipant(Friend friend) {
         try {
             List<Record> recordList = recordRepository.findByParticipant(friend);
-            log.info("findByParticipant() Success: 특정 참가자가 포함된 모든 이벤트 기록 검색 성공");
+            log.info("Record | findByParticipant() Success: 검색 성공");
             return recordList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("findByParticipant() Fail: 특정 참가자가 포함된 모든 이벤트 기록 검색 실패 => " + e.getMessage());
+            log.warn("Record | findByParticipant() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -65,11 +80,11 @@ public class RecordService {
     public Record findOne(Event event, Friend friend) {
         try {
             Record record = recordRepository.findOne(event, friend);
-            log.info("findOneRecord() Success: 특정 기록 검색 성공");
+            log.info("Record | findOneRecord() Success: 검색 성공");
             return record;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("findOneRecord() Fail: 특정 기록 검색 실패 => " + e.getMessage());
+            log.warn("Record | findOneRecord() Fail: 검색 결과 없음 => " + e.getMessage());
             return null;
         }
     }
@@ -77,13 +92,19 @@ public class RecordService {
     // 특정 이벤트의 모든 참가자 기록을 삭제
     @Transactional
     public boolean deleteAllRecords(Event event) {
-        int result = recordRepository.deleteAllRecords(event);
-        if(result == 0) {
-            log.warn("deleteAllRecord() Fail: 기록 삭제 실패 => 삭제된 데이터가 없음");
+        try {
+            int result = recordRepository.deleteAllRecords(event);
+            if(result < 1) {
+                log.warn("Record | deleteAllRecord() Fail: 삭제된 데이터가 없음");
+                return false;
+            }
+            log.info("Record | deleteAllRecord() Success: 삭제 성공");
+            return true;
+        }
+        catch (Exception e) {
+            log.warn("Record | deleteAllRecord() Fail: 에러 발생 => " + e.getMessage());
             return false;
         }
-        log.info("deleteAllRecord() Success: 기록 삭제 성공");
-        return true;
     }
 
     // 특정 기록을 삭제
@@ -91,11 +112,11 @@ public class RecordService {
     public boolean deleteRecord(Record record) {
         try {
             recordRepository.deleteRecord(record);
-            log.info("deleteRecordById() Success: 기록 삭제 성공");
+            log.info("Record | deleteRecordById() Success: 삭제 성공");
             return true;
         }
         catch(Exception e) {
-            log.warn("deleteRecordById() Fail: 기록 삭제 실패 => " + e.getMessage());
+            log.warn("Record | 음deleteRecordById() Fail: 에러 발생 => " + e.getMessage());
             return false;
         }
     }
