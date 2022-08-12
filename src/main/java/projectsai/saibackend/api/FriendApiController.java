@@ -86,7 +86,7 @@ public class FriendApiController {
         return new DeleteFriendResponse(Boolean.FALSE);
     }
 
-    // 최초 친구 추가 시점에서 String 타입의 관계 상태를 int score 로 변환
+    // Business Methods
     private int stringToScore(RelationStatus status) {
         if(status.equals(RelationStatus.BAD)) return 10;
         else if(status.equals(RelationStatus.NEGATIVE)) return 30;

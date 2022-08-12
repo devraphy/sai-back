@@ -18,6 +18,7 @@ import projectsai.saibackend.dto.event.responseDto.DeleteEventResponse;
 import projectsai.saibackend.dto.event.responseDto.SearchEventResponse;
 import projectsai.saibackend.dto.event.responseDto.UpdateEventResponse;
 import projectsai.saibackend.service.EventService;
+import projectsai.saibackend.service.FriendService;
 import projectsai.saibackend.service.RecordService;
 
 import javax.persistence.EntityManager;
@@ -25,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class EventApiController {
 
     @PersistenceContext EntityManager em;
     private final EventService eventService;
+    private final FriendService friendService;
     private final RecordService recordService;
 
     @PostMapping("/event/add")
@@ -63,11 +66,8 @@ public class EventApiController {
             List<Event> allEvents = eventService.findAll(owner);
 
             for (Event event : allEvents) {
-                List participants = em.createQuery("select r.friend " +
-                                "from Record r " +
-                                "where r.event = :event")
-                        .setParameter("event", event)
-                        .getResultList();
+                List<Record> recordList = recordService.findAll(event);
+                List<Friend> participants = recordList.stream().map(o -> o.getFriend()).collect(Collectors.toList());
                 result.add(new SearchEventResponse(event, participants));
             }
             return result;
@@ -80,65 +80,47 @@ public class EventApiController {
 
     @PutMapping("/event")
     public UpdateEventResponse updateEvent(@RequestBody @Valid UpdateEventRequest request) {
-        try {
-            Event event = eventService.findById(request.getEventId());
-            EventEvaluation prevEvaluation = event.getEvaluation();
-            EventEvaluation newEvaluation = request.getEvaluation();
-            List<Record> prevParticipants = recordService.findAll(event);
-            List<Friend> newParticipants = request.getParticipants();
 
-            if(!newParticipants.containsAll(prevParticipants) && !newEvaluation.equals(prevEvaluation)){
-                em.createQuery("delete from Record r where r.event = :event")
-                        .setParameter("event", event)
-                        .executeUpdate();
+        Event event = eventService.findById(request.getEventId());
 
-                for (Friend participant : request.getParticipants()) {
-                    participant.calcScore(request.getEvaluation());
-                    participant.calcStatus(participant.getScore());
-                    Record record = new Record(event, participant);
-                    em.persist(record);
-                }
-            }
-            else if(!newParticipants.containsAll(prevParticipants) && newEvaluation.equals(prevEvaluation)){
-                em.createQuery("delete from Record r where r.event = :event")
-                        .setParameter("event", event)
-                        .executeUpdate();
+        EventEvaluation curnEvaluation = request.getEvaluation();
+        List<Friend> curnParticipants = request.getParticipants();
 
-                for (Friend participant : request.getParticipants()) {
-                    Record record = new Record(event, participant);
-                    em.persist(record);
-                }
-            }
-            else if(!newEvaluation.equals(prevEvaluation)) {
-                for (Friend participant : request.getParticipants()) {
-                    participant.calcScore(request.getEvaluation());
-                    participant.calcStatus(participant.getScore());
-                }
-            }
+        EventEvaluation prevEvaluation = event.getEvaluation();
+        List<Friend> prevParticipants = recordService.findAll(event).stream()
+                .map(o -> o.getFriend()).collect(Collectors.toList());
 
-            event.updateInfo(request.getName(), request.getDate(), request.getPurpose(), request.getEvaluation());
-            em.flush();
-            em.clear();
+        if(curnParticipants.containsAll(prevParticipants) && !curnEvaluation.equals(prevEvaluation)) {
+            friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
+            friendService.renewMultipleScore(curnParticipants, curnEvaluation);
+        }
+        else {
+            friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
+            recordService.deleteAllRecords(event);
+            friendService.renewMultipleScore(curnParticipants, curnEvaluation);
+            recordService.addMultipleRecords(event, curnParticipants);
+        }
+
+        boolean result = eventService.updateEvent(event.getId(), request.getName(), request.getDate(),
+                request.getPurpose(), request.getEvaluation());
+
+        if(result) {
             return new UpdateEventResponse(Boolean.TRUE);
         }
-        catch(Exception e) {
-            log.warn("updateEvent Fail: 이벤트 수정 실패 => " + e.getMessage());
-            return new UpdateEventResponse(Boolean.FALSE);
-        }
+        return new UpdateEventResponse(Boolean.FALSE);
     }
 
     @DeleteMapping("/event")
     public DeleteEventResponse deleteEvent(@RequestBody @Valid DeleteEventRequest request) {
-        try {
-            Event event = em.find(Event.class, request.getEventId());
-            recordService.deleteAllRecords(event);
-            eventService.deleteEvent(event);
-            log.info("deleteEvent Success: 이벤트 삭제 성공");
+
+        Event event = em.find(Event.class, request.getEventId());
+
+        recordService.deleteAllRecords(event);
+        boolean result = eventService.deleteEvent(event);
+
+        if(result) {
             return new DeleteEventResponse(Boolean.TRUE);
         }
-        catch(Exception e) {
-            log.warn("deleteEvent Fail: 이벤트 삭제 실패 => " + e.getMessage());
-            return new DeleteEventResponse(Boolean.FALSE);
-        }
+        return new DeleteEventResponse(Boolean.FALSE);
     }
 }
