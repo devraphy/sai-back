@@ -88,20 +88,20 @@ public class Friend {
         this.birthDate = birthDate;
     }
 
-    public void calcScore(EventEvaluation evaluation) {
-        if(evaluation.equals(EventEvaluation.BAD)) this.score -= 10;
-        if(evaluation.equals(EventEvaluation.NEGATIVE)) this.score -= 5;
-        if(evaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
-        if(evaluation.equals(EventEvaluation.POSITIVE)) this.score += 5;
-        if(evaluation.equals(EventEvaluation.GREAT)) this.score += 10;
+    public void calcScore(EventEvaluation curnEvaluation) {
+        if(curnEvaluation.equals(EventEvaluation.BAD)) this.score -= 10;
+        if(curnEvaluation.equals(EventEvaluation.NEGATIVE)) this.score -= 5;
+        if(curnEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
+        if(curnEvaluation.equals(EventEvaluation.POSITIVE)) this.score += 5;
+        if(curnEvaluation.equals(EventEvaluation.GREAT)) this.score += 10;
     }
 
-    public void restoreScore(EventEvaluation evaluation) {
-        if(evaluation.equals(EventEvaluation.BAD)) this.score += 10;
-        if(evaluation.equals(EventEvaluation.NEGATIVE)) this.score += 5;
-        if(evaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
-        if(evaluation.equals(EventEvaluation.POSITIVE)) this.score -= 5;
-        if(evaluation.equals(EventEvaluation.GREAT)) this.score -= 10;
+    public void restoreScore(EventEvaluation prevEvaluation) {
+        if(prevEvaluation.equals(EventEvaluation.BAD)) this.score += 10;
+        if(prevEvaluation.equals(EventEvaluation.NEGATIVE)) this.score += 5;
+        if(prevEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
+        if(prevEvaluation.equals(EventEvaluation.POSITIVE)) this.score -= 5;
+        if(prevEvaluation.equals(EventEvaluation.GREAT)) this.score -= 10;
     }
 
     public void calcStatus(int score) {
