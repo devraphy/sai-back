@@ -69,8 +69,7 @@ public class EventApiController {
 
             for (Event event : allEvents) {
                 List<Record> recordList = recordService.findAll(event);
-                List<Friend> participants = recordList.stream().map(o -> o.getFriend()).collect(Collectors.toList());
-                result.add(new SearchEventResponse(event, participants));
+                result.add(new SearchEventResponse(event, recordList));
             }
             log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
             return result;
