@@ -37,7 +37,7 @@ public class EventApiController {
     private final FriendService friendService;
     private final RecordService recordService;
 
-    @PostMapping("/event/add")
+    @PostMapping("/event/add") // 이벤트 - 저장
     public AddEventResponse addEvent(@RequestBody @Valid AddEventRequest request) {
         try {
             Member owner = em.find(Member.class, request.getOwnerId());
@@ -60,7 +60,7 @@ public class EventApiController {
         }
     }
 
-    @PostMapping("/event")
+    @PostMapping("/event") // 이벤트 - 소유한 전체 이벤트 검색
     public List<SearchEventResponse> searchEvents(@RequestBody @Valid SearchEventRequest request) {
         try {
             List<SearchEventResponse> result = new ArrayList<>();
@@ -81,7 +81,7 @@ public class EventApiController {
         }
     }
 
-    @PutMapping("/event")
+    @PutMapping("/event") // 이벤트 - 특정 이벤트 수정
     public UpdateEventResponse updateEvent(@RequestBody @Valid UpdateEventRequest request) {
 
         Event event = eventService.findById(request.getEventId());
@@ -115,7 +115,7 @@ public class EventApiController {
         return new UpdateEventResponse(Boolean.FALSE);
     }
 
-    @DeleteMapping("/event")
+    @DeleteMapping("/event") // 이벤트 - 삭제
     public DeleteEventResponse deleteEvent(@RequestBody @Valid DeleteEventRequest request) {
 
         Event event = em.find(Event.class, request.getEventId());
