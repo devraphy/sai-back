@@ -54,7 +54,7 @@ public class EventApiController {
             return new AddEventResponse(Boolean.TRUE);
         }
         catch(Exception e) {
-            log.warn("addEvent Fail: 이벤트 저장 실패 => " + e.getMessage());
+            log.warn("Event API | addEvent() Fail: 이벤트 저장 실패 => " + e.getMessage());
             return new AddEventResponse(Boolean.FALSE);
         }
     }
@@ -74,7 +74,7 @@ public class EventApiController {
             return result;
         }
         catch(Exception e) {
-            log.warn("searchEvents Fail: 검색 실패 => " + e.getMessage());
+            log.warn("Event API | searchEvents() Fail: 검색 실패 => " + e.getMessage());
             return null;
         }
     }
@@ -108,19 +108,19 @@ public class EventApiController {
         if(result) {
             return new UpdateEventResponse(Boolean.TRUE);
         }
+        log.warn("Event API | updateEvent() Fail: 수정 실패");
         return new UpdateEventResponse(Boolean.FALSE);
     }
 
     @DeleteMapping("/event")
     public DeleteEventResponse deleteEvent(@RequestBody @Valid DeleteEventRequest request) {
 
-        try {
-            Event event = em.find(Event.class, request.getEventId());
-            eventService.deleteEvent(event);
+        Event event = em.find(Event.class, request.getEventId());
+        boolean result = eventService.deleteEvent(event);
+        if(result) {
             return new DeleteEventResponse(Boolean.TRUE);
         }
-        catch(Exception e) {
-            return new DeleteEventResponse(Boolean.FALSE);
-        }
+        log.warn("Event API | deleteEvent() Fail: 삭제 실패");
+        return new DeleteEventResponse(Boolean.FALSE);
     }
 }

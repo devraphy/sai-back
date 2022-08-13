@@ -39,10 +39,10 @@ public class FriendApiController {
                 request.getStatus(), score, request.getMemo(), request.getBirthDate());
 
         if(friendService.addFriend(friend)) {
-            log.info("addFriend() Success: 친구 저장 성공");
+            log.info("Friend API | addFriend() Success: 친구 저장 성공");
             return new AddFriendResponse(Boolean.TRUE);
         }
-        log.warn("addFriend() Fail: 친구 저장 실패");
+        log.warn("Friend API | addFriend() Fail: 친구 저장 실패");
         return new AddFriendResponse(Boolean.FALSE);
     }
 
@@ -56,11 +56,11 @@ public class FriendApiController {
             List<SearchFriendResponse> result = allFriends.stream()
                     .map(o -> new SearchFriendResponse(o)).collect(toList());
 
-            log.info("findAll() Success: 검색 성공");
+            log.info("Friend API | findAll() Success: 검색 성공");
             return result;
         }
         catch(Exception e) {
-            log.warn("findAll() Fail: 검색 실피");
+            log.warn("Friend API | findAll() Fail: 검색 실피");
             return null;
         }
     }
@@ -74,10 +74,10 @@ public class FriendApiController {
                     request.getStatus(), score, request.getMemo(), request.getBirthDate());
         }
         catch(Exception e) {
-            log.info("updateFriend() Fail: 친구 수정 실패");
+            log.info("Friend API | updateFriend() Fail: 친구 수정 실패");
             return new UpdateFriendResponse(Boolean.FALSE);
         }
-        log.info("updateFriend() Success: 친구 수정 성공");
+        log.info("Friend API | updateFriend() Success: 친구 수정 성공");
         return new UpdateFriendResponse(Boolean.TRUE);
     }
 
@@ -88,10 +88,10 @@ public class FriendApiController {
         boolean result = friendService.deleteFriend(friend);
 
         if(result) {
-            log.info("deleteFriend() Success: 친구 삭제 성공");
+            log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
             return new DeleteFriendResponse(Boolean.TRUE);
         }
-        log.warn("deleteFriend() Fail: 친구 삭제 실패");
+        log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
         return new DeleteFriendResponse(Boolean.FALSE);
     }
 
