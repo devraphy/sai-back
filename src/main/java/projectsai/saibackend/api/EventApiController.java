@@ -51,6 +51,7 @@ public class EventApiController {
                 recordService.addRecord(new Record(event, friend));
                 friendService.updateScoreStatus(friend, request.getEvaluation());
             }
+            log.info("Event API | addEvent() Success: 이벤트 저장 성공");
             return new AddEventResponse(Boolean.TRUE);
         }
         catch(Exception e) {
@@ -71,6 +72,7 @@ public class EventApiController {
                 List<Friend> participants = recordList.stream().map(o -> o.getFriend()).collect(Collectors.toList());
                 result.add(new SearchEventResponse(event, participants));
             }
+            log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
             return result;
         }
         catch(Exception e) {
@@ -106,6 +108,7 @@ public class EventApiController {
                 request.getPurpose(), request.getEvaluation());
 
         if(result) {
+            log.info("Event API | updateEvent() Success: 이벤트 수정 성공");
             return new UpdateEventResponse(Boolean.TRUE);
         }
         log.warn("Event API | updateEvent() Fail: 수정 실패");
@@ -118,6 +121,7 @@ public class EventApiController {
         Event event = em.find(Event.class, request.getEventId());
         boolean result = eventService.deleteEvent(event);
         if(result) {
+            log.info("Event API | deleteEvent() Success: 이벤트 삭제 성공");
             return new DeleteEventResponse(Boolean.TRUE);
         }
         log.warn("Event API | deleteEvent() Fail: 삭제 실패");
