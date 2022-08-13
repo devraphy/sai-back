@@ -128,7 +128,7 @@ public class FriendService {
         try {
             Friend findFriend = friendRepository.findById(friendId);
             findFriend.updateInfo(name, type, status, memo, birthDate);
-            findFriend.calcStatus(findFriend.getScore());
+            findFriend.calcStatus();
 
             em.flush();
             em.clear();
@@ -165,7 +165,7 @@ public class FriendService {
         try {
             for (Friend friend : curnParticipants) {
                 friend.calcScore(curnEvaluation);
-                friend.calcStatus(friend.getScore());
+                friend.calcStatus();
             }
             em.flush();
             em.clear();
@@ -182,7 +182,7 @@ public class FriendService {
     public boolean updateScoreStatus(Friend friend, EventEvaluation evaluation) {
         try {
             friend.calcScore(evaluation);
-            friend.calcStatus(friend.getScore());
+            friend.calcStatus();
 
             em.flush();
             em.clear();
