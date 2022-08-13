@@ -129,7 +129,7 @@ public class MemberService {
                 log.warn("Member Service | updateMember() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
-            else if(member.getEmail().equals(email) && member.getId().equals(id)) {
+            else if(member.getEmail().equals(email) && member.getMemberId().equals(id)) {
                 member.updateInfo(name, email, password);
                 em.flush();
                 em.clear();
