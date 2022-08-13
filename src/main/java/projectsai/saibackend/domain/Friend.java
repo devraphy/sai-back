@@ -1,5 +1,6 @@
 package projectsai.saibackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 import projectsai.saibackend.domain.enums.EventEvaluation;
@@ -18,6 +19,7 @@ public class Friend {
     @Column(name = "friend_id")
     private Long friendId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member owner;
