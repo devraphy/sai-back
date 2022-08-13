@@ -27,9 +27,13 @@ public class MemberService {
         try {
             if(emailValidation(member.getEmail())) {
                 memberRepository.addMember(member);
+                log.info("Member | signUp() Success: 저장 성공");
+                return true;
             }
-            log.info("Member | signUp() Success: 저장 성공");
-            return true;
+            else {
+                log.warn("Member | signUp() Fail: 저장 실패");
+                return false;
+            }
         }
         catch(Exception e) {
             log.warn("Member | signUp() Fail: 에러 발생 => " + e.getMessage());
