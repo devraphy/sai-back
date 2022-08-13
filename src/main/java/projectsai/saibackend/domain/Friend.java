@@ -104,11 +104,11 @@ public class Friend {
         if(prevEvaluation.equals(EventEvaluation.GREAT)) this.score -= 10;
     }
 
-    public void calcStatus(int score) {
-        if(score <= 20) this.status = RelationStatus.BAD;
-        else if(score > 20 && score <= 40) this.status = RelationStatus.NEGATIVE;
-        else if(score > 40 && score <= 60) this.status = RelationStatus.NORMAL;
-        else if(score > 60 && score <= 80) this.status = RelationStatus.POSITIVE;
-        else if(score > 80) this.status = RelationStatus.GREAT;
+    public void calcStatus() {
+        if(this.score <= 20) this.status = RelationStatus.BAD;
+        else if(this.score <= 40) this.status = RelationStatus.NEGATIVE;
+        else if(this.score <= 60) this.status = RelationStatus.NORMAL;
+        else if(this.score <= 80) this.status = RelationStatus.POSITIVE;
+        else this.status = RelationStatus.GREAT;
     }
 }
