@@ -16,7 +16,7 @@ public class RecordRepository {
 
     public Long addRecord(Record record) {
         em.persist(record);
-        return record.getId();
+        return record.getRecordId();
     }
 
     public Record findById(Long recordId) {

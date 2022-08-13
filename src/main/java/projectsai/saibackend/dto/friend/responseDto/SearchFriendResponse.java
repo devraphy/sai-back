@@ -20,7 +20,7 @@ public class SearchFriendResponse {
     private LocalDate birthDate;
 
     public SearchFriendResponse(Friend friend) {
-        this.id = friend.getId();
+        this.id = friend.getFriendId();
         this.name = friend.getName();
         this.type = friend.getType();
         this.status = friend.getStatus();

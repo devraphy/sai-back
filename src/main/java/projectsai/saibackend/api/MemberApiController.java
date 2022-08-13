@@ -24,7 +24,7 @@ public class MemberApiController {
 
         if(memberService.signUp(member)) {
             log.info("Member API | joinMember() Success: 회원 가입 성공");
-            return new JoinMemberResponse(member.getId(), Boolean.TRUE);
+            return new JoinMemberResponse(member.getMemberId(), Boolean.TRUE);
         }
         log.warn("Member API | joinMember() Fail: 회원 가입 실패");
         return new JoinMemberResponse(null, Boolean.FALSE);
@@ -45,7 +45,7 @@ public class MemberApiController {
         if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
             Member findMember = memberService.findByEmail(request.getEmail());
             log.info("Member API | searchMember() Success: 프로필 접근 성공");
-            return new SearchMemberResponse(findMember.getId(), findMember.getEmail(),
+            return new SearchMemberResponse(findMember.getMemberId(), findMember.getEmail(),
                     findMember.getName(), findMember.getPassword(), findMember.getSignUpDate(), Boolean.TRUE);
         }
         log.warn("Member API | searchMember() Fail: 프로필 접근 실패");

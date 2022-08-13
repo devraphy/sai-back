@@ -45,7 +45,7 @@ class RecordServiceTest {
         recordService.addRecord(record);
 
         // then
-        Assertions.assertEquals(record, em.find(Record.class, record.getId()));
+        Assertions.assertEquals(record, em.find(Record.class, record.getRecordId()));
 
     }
 

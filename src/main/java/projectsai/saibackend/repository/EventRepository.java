@@ -22,7 +22,7 @@ public class EventRepository {
     // CREATE - 새로운 Event 객체 영속화
     public Long addEvent(Event event) {
         em.persist(event);
-        return event.getId();
+        return event.getEventId();
     }
 
     // *********************************** READ화

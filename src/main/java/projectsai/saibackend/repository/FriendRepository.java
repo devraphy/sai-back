@@ -21,7 +21,7 @@ public class FriendRepository {
     // CREATE - Friend 객체 영속화
     public Long addFriend(Friend friend) {
         em.persist(friend);
-        return friend.getId();
+        return friend.getFriendId();
     }
 
     // *********************************** READ
