@@ -50,15 +50,10 @@ public class RecordRepository {
         int result = em.createQuery("delete from Record r where r.event = :event")
                 .setParameter("event", event)
                 .executeUpdate();
-
-        em.flush();
-        em.clear();
         return result;
     }
 
     public void deleteRecord(Record record) {
         em.remove(record);
-        em.flush();
-        em.clear();
     }
 }
