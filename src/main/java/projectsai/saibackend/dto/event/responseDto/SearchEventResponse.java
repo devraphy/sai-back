@@ -9,6 +9,5 @@ import java.util.List;
 
 @Data @AllArgsConstructor
 public class SearchEventResponse {
-    private Event event;
     private List<Record> eventRecords;
 }

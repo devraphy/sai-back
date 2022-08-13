@@ -69,7 +69,7 @@ public class EventApiController {
 
             for (Event event : allEvents) {
                 List<Record> recordList = recordService.findAll(event);
-                result.add(new SearchEventResponse(event, recordList));
+                result.add(new SearchEventResponse(recordList));
             }
             log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
             return result;
@@ -103,7 +103,7 @@ public class EventApiController {
             recordService.addMultipleRecords(event, curnParticipants);
         }
 
-        boolean result = eventService.updateEvent(event.getId(), request.getName(), request.getDate(),
+        boolean result = eventService.updateEvent(event.getEventId(), request.getName(), request.getDate(),
                 request.getPurpose(), request.getEvaluation());
 
         if(result) {
