@@ -94,10 +94,14 @@ public class RecordService {
     public boolean deleteAllRecords(Event event) {
         try {
             int result = recordRepository.deleteAllRecords(event);
+
             if(result < 1) {
                 log.warn("Record | deleteAllRecord() Fail: 삭제된 데이터가 없음");
                 return false;
             }
+
+            em.flush();
+            em.clear();
             log.info("Record | deleteAllRecord() Success: 삭제 성공");
             return true;
         }
@@ -112,11 +116,13 @@ public class RecordService {
     public boolean deleteRecord(Record record) {
         try {
             recordRepository.deleteRecord(record);
+            em.flush();
+            em.clear();
             log.info("Record | deleteRecordById() Success: 삭제 성공");
             return true;
         }
         catch(Exception e) {
-            log.warn("Record | 음deleteRecordById() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Record | deleteRecordById() Fail: 에러 발생 => " + e.getMessage());
             return false;
         }
     }
