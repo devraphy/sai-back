@@ -16,7 +16,7 @@ public class Friend {
 
     @Id @GeneratedValue
     @Column(name = "friend_id")
-    private Long id;
+    private Long friendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -57,22 +57,26 @@ public class Friend {
     }
 
     // Equals & HashCode
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Friend friend = (Friend) o;
-        return getScore() == friend.getScore() && Objects.equals(getId(), friend.getId())
+        return Objects.equals(getFriendId(), friend.getFriendId())
                 && Objects.equals(getOwner(), friend.getOwner())
                 && Objects.equals(getName(), friend.getName())
                 && getType() == friend.getType() && getStatus() == friend.getStatus()
+                && Objects.equals(getScore(), friend.getScore())
                 && Objects.equals(getMemo(), friend.getMemo())
                 && Objects.equals(getBirthDate(), friend.getBirthDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getName(), getType(), getStatus(), getScore(), getMemo(), getBirthDate());
+        return Objects.hash(getFriendId(), getOwner(), getName(), getType(),
+                getStatus(), getScore(), getMemo(), getBirthDate());
     }
 
     // Business Methods

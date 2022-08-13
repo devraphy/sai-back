@@ -44,21 +44,24 @@ public class Event {
     }
 
     // Equals & HashCode
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(getId(), event.getId()) && Objects.equals(getOwner(), event.getOwner())
-                && Objects.equals(getDate(), event.getDate()) && getPurpose() == event.getPurpose()
+        return Objects.equals(getEventId(), event.getEventId())
+                & Objects.equals(getOwner(), event.getOwner())
+                && Objects.equals(getDate(), event.getDate())
+                && getPurpose() == event.getPurpose()
                 && Objects.equals(getName(), event.getName()) && getEvaluation() == event.getEvaluation();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getDate(), getPurpose(), getName(), getEvaluation());
+        return Objects.hash(getEventId(), getOwner(), getDate(), getPurpose(), getName(), getEvaluation());
     }
-
 
     // Business Methods
     public void updateInfo(String name, LocalDate date, EventPurpose purpose, EventEvaluation evaluation){
