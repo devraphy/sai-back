@@ -14,7 +14,7 @@ public class Event {
 
     @Id @GeneratedValue
     @Column(name = "event_id")
-    private Long id;
+    private Long eventId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

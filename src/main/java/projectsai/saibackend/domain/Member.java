@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
-    private Long id;
+    private Long memberId;
 
     @Column(name = "member_name", nullable = false)
     private String name;
@@ -40,12 +40,15 @@ public class Member {
     }
 
     // Equals & HashCode
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
-        return Objects.equals(getId(), member.getId()) && Objects.equals(getName(), member.getName())
+        return Objects.equals(getMemberId(), member.getMemberId())
+                && Objects.equals(getName(), member.getName())
                 && Objects.equals(getEmail(), member.getEmail())
                 && Objects.equals(getPassword(), member.getPassword())
                 && Objects.equals(getSignUpDate(), member.getSignUpDate())
@@ -54,7 +57,7 @@ public class Member {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getSignUpDate(), getVisibility());
+        return Objects.hash(getMemberId(), getName(), getEmail(), getPassword(), getSignUpDate(), getVisibility());
     }
 
     // Business Methods

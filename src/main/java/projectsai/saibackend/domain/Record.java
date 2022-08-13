@@ -10,7 +10,7 @@ public class Record {
 
     @Id @GeneratedValue
     @Column(name = "record_id")
-    private Long id;
+    private Long recordId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
@@ -29,17 +29,19 @@ public class Record {
     }
 
     // Equals & HashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Record that = (Record) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getEvent(), that.getEvent())
-                && Objects.equals(getFriend(), that.getFriend());
+        Record record = (Record) o;
+        return Objects.equals(getRecordId(), record.getRecordId())
+                && Objects.equals(getEvent(), record.getEvent())
+                && Objects.equals(getFriend(), record.getFriend());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEvent(), getFriend());
+        return Objects.hash(getRecordId(), getEvent(), getFriend());
     }
 }
