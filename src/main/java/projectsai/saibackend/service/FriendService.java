@@ -124,10 +124,10 @@ public class FriendService {
     // 단일 친구 정보 수정
     @Transactional
     public boolean updateFriend(Long friendId, String name, RelationType type, RelationStatus status,
-                             String memo, LocalDate birthDate) {
+                             Integer score, String memo, LocalDate birthDate) {
         try {
             Friend findFriend = friendRepository.findById(friendId);
-            findFriend.updateInfo(name, type, status, memo, birthDate);
+            findFriend.updateInfo(name, type, score, status, memo, birthDate);
             findFriend.calcStatus();
 
             em.flush();

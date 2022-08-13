@@ -148,7 +148,7 @@ class FriendServiceTest {
         friendService.addFriend(testFriend);
 
         // when
-        friendService.updateFriend(testFriend.getId(), "바꾼이름", RelationType.FRIEND, RelationStatus.POSITIVE, null, null);
+        friendService.updateFriend(testFriend.getId(), "바꾼이름", RelationType.FRIEND,  RelationStatus.POSITIVE, 70,null, null);
 
         // then
         Assertions.assertEquals( "바꾼이름", testFriend.getName());

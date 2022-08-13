@@ -34,7 +34,7 @@ public class Friend {
     private RelationStatus status;
 
     @NotNull
-    private int score;
+    private Integer score;
 
     @Nullable
     private String memo;
@@ -80,9 +80,10 @@ public class Friend {
         this.owner = member;
     }
 
-    public void updateInfo(String name, RelationType type, RelationStatus status, String memo, LocalDate birthDate) {
+    public void updateInfo(String name, RelationType type, Integer score, RelationStatus status, String memo, LocalDate birthDate) {
         this.name = name;
         this.type = type;
+        this.score = score;
         this.status = status;
         this.memo = memo;
         this.birthDate = birthDate;

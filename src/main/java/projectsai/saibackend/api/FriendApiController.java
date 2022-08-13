@@ -1,6 +1,7 @@
 package projectsai.saibackend.api;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.*;
 
-@RestController
+@RestController @Slf4j
 @RequiredArgsConstructor
 public class FriendApiController {
 
@@ -32,39 +33,51 @@ public class FriendApiController {
     @PostMapping("/friend/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
 
-        int score = stringToScore(request.getStatus());
+        int score = setInitialScore(request.getStatus());
         Member owner = em.find(Member.class, request.getOwnerId());
         Friend friend = new Friend(owner, request.getName(), request.getType(),
                 request.getStatus(), score, request.getMemo(), request.getBirthDate());
 
         if(friendService.addFriend(friend)) {
+            log.info("addFriend() Success: 친구 저장 성공");
             return new AddFriendResponse(Boolean.TRUE);
         }
+        log.warn("addFriend() Fail: 친구 저장 실패");
         return new AddFriendResponse(Boolean.FALSE);
     }
 
     @PostMapping("/friend") // 모든 친구 검색
     public List<SearchFriendResponse> findAll(@RequestBody @Valid SearchFriendRequest request) {
 
-        Member owner = em.find(Member.class, request.getOwnerId());
-        List<Friend> allFriends = friendService.findAll(owner);
+        try {
+            Member owner = em.find(Member.class, request.getOwnerId());
+            List<Friend> allFriends = friendService.findAll(owner);
 
-        List<SearchFriendResponse> result = allFriends.stream()
-                .map(o -> new SearchFriendResponse(o)).collect(toList());
+            List<SearchFriendResponse> result = allFriends.stream()
+                    .map(o -> new SearchFriendResponse(o)).collect(toList());
 
-        return result;
+            log.info("findAll() Success: 검색 성공");
+            return result;
+        }
+        catch(Exception e) {
+            log.warn("findAll() Fail: 검색 실피");
+            return null;
+        }
     }
 
     @PutMapping("/friend") // 친구 수정
     public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
 
         try {
+            Integer score = setInitialScore(request.getStatus());
             friendService.updateFriend(request.getFriendId(), request.getName(), request.getType(),
-                    request.getStatus(), request.getMemo(), request.getBirthDate());
+                    request.getStatus(), score, request.getMemo(), request.getBirthDate());
         }
         catch(Exception e) {
+            log.info("updateFriend() Fail: 친구 수정 실패");
             return new UpdateFriendResponse(Boolean.FALSE);
         }
+        log.info("updateFriend() Success: 친구 수정 성공");
         return new UpdateFriendResponse(Boolean.TRUE);
     }
 
@@ -75,13 +88,15 @@ public class FriendApiController {
         boolean result = friendService.deleteFriend(friend);
 
         if(result) {
+            log.info("deleteFriend() Success: 친구 삭제 성공");
             return new DeleteFriendResponse(Boolean.TRUE);
         }
+        log.warn("deleteFriend() Fail: 친구 삭제 실패");
         return new DeleteFriendResponse(Boolean.FALSE);
     }
 
     // Business Methods
-    private int stringToScore(RelationStatus status) {
+    private int setInitialScore(RelationStatus status) {
 
         if(status.equals(RelationStatus.BAD)) return 10;
         else if(status.equals(RelationStatus.NEGATIVE)) return 30;
