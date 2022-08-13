@@ -7,15 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 import projectsai.saibackend.repository.FriendRepository;
+import projectsai.saibackend.repository.RecordRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service @Slf4j
 @Transactional(readOnly = true)
@@ -24,6 +27,7 @@ public class FriendService {
 
     @PersistenceContext EntityManager em;
     private final FriendRepository friendRepository;
+    private final RecordRepository recordRepository;
 
     // 친구 저장
     @Transactional
@@ -196,6 +200,11 @@ public class FriendService {
     @Transactional
     public boolean deleteFriend(Friend friend) {
         try {
+            List<Record> friendList = recordRepository.findByParticipant(friend);
+            for (Record record : friendList) {
+                recordRepository.deleteRecord(record);
+            }
+
             friendRepository.deleteFriend(friend);
 
             em.flush();
