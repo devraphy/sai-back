@@ -83,7 +83,5 @@ public class EventRepository {
     // DELETE - 특정 이벤트 삭제
     public void deleteEvent(Event event) {
         em.remove(event);
-        em.flush();
-        em.clear();
     }
 }

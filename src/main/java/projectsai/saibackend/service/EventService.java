@@ -6,15 +6,19 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
+import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
 import projectsai.saibackend.repository.EventRepository;
+import projectsai.saibackend.repository.RecordRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service @Slf4j
 @Transactional(readOnly = true)
@@ -23,6 +27,7 @@ public class EventService {
 
     @PersistenceContext EntityManager em;
     private final EventRepository eventRepository;
+    private final RecordRepository recordRepository;
 
     // 이벤트 저장
     @Transactional
@@ -117,6 +122,7 @@ public class EventService {
     }
 
     // 이벤트 정보 수정
+    @Transactional
     public boolean updateEvent(Long eventId, String name, LocalDate date, EventPurpose purpose, EventEvaluation evaluation) {
         try {
             Event findEvent = eventRepository.findById(eventId);
@@ -138,7 +144,18 @@ public class EventService {
     @Transactional
     public boolean deleteEvent(Event event) {
         try {
+            List<Record> recordList = recordRepository.findAll(event);
+            List<Friend> friendList = recordList.stream().map(o -> o.getFriend()).collect(Collectors.toList());
+            for (Friend friend : friendList) {
+                friend.restoreScore(event.getEvaluation());
+                friend.calcStatus();
+            }
+            recordRepository.deleteAllRecords(event);
             eventRepository.deleteEvent(event);
+
+            em.flush();
+            em.clear();
+
             log.info("Event | deleteEvent() Success: 삭제 성공");
             return true;
         }

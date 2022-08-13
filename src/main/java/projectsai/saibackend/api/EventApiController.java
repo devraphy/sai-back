@@ -41,14 +41,15 @@ public class EventApiController {
     public AddEventResponse addEvent(@RequestBody @Valid AddEventRequest request) {
         try {
             Member owner = em.find(Member.class, request.getOwnerId());
-            Event event = new Event(owner, request.getDate(), request.getPurpose(), request.getName(), request.getEvaluation());
+            Event event = new Event(owner, request.getDate(), request.getPurpose(),
+                    request.getName(), request.getEvaluation());
+
             eventService.addEvent(event);
-            for (Long friendId : request.getParticipants()) {
-                Friend friend = em.find(Friend.class, friendId);
-                friend.calcScore(request.getEvaluation());
-                friend.calcStatus(friend.getScore());
-                Record record = new Record(event, friend);
-                em.persist(record);
+
+            for (Long id : request.getParticipants()) {
+                Friend friend = friendService.findById(id);
+                recordService.addRecord(new Record(event, friend));
+                friendService.updateScoreStatus(friend, request.getEvaluation());
             }
             return new AddEventResponse(Boolean.TRUE);
         }
@@ -82,12 +83,12 @@ public class EventApiController {
     public UpdateEventResponse updateEvent(@RequestBody @Valid UpdateEventRequest request) {
 
         Event event = eventService.findById(request.getEventId());
-
         EventEvaluation curnEvaluation = request.getEvaluation();
-        List<Friend> curnParticipants = request.getParticipants();
-
         EventEvaluation prevEvaluation = event.getEvaluation();
-        List<Friend> prevParticipants = recordService.findAll(event).stream()
+        List<Long> participants = request.getParticipants();
+        List<Record> recordList = recordService.findAll(event);
+        List<Friend> curnParticipants = friendService.findFriends(participants);
+        List<Friend> prevParticipants = recordList.stream()
                 .map(o -> o.getFriend()).collect(Collectors.toList());
 
         if(curnParticipants.containsAll(prevParticipants) && !curnEvaluation.equals(prevEvaluation)) {
@@ -113,14 +114,13 @@ public class EventApiController {
     @DeleteMapping("/event")
     public DeleteEventResponse deleteEvent(@RequestBody @Valid DeleteEventRequest request) {
 
-        Event event = em.find(Event.class, request.getEventId());
-
-        recordService.deleteAllRecords(event);
-        boolean result = eventService.deleteEvent(event);
-
-        if(result) {
+        try {
+            Event event = em.find(Event.class, request.getEventId());
+            eventService.deleteEvent(event);
             return new DeleteEventResponse(Boolean.TRUE);
         }
-        return new DeleteEventResponse(Boolean.FALSE);
+        catch(Exception e) {
+            return new DeleteEventResponse(Boolean.FALSE);
+        }
     }
 }
