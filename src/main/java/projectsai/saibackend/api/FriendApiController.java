@@ -25,12 +25,13 @@ import static java.util.stream.Collectors.*;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/friend")
 public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
 
-    @PostMapping("/friend/add") // 친구 추가
+    @PostMapping("/add") // 친구 추가
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
 
         int score = setInitialScore(request.getStatus());
@@ -46,7 +47,7 @@ public class FriendApiController {
         return new AddFriendResponse(Boolean.FALSE);
     }
 
-    @PostMapping("/friend") // 모든 친구 검색
+    @PostMapping("/search") // 모든 친구 검색
     public List<SearchFriendResponse> findAll(@RequestBody @Valid SearchFriendRequest request) {
 
         try {
@@ -65,7 +66,7 @@ public class FriendApiController {
         }
     }
 
-    @PutMapping("/friend") // 친구 수정
+    @PutMapping("/update") // 친구 수정
     public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
 
         try {
@@ -81,7 +82,7 @@ public class FriendApiController {
         return new UpdateFriendResponse(Boolean.TRUE);
     }
 
-    @DeleteMapping("/friend")
+    @DeleteMapping("/delete")
     public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
 
         Friend friend = friendService.findById(request.getFriendId());

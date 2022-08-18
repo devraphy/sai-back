@@ -13,6 +13,7 @@ import java.time.LocalDate;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/member")
 public class MemberApiController {
 
     private final MemberService memberService;
