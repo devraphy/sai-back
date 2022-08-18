@@ -1,20 +1,19 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/sai;
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/project_sai?serverTimezone=Asia/Seoul
+    username: sai
+    password: sai123!
 
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        #        show_sql: true # sysout으로 찍히는 SQL
         format_sql: true
-        default_batch_fetch_size: 100 # Batch Size 설정
+        default_batch_fetch_size: 100
 
 logging:
   level:
-    org.hibernate.SQL: debug # hibernate에서 발행하는 SQL을 로그로 출력
-    org.hibernate.type: trace # 로그에 찍힌 SQL에 전달되는 매개변수 값을 출력함
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace

@@ -23,32 +23,30 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	runtimeOnly 'mysql:mysql-connector-java'
+
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5' // jackson
 	implementation 'com.querydsl:querydsl-jpa' // query dsl
 	implementation 'com.querydsl:querydsl-apt'
-    implementation 'org.jetbrains:annotations'// query dsl(20.1.0)
+    implementation 'org.jetbrains:annotations'
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT
 	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security
-	testImplementation 'org.springframework.security:spring-security-test'// Spring Security Test
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools' // devtools
 	developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter' // p6spy
 
-	runtimeOnly 'com.h2database:h2'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api' // Junit5(5.8.1)
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' // Junit5(5.8.1)
+	testImplementation 'org.junit.jupiter:junit-jupiter-api' // Junit5
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-
-//	testImplementation("org.junit.vintage:junit-vintage-engine") { // Junit4
-//		exclude group: "org.hamcrest", module: "hamcrest-core"
-//	}
 }
 
 test {
