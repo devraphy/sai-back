@@ -47,7 +47,7 @@ public class MemberApiController {
         if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
             Member findMember = memberService.findByEmail(request.getEmail());
             log.info("Member API | searchMember() Success: 프로필 접근 성공");
-            return SearchMemberResponse.buildResponse(findMember, passwordEncoder);
+            return SearchMemberResponse.buildResponse(findMember);
         }
         log.warn("Member API | searchMember() Fail: 프로필 접근 실패");
         return new SearchMemberResponse(null, null, null, null, null, Boolean.FALSE);
@@ -55,7 +55,7 @@ public class MemberApiController {
 
     @PutMapping("/profile") // 회원 - 정보 수정
     public UpdateMemberResponse updateMember(@RequestBody @Valid UpdateMemberRequest request) {
-        boolean result = memberService.updateMember(request.getId(), request.getName(), request.getEmail(), request.getPassword());
+        boolean result = memberService.updateMember(request.getId(), request.getEmail(), request.getName(), request.getPassword());
         if(result) {
             log.info("Member API | updateMember() Success: 프로필 수정 성공");
             return new UpdateMemberResponse(Boolean.TRUE);

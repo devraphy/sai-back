@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 
@@ -21,16 +22,17 @@ import java.util.List;
 @Transactional @Slf4j
 class MemberRepositoryTest {
 
-    @Autowired MemberRepository memberRepository;
     @PersistenceContext EntityManager em;
+    @Autowired MemberRepository memberRepository;
+    @Autowired PasswordEncoder passwordEncoder;
 
     private Member member1, member2;
     private Long savedId1, savedId2;
 
     @BeforeEach
     public void createMember() {
-        member1 = new Member("이근형","abc@gmail.com", "abcde", 1);
-        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", 1);
+        member1 = new Member("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1);
+        member2 = new Member("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1);
         savedId1 = memberRepository.addMember(member1);
         savedId2 = memberRepository.addMember(member2);
         em.flush();
@@ -40,7 +42,7 @@ class MemberRepositoryTest {
     @Test @DisplayName("Member - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        member1 = new Member("저장테스트","save@gmail.com", "save", 1);
+        member1 = new Member("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1);
 
         // when
         Long savedMemberId = memberRepository.addMember(member1);

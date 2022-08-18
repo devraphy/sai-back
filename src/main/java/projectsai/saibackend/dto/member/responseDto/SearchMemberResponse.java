@@ -26,12 +26,12 @@ public class SearchMemberResponse {
         this.result = result;
     }
 
-    public static SearchMemberResponse buildResponse(Member member, PasswordEncoder passwordEncoder) {
+    public static SearchMemberResponse buildResponse(Member member) {
         SearchMemberResponse response = SearchMemberResponse.builder()
                 .id(member.getMemberId())
                 .email(member.getEmail())
                 .name(member.getName())
-                .password(passwordEncoder.encode(member.getPassword()))
+                .password(member.getPassword())
                 .signUpDate(member.getSignUpDate())
                 .result(Boolean.TRUE)
                 .build();

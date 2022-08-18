@@ -1,6 +1,7 @@
 package projectsai.saibackend;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
@@ -33,9 +34,10 @@ public class DummyData {
     static class InitService {
 
         private final EntityManager em;
+        private final PasswordEncoder passwordEncoder;
 
         public void dbInit1() {
-            Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", "abcabc", 1);
+            Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", passwordEncoder.encode("abcabc"), 1);
             em.persist(member1);
 
             Friend friend1 = new Friend(member1, "아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
@@ -63,7 +65,7 @@ public class DummyData {
         }
 
         public void dbInit2() {
-            Member member2 = new Member("David Lee" ,"devraphy@gmali.com", "123123", 1);
+            Member member2 = new Member("David Lee" ,"devraphy@gmali.com", passwordEncoder.encode("123123"), 1);
             em.persist(member2);
 
             Friend friend1 = new Friend(member2,"지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
@@ -90,10 +92,10 @@ public class DummyData {
             em.persist(record3);
             em.persist(record4);
 
-            Member member3 = new Member("test1" ,"test@gmail.com", "abcabc", 1);
+            Member member3 = new Member("test1" ,"test@gmail.com",passwordEncoder.encode("abcabc") , 1);
             em.persist(member3);
 
-            Member member4 = new Member("test2" ,"resign@gmail.com", "123123", 0);
+            Member member4 = new Member("test2" ,"resign@gmail.com", passwordEncoder.encode("123123"), 0);
             em.persist(member4);
         }
     }
