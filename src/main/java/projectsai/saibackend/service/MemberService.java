@@ -84,7 +84,7 @@ public class MemberService {
     public Boolean emailValidation(String email) {
         try {
             Member findMember = memberRepository.findByEmail(email);
-            if(findMember.getVisibility().equals(Boolean.FALSE)) {
+            if(findMember.getVisibility().equals(0)) {
                 log.warn("Member Service | emailValidation() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
@@ -101,7 +101,7 @@ public class MemberService {
     public boolean loginValidation(String email, String password) {
         try {
             Member member = memberRepository.findByEmail(email);
-            if(member.getVisibility().equals(Boolean.FALSE)) {
+            if(member.getVisibility().equals(0)) {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
@@ -125,7 +125,7 @@ public class MemberService {
         try {
             Member member = memberRepository.findByEmail(email);
 
-            if(member.getVisibility().equals(Boolean.FALSE)) {
+            if(member.getVisibility().equals(0)) {
                 log.warn("Member Service | updateMember() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }
@@ -154,7 +154,7 @@ public class MemberService {
     public boolean deleteMember(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
-            if(member.getVisibility().equals(Boolean.FALSE)) {
+            if(member.getVisibility().equals(0)) {
                 log.warn("Member Service | deleteMember() Fail: 탈퇴 사용자 => " + email);
                 return false;
             }

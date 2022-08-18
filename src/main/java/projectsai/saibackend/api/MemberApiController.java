@@ -2,6 +2,7 @@ package projectsai.saibackend.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.dto.member.requestDto.*;
@@ -17,11 +18,11 @@ import java.time.LocalDate;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
-        Member member = new Member(request.getName(), request.getEmail(),
-                request.getPassword(), LocalDate.now(), 1);
+        Member member = Member.buildMember(request, passwordEncoder);
 
         if(memberService.signUp(member)) {
             log.info("Member API | joinMember() Success: 회원 가입 성공");
@@ -46,8 +47,7 @@ public class MemberApiController {
         if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
             Member findMember = memberService.findByEmail(request.getEmail());
             log.info("Member API | searchMember() Success: 프로필 접근 성공");
-            return new SearchMemberResponse(findMember.getMemberId(), findMember.getEmail(),
-                    findMember.getName(), findMember.getPassword(), findMember.getSignUpDate(), Boolean.TRUE);
+            return SearchMemberResponse.buildResponse(findMember, passwordEncoder);
         }
         log.warn("Member API | searchMember() Fail: 프로필 접근 실패");
         return new SearchMemberResponse(null, null, null, null, null, Boolean.FALSE);

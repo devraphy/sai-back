@@ -1,6 +1,9 @@
 package projectsai.saibackend.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,12 +34,24 @@ public class Member {
     // Constructor
     public Member() {}
 
+    @Builder
     public Member(String name, String email, String password, LocalDate signUpDate, Integer visibility) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.signUpDate = signUpDate;
         this.visibility = visibility;
+    }
+
+    public static Member buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
+        Member member = Member.builder()
+                .name(joinMemberRequest.getName())
+                .email(joinMemberRequest.getEmail())
+                .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
+                .signUpDate(LocalDate.now())
+                .visibility(1)
+                .build();
+        return member;
     }
 
     // Equals & HashCode
