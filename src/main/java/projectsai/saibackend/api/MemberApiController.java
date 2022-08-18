@@ -20,7 +20,7 @@ public class MemberApiController {
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
         Member member = new Member(request.getName(), request.getEmail(),
-                request.getPassword(), LocalDate.now(), Boolean.TRUE);
+                request.getPassword(), LocalDate.now(), 1);
 
         if(memberService.signUp(member)) {
             log.info("Member API | joinMember() Success: 회원 가입 성공");

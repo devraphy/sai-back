@@ -34,7 +34,7 @@ class FriendServiceTest {
 
     @BeforeEach
     private void createMember() {
-        owner = new Member("라파파", "rapapa@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
+        owner = new Member("라파파", "rapapa@gmail.com", "abcde", LocalDate.now(), 1);
         em.persist(owner);
     }
 
@@ -83,7 +83,7 @@ class FriendServiceTest {
         // given
 
         // when
-        Friend findFriend = friendService.findById(friend1.getId());
+        Friend findFriend = friendService.findById(friend1.getFriendId());
 
         // then
         Assertions.assertEquals(friend1, findFriend);
@@ -131,13 +131,13 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 다중 ID로 검색")
     public void findFriends() throws Exception {
        //given
-        List<Long> friendIds = Arrays.asList(friend1.getId(), friend2.getId(), friend3.getId());
+        List<Long> friendIds = Arrays.asList(friend1.getFriendId(), friend2.getFriendId(), friend3.getFriendId());
 
        //when
         List<Friend> findFriends = friendService.findFriends(friendIds);
 
         //then
-        List<Long> ids = findFriends.stream().map(o -> o.getId()).collect(Collectors.toList());
+        List<Long> ids = findFriends.stream().map(o -> o.getFriendId()).collect(Collectors.toList());
         Assertions.assertEquals(friendIds, ids);
     }
 
@@ -148,7 +148,7 @@ class FriendServiceTest {
         friendService.addFriend(testFriend);
 
         // when
-        friendService.updateFriend(testFriend.getId(), "바꾼이름", RelationType.FRIEND,  RelationStatus.POSITIVE, 70,null, null);
+        friendService.updateFriend(testFriend.getFriendId(), "바꾼이름", RelationType.FRIEND,  RelationStatus.POSITIVE, 70,null, null);
 
         // then
         Assertions.assertEquals( "바꾼이름", testFriend.getName());

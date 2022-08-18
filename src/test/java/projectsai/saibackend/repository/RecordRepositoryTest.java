@@ -45,7 +45,7 @@ class RecordRepositoryTest {
         Long savedRecordId = recordRepository.addRecord(record);
 
         // then
-        Assertions.assertThat(savedRecordId).isEqualTo(record.getId());
+        Assertions.assertThat(savedRecordId).isEqualTo(record.getRecordId());
     }
 
     @Test @DisplayName("Record - Id로 기록 검색")
@@ -96,7 +96,7 @@ class RecordRepositoryTest {
         Record oneRecord = recordRepository.findOne(event, friend);
 
         // then
-        Assertions.assertThat(oneRecord.getId()).isEqualTo(record.getId());
+        Assertions.assertThat(oneRecord.getRecordId()).isEqualTo(record.getRecordId());
     }
 
     @Test @DisplayName("Record - 이벤트로 모든 기록 삭제")

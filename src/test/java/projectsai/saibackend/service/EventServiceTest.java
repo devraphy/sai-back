@@ -40,7 +40,7 @@ class EventServiceTest {
 
     @BeforeEach
     void createMemberFriendEvent() {
-        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now(), Boolean.TRUE);
+        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", LocalDate.now(), 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend3 = new Friend(owner, "친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
@@ -69,7 +69,7 @@ class EventServiceTest {
         Long savedEventId = eventService.addEvent(event1);
 
         // then
-        Assertions.assertEquals(savedEventId, event1.getId());
+        Assertions.assertEquals(savedEventId, event1.getEventId());
     }
 
     @Test @DisplayName("Event - ID로 이벤트 검색")
@@ -81,7 +81,7 @@ class EventServiceTest {
         Event findEvent = eventService.findById(savedEventId);
 
         // then
-        Assertions.assertEquals(savedEventId, findEvent.getId());
+        Assertions.assertEquals(savedEventId, findEvent.getEventId());
     }
 
     @Test @DisplayName("Event - 모든 이벤트 검색")

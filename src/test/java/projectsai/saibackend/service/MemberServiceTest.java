@@ -25,8 +25,8 @@ class MemberServiceTest {
 
     @BeforeEach
     void createMember() throws Exception {
-        member1 = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), true);
-        member2 = new Member("박근형", "def@gmail.com", "abcdefg", LocalDate.now(), true);
+        member1 = new Member("이근형", "abc@gmail.com", "abcdefg", LocalDate.now(), 1);
+        member2 = new Member("박근형", "def@gmail.com", "abcdefg", LocalDate.now(), 1);
         memberService.signUp(member1);
         memberService.signUp(member2);
     }
@@ -34,13 +34,13 @@ class MemberServiceTest {
     @Test @DisplayName("Member - 회원 가입")
     void signUp() throws Exception {
         // given
-        Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), true);
+        Member newMember = new Member("라파파", "rapapa@gmail.com", "abcdefg", LocalDate.now(), 1);
 
         // when
         memberService.signUp(newMember);
 
         // then
-        Assertions.assertEquals(newMember.getId(), memberRepository.findByEmail("rapapa@gmail.com").getId());
+        Assertions.assertEquals(newMember.getMemberId(), memberRepository.findByEmail("rapapa@gmail.com").getMemberId());
     }
 
     @Test @DisplayName("Member - 전체 검색")
@@ -59,12 +59,12 @@ class MemberServiceTest {
         // given
 
         // when
-        Member findMember1 = memberService.findMember(member1.getId());
-        Member findMember2 = memberService.findMember(member2.getId());
+        Member findMember1 = memberService.findMember(member1.getMemberId());
+        Member findMember2 = memberService.findMember(member2.getMemberId());
 
         // then
-        Assertions.assertEquals(member1.getId(), findMember1.getId());
-        Assertions.assertEquals(member2.getId(), findMember2.getId());
+        Assertions.assertEquals(member1.getMemberId(), findMember1.getMemberId());
+        Assertions.assertEquals(member2.getMemberId(), findMember2.getMemberId());
     }
 
     @Test @DisplayName("Member - Email 검색")
@@ -109,9 +109,9 @@ class MemberServiceTest {
        //given
 
        //when
-        memberService.updateMember(member1.getId(), "바꾼이름", "바꾼이메일", "바꾼비밀번호");
+        memberService.updateMember(member1.getMemberId(), "바꾼이름", "바꾼이메일", "바꾼비밀번호");
 
        //then
-        Assertions.assertEquals("바꾼이메일", memberService.findMember(member1.getId()).getEmail());
+        Assertions.assertEquals("바꾼이메일", memberService.findMember(member1.getMemberId()).getEmail());
     }
 }

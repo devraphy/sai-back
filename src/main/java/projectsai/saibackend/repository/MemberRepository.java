@@ -27,7 +27,7 @@ public class MemberRepository {
     public Member findById(Long memberId) {
         return em.createQuery("select m from Member m " +
                         "where m.id = :memberId " +
-                        "and m.visibility = true", Member.class)
+                        "and m.visibility = 1", Member.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();
     }
@@ -43,7 +43,7 @@ public class MemberRepository {
     // READ - 전체 검색
     public List<Member> findAll() {
         return em.createQuery("select m from Member m " +
-                        "where m.visibility = true", Member.class)
+                        "where m.visibility = 1", Member.class)
                 .getResultList();
     }
 }

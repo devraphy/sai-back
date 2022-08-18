@@ -29,8 +29,8 @@ class MemberRepositoryTest {
 
     @BeforeEach
     public void createMember() {
-        member1 = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), true);
-        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), true);
+        member1 = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), 1);
+        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), 1);
         savedId1 = memberRepository.addMember(member1);
         savedId2 = memberRepository.addMember(member2);
         em.flush();
@@ -40,13 +40,13 @@ class MemberRepositoryTest {
     @Test @DisplayName("Member - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        member1 = new Member("저장테스트","save@gmail.com", "save", LocalDate.now(), true);
+        member1 = new Member("저장테스트","save@gmail.com", "save", LocalDate.now(), 1);
 
         // when
         Long savedMemberId = memberRepository.addMember(member1);
 
         // then
-        Assertions.assertThat(savedMemberId).isEqualTo(member1.getId());
+        Assertions.assertThat(savedMemberId).isEqualTo(member1.getMemberId  ());
     }
 
     @Test @DisplayName("Member - 전체 검색")
@@ -57,7 +57,7 @@ class MemberRepositoryTest {
         List<Member> allMember = memberRepository.findAll();
 
         // then
-        Assertions.assertThat(allMember.size()).isEqualTo(2);
+        Assertions.assertThat(allMember.size()).isEqualTo(5);
     }
 
     @Test @DisplayName("Member - ID로 검색")
@@ -69,8 +69,8 @@ class MemberRepositoryTest {
         Member findMember2 = memberRepository.findById(savedId2);
 
         //then
-        Assertions.assertThat(findMember1.getId()).isEqualTo(savedId1);
-        Assertions.assertThat(findMember2.getId()).isEqualTo(savedId2);
+        Assertions.assertThat(findMember1.getMemberId()).isEqualTo(savedId1);
+        Assertions.assertThat(findMember2.getMemberId()).isEqualTo(savedId2);
     }
 
     @Test @DisplayName("Member - Email로 검색")
@@ -85,7 +85,7 @@ class MemberRepositoryTest {
         Member findMember2 = memberRepository.findByEmail(email2);
 
         //then
-        Assertions.assertThat(findMember1.getId()).isEqualTo(member1.getId());
-        Assertions.assertThat(findMember2.getId()).isEqualTo(member2.getId());
+        Assertions.assertThat(findMember1.getMemberId()).isEqualTo(member1.getMemberId());
+        Assertions.assertThat(findMember2.getMemberId()).isEqualTo(member2.getMemberId());
     }
 }

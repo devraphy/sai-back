@@ -26,12 +26,12 @@ public class Member {
     private LocalDate signUpDate;
 
     @NotNull
-    private Boolean visibility;
+    private Integer visibility;
 
     // Constructor
     public Member() {}
 
-    public Member(String name, String email, String password, LocalDate signUpDate, Boolean visibility) {
+    public Member(String name, String email, String password, LocalDate signUpDate, Integer visibility) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -66,7 +66,7 @@ public class Member {
     }
 
     public void deleteMember() {
-        this.visibility = Boolean.FALSE;
+        this.visibility = 0;
     }
 
 }

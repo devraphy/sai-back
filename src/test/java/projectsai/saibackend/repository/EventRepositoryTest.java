@@ -34,7 +34,7 @@ class EventRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), Boolean.TRUE);
+        owner = new Member("이근형","abc@gmail.com", "abcdefg", LocalDate.now(), 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         business1 = new Friend(owner, "동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
@@ -82,7 +82,7 @@ class EventRepositoryTest {
         Event findEvent = eventRepository.findById(savedEventId);
 
         // then
-        Assertions.assertThat(findEvent.getId()).isEqualTo(savedEventId);
+        Assertions.assertThat(findEvent.getEventId()).isEqualTo(savedEventId);
     }
 
     @Test @DisplayName("Event - 전체 검색")

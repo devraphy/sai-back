@@ -32,7 +32,7 @@ public class FriendRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), Boolean.TRUE);
+        owner = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         friend3 = new Friend(owner, "친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
@@ -52,7 +52,7 @@ public class FriendRepositoryTest {
         Long savedFriendId = friendRepository.addFriend(newFriend);
 
         // then
-        Assertions.assertThat(savedFriendId).isEqualTo(newFriend.getId());
+        Assertions.assertThat(savedFriendId).isEqualTo(newFriend.getFriendId());
     }
 
     @Test @DisplayName("Friend - 전체 검색")
@@ -72,10 +72,10 @@ public class FriendRepositoryTest {
        //given
 
        //when
-        Friend findFriend = friendRepository.findById(friend1.getId());
+        Friend findFriend = friendRepository.findById(friend1.getFriendId());
 
         //then
-        Assertions.assertThat(findFriend.getId()).isEqualTo(friend1.getId());
+        Assertions.assertThat(findFriend.getFriendId()).isEqualTo(friend1.getFriendId());
     }
 
     @Test @DisplayName("Friend - 이름으로 검색")
@@ -124,9 +124,9 @@ public class FriendRepositoryTest {
     public void findFriends() throws Exception {
         //given
         List<Long> friendIds = new ArrayList<>();
-        friendIds.add(friend1.getId());
-        friendIds.add(friend2.getId());
-        friendIds.add(friend3.getId());
+        friendIds.add(friend1.getFriendId());
+        friendIds.add(friend2.getFriendId());
+        friendIds.add(friend3.getFriendId());
 
         //when
         List<Friend> friends = friendRepository.findByIds(friendIds);

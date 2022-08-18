@@ -26,19 +26,23 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5' // jackson
 	implementation 'com.querydsl:querydsl-jpa' // query dsl
 	implementation 'com.querydsl:querydsl-apt'
-    implementation 'org.jetbrains:annotations:20.1.0'// query dsl
+    implementation 'org.jetbrains:annotations'// query dsl(20.1.0)
+
+	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT
+	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security
+	testImplementation 'org.springframework.security:spring-security-test'// Spring Security Test
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6' // p6spy
+	developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter' // p6spy
 
 	runtimeOnly 'com.h2database:h2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1' // Junit5
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1' // Junit5
+	testImplementation 'org.junit.jupiter:junit-jupiter-api' // Junit5(5.8.1)
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' // Junit5(5.8.1)
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
