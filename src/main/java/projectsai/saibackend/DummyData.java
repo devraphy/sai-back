@@ -35,7 +35,7 @@ public class DummyData {
         private final EntityManager em;
 
         public void dbInit1() {
-            Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", "abcabc", LocalDate.now(), 1);
+            Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", "abcabc", 1);
             em.persist(member1);
 
             Friend friend1 = new Friend(member1, "아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
@@ -63,7 +63,7 @@ public class DummyData {
         }
 
         public void dbInit2() {
-            Member member2 = new Member("David Lee" ,"devRaphy@gmali.com", "123123", LocalDate.of(2022, 8, 8), 1);
+            Member member2 = new Member("David Lee" ,"devraphy@gmali.com", "123123", 1);
             em.persist(member2);
 
             Friend friend1 = new Friend(member2,"지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
@@ -90,10 +90,10 @@ public class DummyData {
             em.persist(record3);
             em.persist(record4);
 
-            Member member3 = new Member("test1" ,"test@gmail.com", "abcabc", LocalDate.of(2022, 8, 8),1);
+            Member member3 = new Member("test1" ,"test@gmail.com", "abcabc", 1);
             em.persist(member3);
 
-            Member member4 = new Member("test2" ,"resign@gmail.com", "123123", LocalDate.of(2022, 8, 8), 0);
+            Member member4 = new Member("test2" ,"resign@gmail.com", "123123", 0);
             em.persist(member4);
         }
     }

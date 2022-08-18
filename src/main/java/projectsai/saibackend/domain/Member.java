@@ -2,6 +2,7 @@ package projectsai.saibackend.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
 
@@ -25,7 +26,7 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @NotNull
+    @CreationTimestamp
     private LocalDate signUpDate;
 
     @NotNull
@@ -35,11 +36,10 @@ public class Member {
     public Member() {}
 
     @Builder
-    public Member(String name, String email, String password, LocalDate signUpDate, Integer visibility) {
+    public Member(String name, String email, String password, Integer visibility) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.signUpDate = signUpDate;
         this.visibility = visibility;
     }
 
@@ -48,7 +48,6 @@ public class Member {
                 .name(joinMemberRequest.getName())
                 .email(joinMemberRequest.getEmail())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
-                .signUpDate(LocalDate.now())
                 .visibility(1)
                 .build();
         return member;

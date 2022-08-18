@@ -34,7 +34,7 @@ class FriendServiceTest {
 
     @BeforeEach
     private void createMember() {
-        owner = new Member("라파파", "rapapa@gmail.com", "abcde", LocalDate.now(), 1);
+        owner = new Member("라파파", "rapapa@gmail.com", "abcde", 1);
         em.persist(owner);
     }
 

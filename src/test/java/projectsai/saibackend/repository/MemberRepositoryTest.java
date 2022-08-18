@@ -29,8 +29,8 @@ class MemberRepositoryTest {
 
     @BeforeEach
     public void createMember() {
-        member1 = new Member("이근형","abc@gmail.com", "abcde", LocalDate.now(), 1);
-        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", LocalDate.now(), 1);
+        member1 = new Member("이근형","abc@gmail.com", "abcde", 1);
+        member2 = new Member("곽두팔","twoegiht@gmail.com", "2828", 1);
         savedId1 = memberRepository.addMember(member1);
         savedId2 = memberRepository.addMember(member2);
         em.flush();
@@ -40,7 +40,7 @@ class MemberRepositoryTest {
     @Test @DisplayName("Member - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        member1 = new Member("저장테스트","save@gmail.com", "save", LocalDate.now(), 1);
+        member1 = new Member("저장테스트","save@gmail.com", "save", 1);
 
         // when
         Long savedMemberId = memberRepository.addMember(member1);
