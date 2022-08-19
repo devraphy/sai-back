@@ -10,7 +10,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity @Getter
 public class Friend {
@@ -56,27 +55,6 @@ public class Friend {
         this.score = score;
         this.memo = memo;
         this.birthDate = birthDate;
-    }
-
-    // Equals & HashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Friend friend = (Friend) o;
-        return Objects.equals(getFriendId(), friend.getFriendId())
-                && Objects.equals(getOwner(), friend.getOwner())
-                && Objects.equals(getName(), friend.getName())
-                && getType() == friend.getType() && getStatus() == friend.getStatus()
-                && Objects.equals(getScore(), friend.getScore())
-                && Objects.equals(getMemo(), friend.getMemo())
-                && Objects.equals(getBirthDate(), friend.getBirthDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getFriendId(), getOwner(), getName(), getType(),
-                getStatus(), getScore(), getMemo(), getBirthDate());
     }
 
     // Business Methods

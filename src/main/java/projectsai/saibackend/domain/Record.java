@@ -3,7 +3,6 @@ package projectsai.saibackend.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity @Getter
 public class Record {
@@ -26,21 +25,5 @@ public class Record {
     public Record(Event event, Friend friend) {
         this.event = event;
         this.friend = friend;
-    }
-
-    // Equals & HashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Record record = (Record) o;
-        return Objects.equals(getRecordId(), record.getRecordId())
-                && Objects.equals(getEvent(), record.getEvent())
-                && Objects.equals(getFriend(), record.getFriend());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getRecordId(), getEvent(), getFriend());
     }
 }

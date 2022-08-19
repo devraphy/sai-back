@@ -8,7 +8,6 @@ import projectsai.saibackend.domain.enums.EventPurpose;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity @Getter
 public class Event {
@@ -43,24 +42,6 @@ public class Event {
         this.purpose = purpose;
         this.name = name;
         this.evaluation = evaluation;
-    }
-
-    // Equals & HashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return Objects.equals(getEventId(), event.getEventId())
-                & Objects.equals(getOwner(), event.getOwner())
-                && Objects.equals(getDate(), event.getDate())
-                && getPurpose() == event.getPurpose()
-                && Objects.equals(getName(), event.getName()) && getEvaluation() == event.getEvaluation();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getEventId(), getOwner(), getDate(), getPurpose(), getName(), getEvaluation());
     }
 
     // Business Methods

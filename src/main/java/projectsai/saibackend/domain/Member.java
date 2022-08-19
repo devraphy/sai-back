@@ -1,17 +1,26 @@
 package projectsai.saibackend.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Entity @Getter
+@Entity @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -30,17 +39,23 @@ public class Member {
     private LocalDate signUpDate;
 
     @NotNull
-    private Integer visibility;
+    private Boolean visibility;
+
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
 
     // Constructor
-    public Member() {}
 
     @Builder
-    public Member(String name, String email, String password, Integer visibility) {
+    public Member(String name, String email, String password, Boolean visibility, List<Role> roles) {
         this.name = name;
         this.email = email.toLowerCase();
         this.password = password;
         this.visibility = visibility;
+        this.roles = roles;
     }
 
     public static Member buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
@@ -48,28 +63,9 @@ public class Member {
                 .name(joinMemberRequest.getName())
                 .email(joinMemberRequest.getEmail().toLowerCase())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
-                .visibility(1)
+                .visibility(Boolean.TRUE)
                 .build();
         return member;
-    }
-
-    // Equals & HashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Member member = (Member) o;
-        return Objects.equals(getMemberId(), member.getMemberId())
-                && Objects.equals(getName(), member.getName())
-                && Objects.equals(getEmail(), member.getEmail())
-                && Objects.equals(getPassword(), member.getPassword())
-                && Objects.equals(getSignUpDate(), member.getSignUpDate())
-                && Objects.equals(getVisibility(), member.getVisibility());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getMemberId(), getName(), getEmail(), getPassword(), getSignUpDate(), getVisibility());
     }
 
     // Business Methods
@@ -80,7 +76,6 @@ public class Member {
     }
 
     public void deleteMember() {
-        this.visibility = 0;
+        this.visibility = Boolean.FALSE;
     }
-
 }
