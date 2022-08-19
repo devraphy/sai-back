@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.*;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/friend")
+@RequestMapping("/api/friend")
 public class FriendApiController {
 
     @PersistenceContext EntityManager em;

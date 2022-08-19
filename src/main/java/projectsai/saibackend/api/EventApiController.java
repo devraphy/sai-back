@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/event")
+@RequestMapping("/api/event")
 public class EventApiController {
 
     @PersistenceContext EntityManager em;
