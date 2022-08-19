@@ -38,7 +38,7 @@ public class Member {
     @Builder
     public Member(String name, String email, String password, Integer visibility) {
         this.name = name;
-        this.email = email;
+        this.email = email.toLowerCase();
         this.password = password;
         this.visibility = visibility;
     }
@@ -46,7 +46,7 @@ public class Member {
     public static Member buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
         Member member = Member.builder()
                 .name(joinMemberRequest.getName())
-                .email(joinMemberRequest.getEmail())
+                .email(joinMemberRequest.getEmail().toLowerCase())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
                 .visibility(1)
                 .build();

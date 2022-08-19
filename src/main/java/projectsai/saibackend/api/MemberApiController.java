@@ -34,9 +34,9 @@ public class MemberApiController {
 
     @PostMapping("/login") // 회원 - 로그인
     public LoginMemberResponse loginMember(@RequestBody @Valid LoginMemberRequest request) {
-        if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
+        if(memberService.loginValidation(request.getEmail().toLowerCase(), request.getPassword())) {
             log.info("Member API | loginMember() Success: 로그인 성공");
-            return new LoginMemberResponse(request.getEmail(), Boolean.TRUE);
+            return new LoginMemberResponse(request.getEmail().toLowerCase(), Boolean.TRUE);
         }
         log.warn("Member API | loginMember() Fail: 로그인 실패");
         return new LoginMemberResponse(null, Boolean.FALSE);
