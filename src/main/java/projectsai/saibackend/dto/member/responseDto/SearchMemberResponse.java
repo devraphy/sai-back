@@ -2,10 +2,9 @@ package projectsai.saibackend.dto.member.responseDto;
 
 import lombok.Builder;
 import lombok.Data;
-import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.Member;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 @Data @Builder
 public class SearchMemberResponse {
@@ -26,9 +25,9 @@ public class SearchMemberResponse {
         this.result = result;
     }
 
-    public static SearchMemberResponse buildResponse(User user) {
+    public static SearchMemberResponse buildResponse(Member user) {
         SearchMemberResponse response = SearchMemberResponse.builder()
-                .id(user.getUserId())
+                .id(user.getMemberId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .password(user.getPassword())

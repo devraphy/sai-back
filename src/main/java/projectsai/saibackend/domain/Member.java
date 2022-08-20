@@ -1,9 +1,7 @@
 package projectsai.saibackend.domain;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
@@ -12,15 +10,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity @Getter
-@Table(name = "USERS")
-public class User {
+public class Member {
     @Id @GeneratedValue
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @Column(nullable = false)
     private String name;
@@ -38,13 +34,14 @@ public class User {
     private Integer visibility;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(joinColumns = @JoinColumn(name = "member_id"))
     private List<Role> roles = new ArrayList<>();
 
     // Constructor
-    public User() {}
+    public Member() {}
 
     @Builder
-    public User(String name, String email, String password, Integer visibility, List<Role> roles) {
+    public Member(String name, String email, String password, Integer visibility, List<Role> roles) {
         this.name = name;
         this.email = email.toLowerCase();
         this.password = password;
@@ -52,8 +49,8 @@ public class User {
         this.roles = roles;
     }
 
-    public static User buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
-        return User.builder()
+    public static Member buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
+        return Member.builder()
                 .name(joinMemberRequest.getName())
                 .email(joinMemberRequest.getEmail().toLowerCase())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))

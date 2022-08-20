@@ -21,7 +21,7 @@ public class Friend {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private User owner;
+    private Member owner;
 
     @Column(name = "friend_name", nullable = false)
     private String name;
@@ -46,7 +46,7 @@ public class Friend {
     // Constructor
     public Friend() {}
 
-    public Friend(User owner, String name, RelationType type, RelationStatus status,
+    public Friend(Member owner, String name, RelationType type, RelationStatus status,
                   int score, @Nullable String memo, @Nullable LocalDate birthDate) {
         this.owner = owner;
         this.name = name;
@@ -58,7 +58,7 @@ public class Friend {
     }
 
     // Business Methods
-    public void setOwner(User user) {
+    public void setOwner(Member user) {
         this.owner = user;
     }
 

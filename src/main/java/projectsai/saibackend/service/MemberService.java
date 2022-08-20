@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.Role;
 import projectsai.saibackend.repository.RoleRepository;
-import projectsai.saibackend.repository.UserRepository;
+import projectsai.saibackend.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,10 +18,10 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor @Slf4j
-public class UserService {
+public class MemberService {
 
     @PersistenceContext EntityManager em;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
 
     // 회원 가입
@@ -31,7 +31,7 @@ public class UserService {
             if(emailValidation(user.getEmail())) {
                 Role role_user = roleRepository.findByPosition("ROLE_USER");
                 user.addRoleToUser(role_user);
-                userRepository.addMember(user);
+                memberRepository.addMember(user);
                 log.info("Member Service | signUp() Success: 저장 성공");
                 return true;
             }
@@ -49,7 +49,7 @@ public class UserService {
     // 전체 회원 검색
     public List<Member> findAll() {
         try {
-            List<Member> userList = userRepository.findAll();
+            List<Member> userList = memberRepository.findAll();
             log.info("Member Service | findAll() Success: 검색 성공");
             return userList;
         }
@@ -62,7 +62,7 @@ public class UserService {
     // 특정 회원 검색
     public Member findMember(Long id) {
         try {
-            Member user = userRepository.findById(id);
+            Member user = memberRepository.findById(id);
             log.info("Member Service | findMember() Success: 검색 성공");
             return user;
         }
@@ -75,7 +75,7 @@ public class UserService {
     // email 회원 검색
     public Member findByEmail(String email) {
         try {
-            Member user = userRepository.findByEmail(email);
+            Member user = memberRepository.findByEmail(email);
             log.info("Member Service | findByEmail() Success: 검색 성공");
             return user;
         }
@@ -88,7 +88,7 @@ public class UserService {
     // 회원 가입 - email 중복 검사
     public Boolean emailValidation(String email) {
         try {
-            Member findUser = userRepository.findByEmail(email);
+            Member findUser = memberRepository.findByEmail(email);
             if(findUser.getVisibility().equals(0)) {
                 log.warn("Member Service | emailValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
@@ -105,7 +105,7 @@ public class UserService {
     // 로그인 - email & password 검증
     public boolean loginValidation(String email, String password) {
         try {
-            Member user = userRepository.findByEmail(email);
+            Member user = memberRepository.findByEmail(email);
             if(user.getVisibility().equals(0)) {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
@@ -128,7 +128,7 @@ public class UserService {
     @Transactional
     public boolean updateMember(Long id, String email, String name, String password) {
         try {
-            Member user = userRepository.findByEmail(email);
+            Member user = memberRepository.findByEmail(email);
 
             if(user.getVisibility().equals(0)) {
                 log.warn("Member Service | updateMember() Fail: 탈퇴 사용자 => {}", email);
@@ -143,7 +143,7 @@ public class UserService {
             }
         }
         catch(EmptyResultDataAccessException e) {
-            Member findUser = userRepository.findById(id);
+            Member findUser = memberRepository.findById(id);
             findUser.updateInfo(name, email, password);
             em.flush();
             em.clear();
@@ -158,7 +158,7 @@ public class UserService {
     @Transactional
     public boolean deleteMember(String email) {
         try {
-            Member user = userRepository.findByEmail(email);
+            Member user = memberRepository.findByEmail(email);
             if(user.getVisibility().equals(0)) {
                 log.warn("Member Service | deleteMember() Fail: 탈퇴 사용자 => {}", email);
                 return false;

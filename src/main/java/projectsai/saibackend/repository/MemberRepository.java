@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class UserRepository {
+public class MemberRepository {
 
     @PersistenceContext
     private EntityManager em;

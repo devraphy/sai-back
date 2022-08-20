@@ -6,7 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
@@ -43,7 +43,7 @@ public class FriendService {
     }
 
     // 친구 전체 검색
-    public List<Friend> findAll(User owner) {
+    public List<Friend> findAll(Member owner) {
         try {
             List<Friend> result = friendRepository.findAll(owner);
             log.info("Friend Service | findAll() Success: 검색 성공");
@@ -69,7 +69,7 @@ public class FriendService {
     }
 
     // 친구 이름 검색
-    public List<Friend> findByName(User owner, String name) {
+    public List<Friend> findByName(Member owner, String name) {
         try {
             List<Friend> friendList = friendRepository.findByName(owner, name);
             log.info("Friend Service | findByName() Success: 검색 성공");
@@ -82,7 +82,7 @@ public class FriendService {
     }
 
     // 친구 종류 검색
-    public List<Friend> findByType(User owner, RelationType type) {
+    public List<Friend> findByType(Member owner, RelationType type) {
         try {
             List<Friend> friendList = friendRepository.findByType(owner, type);
             log.info("Friend Service | findByType() Success: 검색 성공");
@@ -95,7 +95,7 @@ public class FriendService {
     }
 
     // 친구 상태 검색
-    public List<Friend> findByStatus(User owner, RelationStatus status) {
+    public List<Friend> findByStatus(Member owner, RelationStatus status) {
         try {
             List<Friend> friendList = friendRepository.findByStatus(owner, status);
             log.info("Friend Service | findByStatus() Success: 검색 성공");
