@@ -14,7 +14,7 @@ import javax.validation.Valid;
 @RestController @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
-public class MemberApiController {
+public class UserApiController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;

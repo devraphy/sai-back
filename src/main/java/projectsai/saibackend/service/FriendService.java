@@ -37,7 +37,7 @@ public class FriendService {
             return true;
         }
         catch (Exception e) {
-            log.error("Friend Service | addFriend() Fail: 에러 발생 => " + e.getMessage());
+            log.error("Friend Service | addFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -50,7 +50,7 @@ public class FriendService {
             return result;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Friend Service | findAll() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class FriendService {
                 return friend;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Friend Service | findById() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findById() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class FriendService {
             return friendList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Friend Service | findByName() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findByName() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class FriendService {
             return friendList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Friend Service | findByType() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findByType() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class FriendService {
             return friendList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Friend Service | findByStatus() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findByStatus() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -115,7 +115,7 @@ public class FriendService {
             return friendList;
         }
         catch (Exception e) {
-            log.warn("Friend Service | findFriends() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Friend Service | findFriends() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class FriendService {
             return true;
         }
         catch(EmptyResultDataAccessException e) {
-            log.info("Friend Service | updateFriend() Fail: 존재하지 않는 ID => " + e.getMessage());
+            log.info("Friend Service | updateFriend() Fail: 존재하지 않는 ID => {}", e.getMessage());
             return false;
         }
     }
@@ -154,7 +154,7 @@ public class FriendService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Friend Service | restoreScore() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Friend Service | restoreScore() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -173,7 +173,7 @@ public class FriendService {
             return true;
         }
         catch (Exception e) {
-            log.warn("Friend Service | renewMultipleScore() Success: 에러 발생 => " + e.getMessage());
+            log.warn("Friend Service | renewMultipleScore() Success: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -190,7 +190,7 @@ public class FriendService {
             return true;
         }
         catch (Exception e) {
-            log.warn("Friend Service | updateScoreStatus() Success: 에러 발생 => " + e.getMessage());
+            log.warn("Friend Service | updateScoreStatus() Success: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -213,7 +213,7 @@ public class FriendService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Friend Service | deleteFriend() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Friend Service | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }

@@ -30,7 +30,7 @@ public class RecordService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Record Service | addRecord() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Record Service | addRecord() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -45,7 +45,7 @@ public class RecordService {
             return true;
         }
         catch (Exception e) {
-            log.warn("Record Service | addMultipleRecords() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Record Service | addMultipleRecords() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -58,7 +58,7 @@ public class RecordService {
             return recordList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Record Service | findAllParticipants() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Record Service | findAllParticipants() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -71,7 +71,7 @@ public class RecordService {
             return recordList;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Record Service | findByParticipant() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Record Service | findByParticipant() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -84,7 +84,7 @@ public class RecordService {
             return record;
         }
         catch(EmptyResultDataAccessException e) {
-            log.warn("Record Service | findOneRecord() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Record Service | findOneRecord() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class RecordService {
             return true;
         }
         catch (Exception e) {
-            log.warn("Record Service | deleteAllRecord() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Record Service | deleteAllRecord() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -122,7 +122,7 @@ public class RecordService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Record Service | deleteRecordById() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Record Service | deleteRecordById() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }

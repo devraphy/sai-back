@@ -38,7 +38,7 @@ public class EventService {
             return savedEventId;
         }
         catch (Exception e) {
-            log.warn("Event Service | addEvent() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Event Service | addEvent() Fail: 에러 발생 => {}", e.getMessage());
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class EventService {
             return event;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findById() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Event Service | findById() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class EventService {
             return eventList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findAll() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Event Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -77,7 +77,7 @@ public class EventService {
             return eventList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findByName() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Event Service | findByName() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -90,7 +90,7 @@ public class EventService {
             return eventList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findByDate() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Event Service | findByDate() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -103,7 +103,7 @@ public class EventService {
             return eventList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findByPurpose() Fail: 검색 결과 없음=> " + e.getMessage());
+            log.warn("Event Service | findByPurpose() Fail: 검색 결과 없음=> {}", e.getMessage());
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class EventService {
             return eventList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Event Service | findByEvaluation() Fail: 검색 결과 없음 => " + e.getMessage());
+            log.warn("Event Service | findByEvaluation() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -135,7 +135,7 @@ public class EventService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Event Service | updateEvent() Fail: 에러 발생=> " + e.getMessage());
+            log.warn("Event Service | updateEvent() Fail: 에러 발생=> {}", e.getMessage());
             return false;
         }
     }
@@ -160,7 +160,7 @@ public class EventService {
             return true;
         }
         catch(Exception e) {
-            log.warn("Event Service | deleteEvent() Fail: 에러 발생 => " + e.getMessage());
+            log.warn("Event Service | deleteEvent() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
