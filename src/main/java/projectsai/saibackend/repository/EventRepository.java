@@ -2,7 +2,7 @@ package projectsai.saibackend.repository;
 
 import org.springframework.stereotype.Repository;
 import projectsai.saibackend.domain.Event;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
 
@@ -32,8 +32,8 @@ public class EventRepository {
         return em.find(Event.class, eventId);
     }
 
-    // READ - Member ID 검색
-    public List<Event> findAll(Member owner) {
+    // READ - User ID 검색
+    public List<Event> findAll(User owner) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner", Event.class)
                 .setParameter("owner", owner)
@@ -41,7 +41,7 @@ public class EventRepository {
     }
 
     // READ - Event 이름으로 검색
-    public List<Event> findByEventName(Member owner, String eventName) {
+    public List<Event> findByEventName(User owner, String eventName) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner " +
                         "and e.name = :eventName", Event.class)
@@ -51,7 +51,7 @@ public class EventRepository {
     }
 
     // READ - 날짜로 검색
-    public List<Event> findByDate(Member owner, LocalDate date) {
+    public List<Event> findByDate(User owner, LocalDate date) {
         return em.createQuery("select e from Event e " +
                         "where e.owner = :owner " +
                         "and e.date = :date", Event.class)
@@ -61,7 +61,7 @@ public class EventRepository {
     }
 
     // READ - 목적으로 검색
-    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
+    public List<Event> findByPurpose(User owner, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
                                 "where e.owner = :owner " +
                                 "and e.purpose = :purpose", Event.class)
@@ -71,7 +71,7 @@ public class EventRepository {
     }
 
     // READ - 평가로 검색
-    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
+    public List<Event> findByEvaluation(User owner, EventEvaluation evaluation) {
         return em.createQuery("select e from Event e " +
                                 "where e.owner = :owner " +
                                 "and e.evaluation = :evaluation", Event.class)

@@ -3,19 +3,16 @@ package projectsai.saibackend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import projectsai.saibackend.domain.Event;
-import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.domain.Record;
-import projectsai.saibackend.domain.enums.EventEvaluation;
-import projectsai.saibackend.domain.enums.EventPurpose;
-import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.RelationType;
+import projectsai.saibackend.domain.*;
+import projectsai.saibackend.domain.enums.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +26,8 @@ public class DummyData {
         initService.dbInit2();
     }
 
-    @Component @Transactional
+    @Component
+    @Transactional
     @RequiredArgsConstructor
     static class InitService {
 
@@ -37,20 +35,20 @@ public class DummyData {
         private final PasswordEncoder passwordEncoder;
 
         public void dbInit1() {
-            Member member1 = new Member("Raphael Lee" ,"raphaellee1014@gmali.com", passwordEncoder.encode("abcabc"), 1);
-            em.persist(member1);
+            User user1 = new User("Raphael Lee" ,"raphaellee1014@gmali.com", passwordEncoder.encode("abcabc"), 1);
+            em.persist(user1);
 
-            Friend friend1 = new Friend(member1, "아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
-            Friend friend2 = new Friend(member1, "쯔바이", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-            Friend friend3 = new Friend(member1, "드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 70, null, null);
-            Friend friend4 = new Friend(member1, "피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 30, null, null);
+            Friend friend1 = new Friend(user1, "아인", RelationType.FRIEND, RelationStatus.NORMAL, 50,  null, null);
+            Friend friend2 = new Friend(user1, "쯔바이", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+            Friend friend3 = new Friend(user1, "드라이", RelationType.FRIEND, RelationStatus.POSITIVE, 70, null, null);
+            Friend friend4 = new Friend(user1, "피어", RelationType.FRIEND, RelationStatus.NEGATIVE, 30, null, null);
             em.persist(friend1);
             em.persist(friend2);
             em.persist(friend3);
             em.persist(friend4);
 
-            Event event1 = new Event(member1, LocalDate.now(), EventPurpose.CHILL, "첫번째놀자", EventEvaluation.GREAT);
-            Event event2 = new Event(member1, LocalDate.now(), EventPurpose.CHILL, "두번째놀자", EventEvaluation.GREAT);
+            Event event1 = new Event(user1, LocalDate.now(), EventPurpose.CHILL, "첫번째놀자", EventEvaluation.GREAT);
+            Event event2 = new Event(user1, LocalDate.now(), EventPurpose.CHILL, "두번째놀자", EventEvaluation.GREAT);
             em.persist(event1);
             em.persist(event2);
 
@@ -65,21 +63,21 @@ public class DummyData {
         }
 
         public void dbInit2() {
-            Member member2 = new Member("David Lee" ,"devraphy@gmali.com", passwordEncoder.encode("123123"), 1);
-            em.persist(member2);
+            User user2 = new User("David Lee" ,"devraphy@gmali.com", passwordEncoder.encode("123123"), 1);
+            em.persist(user2);
 
-            Friend friend1 = new Friend(member2,"지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-            Friend friend2 = new Friend(member2,"아크트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-            Friend friend3 = new Friend(member2,"노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 70, null, null);
-            Friend friend4 = new Friend(member2, "첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 30, null, null);
+            Friend friend1 = new Friend(user2,"지벤", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+            Friend friend2 = new Friend(user2,"아크트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+            Friend friend3 = new Friend(user2,"노인", RelationType.BUSINESS, RelationStatus.POSITIVE, 70, null, null);
+            Friend friend4 = new Friend(user2, "첸", RelationType.BUSINESS, RelationStatus.NEGATIVE, 30, null, null);
             em.persist(friend1);
             em.persist(friend2);
             em.persist(friend3);
             em.persist(friend4);
 
 
-            Event event1 = new Event(member2, LocalDate.now(), EventPurpose.WORK, "첫번째회의", EventEvaluation.GREAT);
-            Event event2 = new Event(member2, LocalDate.now(), EventPurpose.WORK, "두번째회의", EventEvaluation.GREAT);
+            Event event1 = new Event(user2, LocalDate.now(), EventPurpose.WORK, "첫번째회의", EventEvaluation.GREAT);
+            Event event2 = new Event(user2, LocalDate.now(), EventPurpose.WORK, "두번째회의", EventEvaluation.GREAT);
             em.persist(event1);
             em.persist(event2);
 
@@ -92,11 +90,11 @@ public class DummyData {
             em.persist(record3);
             em.persist(record4);
 
-            Member member3 = new Member("test1" ,"test@gmail.com",passwordEncoder.encode("abcabc") , 1);
-            em.persist(member3);
+            User user3 = new User("test1" ,"test@gmail.com",passwordEncoder.encode("abcabc") , 1);
+            em.persist(user3);
 
-            Member member4 = new Member("test2" ,"resign@gmail.com", passwordEncoder.encode("123123"), 0);
-            em.persist(member4);
+            User user4 = new User("test2" ,"resign@gmail.com", passwordEncoder.encode("123123"), 0);
+            em.persist(user4);
         }
     }
 }

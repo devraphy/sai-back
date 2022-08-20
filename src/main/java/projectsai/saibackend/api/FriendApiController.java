@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.dto.friend.requestDto.AddFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
@@ -35,7 +35,7 @@ public class FriendApiController {
     public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
 
         int score = setInitialScore(request.getStatus());
-        Member owner = em.find(Member.class, request.getOwnerId());
+        User owner = em.find(User.class, request.getOwnerId());
         Friend friend = new Friend(owner, request.getName(), request.getType(),
                 request.getStatus(), score, request.getMemo(), request.getBirthDate());
 
@@ -51,7 +51,7 @@ public class FriendApiController {
     public List<SearchFriendResponse> findAll(@RequestBody @Valid SearchFriendRequest request) {
 
         try {
-            Member owner = em.find(Member.class, request.getOwnerId());
+            User owner = em.find(User.class, request.getOwnerId());
             List<Friend> allFriends = friendService.findAll(owner);
 
             List<SearchFriendResponse> result = allFriends.stream()

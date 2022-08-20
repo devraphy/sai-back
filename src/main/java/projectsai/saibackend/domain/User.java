@@ -5,28 +5,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
 
-@Entity @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+@Entity @Getter
+@Table(name = "USERS")
+public class User {
     @Id @GeneratedValue
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column(name = "member_name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, unique = true)
@@ -36,36 +29,30 @@ public class Member {
     private String password;
 
     @CreationTimestamp
-    private LocalDate signUpDate;
+    private Timestamp signUpDate;
 
     @NotNull
-    private Boolean visibility;
-
-    @ManyToMany
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Integer visibility;
 
     // Constructor
 
+    public User() {}
+
     @Builder
-    public Member(String name, String email, String password, Boolean visibility, List<Role> roles) {
+    public User(String name, String email, String password, Integer visibility) {
         this.name = name;
         this.email = email.toLowerCase();
         this.password = password;
         this.visibility = visibility;
-        this.roles = roles;
     }
 
-    public static Member buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
-        Member member = Member.builder()
+    public static User buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
+        return User.builder()
                 .name(joinMemberRequest.getName())
                 .email(joinMemberRequest.getEmail().toLowerCase())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
-                .visibility(Boolean.TRUE)
+                .visibility(1)
                 .build();
-        return member;
     }
 
     // Business Methods
@@ -76,6 +63,6 @@ public class Member {
     }
 
     public void deleteMember() {
-        this.visibility = Boolean.FALSE;
+        this.visibility = 0;
     }
 }

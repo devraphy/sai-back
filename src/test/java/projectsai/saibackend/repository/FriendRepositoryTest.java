@@ -7,15 +7,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +28,11 @@ public class FriendRepositoryTest {
     @Autowired FriendRepository friendRepository;
 
     private Friend friend1, friend2, friend3;
-    private Member owner;
+    private User owner;
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcde", 1);
+        owner = new User("이근형","abc@gmail.com", "abcde", 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         friend3 = new Friend(owner, "친구3", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);

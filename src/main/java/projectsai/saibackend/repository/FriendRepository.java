@@ -2,7 +2,7 @@ package projectsai.saibackend.repository;
 
 import org.springframework.stereotype.Repository;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 
@@ -26,8 +26,8 @@ public class FriendRepository {
 
     // *********************************** READ
 
-    // READ - Member ID로 검색
-    public List<Friend> findAll(Member owner) {
+    // READ - User ID로 검색
+    public List<Friend> findAll(User owner) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner = :owner", Friend.class)
                 .setParameter("owner", owner)
@@ -43,7 +43,7 @@ public class FriendRepository {
     }
 
     // READ - 이름으로 검색
-    public List<Friend> findByName(Member owner, String name) {
+    public List<Friend> findByName(User owner, String name) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner = :owner " +
                         "and f.name = :name ", Friend.class)
@@ -53,7 +53,7 @@ public class FriendRepository {
     }
 
     // READ - 관계 종류로 검색
-    public List<Friend> findByType(Member owner, RelationType type) {
+    public List<Friend> findByType(User owner, RelationType type) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner = :owner " +
                         "and f.type = :type", Friend.class)
@@ -63,7 +63,7 @@ public class FriendRepository {
     }
 
     // READ - 관계 상태로 검색
-    public List<Friend> findByStatus(Member owner, RelationStatus status) {
+    public List<Friend> findByStatus(User owner, RelationStatus status) {
         return em.createQuery("select f from Friend f " +
                         "where f.owner = :owner " +
                         "and f.status = :status", Friend.class)

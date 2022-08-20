@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.dto.event.requestDto.AddEventRequest;
@@ -41,7 +41,7 @@ public class EventApiController {
     @PostMapping("/add") // 이벤트 - 저장
     public AddEventResponse addEvent(@RequestBody @Valid AddEventRequest request) {
         try {
-            Member owner = em.find(Member.class, request.getOwnerId());
+            User owner = em.find(User.class, request.getOwnerId());
             Event event = new Event(owner, request.getDate(), request.getPurpose(),
                     request.getName(), request.getEvaluation());
 
@@ -65,7 +65,7 @@ public class EventApiController {
     public List<SearchEventResponse> searchEvents(@RequestBody @Valid SearchEventRequest request) {
         try {
             List<SearchEventResponse> result = new ArrayList<>();
-            Member owner = em.find(Member.class, request.getOwnerId());
+            User owner = em.find(User.class, request.getOwnerId());
             List<Event> allEvents = eventService.findAll(owner);
 
             for (Event event : allEvents) {

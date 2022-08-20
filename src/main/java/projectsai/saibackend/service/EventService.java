@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
@@ -57,7 +57,7 @@ public class EventService {
     }
 
     // 이벤트 전체 검색
-    public List<Event> findAll(Member owner) {
+    public List<Event> findAll(User owner) {
         try {
             List<Event> eventList = eventRepository.findAll(owner);
             log.info("Event Service | findAll() Success: 검색 성공");
@@ -70,7 +70,7 @@ public class EventService {
     }
 
     // 이벤트 이름 검색
-    public List<Event> findByName(Member owner, String name) {
+    public List<Event> findByName(User owner, String name) {
         try {
             List<Event> eventList = eventRepository.findByEventName(owner, name);
             log.info("Event Service | findByName() Success: 검색 성공");
@@ -83,7 +83,7 @@ public class EventService {
     }
 
     // 이벤트 날짜 검색
-    public List<Event> findByDate(Member owner, LocalDate date) {
+    public List<Event> findByDate(User owner, LocalDate date) {
         try {
             List<Event> eventList = eventRepository.findByDate(owner, date);
             log.info("Event Service | findByDate() Success: 검색 성공");
@@ -96,7 +96,7 @@ public class EventService {
     }
 
     // 이벤트 목적 검색
-    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
+    public List<Event> findByPurpose(User owner, EventPurpose purpose) {
         try {
             List<Event> eventList = eventRepository.findByPurpose(owner, purpose);
             log.info("Event Service | findByPurpose() Success: 검색 성공");
@@ -109,7 +109,7 @@ public class EventService {
     }
 
     // 이벤트 평가 검색
-    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
+    public List<Event> findByEvaluation(User owner, EventEvaluation evaluation) {
         try {
             List<Event> eventList = eventRepository.findByEvaluation(owner, evaluation);
             log.info("Event Service | findByEvaluation() Success: 검색 성공");

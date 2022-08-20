@@ -2,9 +2,9 @@ package projectsai.saibackend.dto.member.responseDto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.domain.User;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Data @Builder
@@ -13,11 +13,11 @@ public class SearchMemberResponse {
     private String email;
     private String name;
     private String password;
-    private LocalDate signUpDate;
+    private Timestamp signUpDate;
     private Boolean result;
 
     @Builder
-    public SearchMemberResponse(Long id, String email, String name, String password, LocalDate signUpDate, Boolean result) {
+    public SearchMemberResponse(Long id, String email, String name, String password, Timestamp signUpDate, Boolean result) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -26,13 +26,13 @@ public class SearchMemberResponse {
         this.result = result;
     }
 
-    public static SearchMemberResponse buildResponse(Member member) {
+    public static SearchMemberResponse buildResponse(User user) {
         SearchMemberResponse response = SearchMemberResponse.builder()
-                .id(member.getMemberId())
-                .email(member.getEmail())
-                .name(member.getName())
-                .password(member.getPassword())
-                .signUpDate(member.getSignUpDate())
+                .id(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .signUpDate(user.getSignUpDate())
                 .result(Boolean.TRUE)
                 .build();
         return response;

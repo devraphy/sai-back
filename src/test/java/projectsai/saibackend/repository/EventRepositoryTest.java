@@ -10,16 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.domain.enums.EventEvaluation;
-import projectsai.saibackend.domain.enums.EventPurpose;
-import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.RelationType;
+import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.enums.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,12 +27,12 @@ class EventRepositoryTest {
     @Autowired EventRepository eventRepository;
     @PersistenceContext EntityManager em;
 
-    private Member owner;
+    private User owner;
     private Friend friend1, friend2, business1, business2;
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", "abcdefg", 1);
+        owner = new User("이근형","abc@gmail.com", "abcdefg", 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
         business1 = new Friend(owner, "동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);

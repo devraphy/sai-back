@@ -6,14 +6,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.domain.enums.EventEvaluation;
-import projectsai.saibackend.domain.enums.EventPurpose;
-import projectsai.saibackend.domain.enums.RelationStatus;
-import projectsai.saibackend.domain.enums.RelationType;
+import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.enums.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class EventServiceTest {
@@ -32,15 +28,14 @@ class EventServiceTest {
     @PersistenceContext EntityManager em;
     @Autowired EventService eventService;
 
-    private Member owner;
+    private User owner;
     private Friend friend1, friend2, friend3;
     private Event event1, event2, event3, event4;
-
     private List<Friend> friendList;
 
     @BeforeEach
     void createMemberFriendEvent() {
-        owner = new Member("라파파", "rapapa@gmail.com", "aasdf", 1);
+        owner = new User("라파파", "rapapa@gmail.com", "aasdf", 1);
         friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
         friend3 = new Friend(owner, "친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
