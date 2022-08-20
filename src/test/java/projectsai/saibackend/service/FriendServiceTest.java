@@ -6,10 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
-import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
@@ -17,7 +16,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,12 +28,12 @@ class FriendServiceTest {
     @PersistenceContext EntityManager em;
     @Autowired FriendService friendService;
 
-    private User owner;
+    private Member owner;
     private Friend friend1, friend2, friend3, business1, business2, business3;
 
     @BeforeEach
     private void createMember() {
-        owner = new User("라파파", "rapapa@gmail.com", "abcde", 1);
+        owner = new Member("라파파", "rapapa@gmail.com", "abcde", 1);
         em.persist(owner);
     }
 

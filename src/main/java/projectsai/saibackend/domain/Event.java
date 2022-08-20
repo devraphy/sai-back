@@ -19,7 +19,7 @@ public class Event {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private User owner;
+    private Member owner;
 
     @NotNull
     private LocalDate date;
@@ -36,7 +36,7 @@ public class Event {
     // Constructor
     public Event() {}
 
-    public Event(User owner, LocalDate date, EventPurpose purpose, String name, EventEvaluation evaluation) {
+    public Event(Member owner, LocalDate date, EventPurpose purpose, String name, EventEvaluation evaluation) {
         this.owner = owner;
         this.date = date;
         this.purpose = purpose;

@@ -8,80 +8,78 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import projectsai.saibackend.domain.Role;
-import projectsai.saibackend.domain.User;
+import projectsai.saibackend.domain.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 
 @SpringBootTest
 @Transactional @Slf4j
-class UserRepositoryTest {
+class MemberRepositoryTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired PasswordEncoder passwordEncoder;
 
-    private User user1, user2;
+    private Member user1, user2;
     private Long savedId1, savedId2;
 
     @BeforeEach
     public void createMember() {
 
-        user1 = new User("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1, new ArrayList<>());
-        user2 = new User("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1, new ArrayList<>());
+        user1 = new Member("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1, new ArrayList<>());
+        user2 = new Member("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1, new ArrayList<>());
 
-        savedId1 = userRepository.addMember(user1);
-        savedId2 = userRepository.addMember(user2);
+        savedId1 = memberRepository.addMember(user1);
+        savedId2 = memberRepository.addMember(user2);
 
         em.flush();
         em.clear();
     }
 
-    @Test @DisplayName("User - 회원 저장")
+    @Test @DisplayName("Member - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        user1 = new User("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1, new ArrayList<>());
+        user1 = new Member("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1, new ArrayList<>());
 
         // when
-        Long savedMemberId = userRepository.addMember(user1);
+        Long savedMemberId = memberRepository.addMember(user1);
 
         // then
         Assertions.assertThat(savedMemberId).isEqualTo(user1.getUserId());
     }
 
-    @Test @DisplayName("User - 전체 검색")
+    @Test @DisplayName("Member - 전체 검색")
     public void findAllMember() throws Exception {
         // given
 
         // when
-        List<User> allUser = userRepository.findAll();
+        List<Member> allMember = memberRepository.findAll();
 
         // then
-        Assertions.assertThat(allUser.size()).isEqualTo(5);
+        Assertions.assertThat(allMember.size()).isEqualTo(5);
     }
 
-    @Test @DisplayName("User - ID로 검색")
+    @Test @DisplayName("Member - ID로 검색")
     public void findById() throws Exception {
         //given
 
         //when
-        User findUser1 = userRepository.findById(savedId1);
-        User findUser2 = userRepository.findById(savedId2);
+        Member findUser1 = memberRepository.findById(savedId1);
+        Member findUser2 = memberRepository.findById(savedId2);
 
         //then
         Assertions.assertThat(findUser1.getUserId()).isEqualTo(savedId1);
         Assertions.assertThat(findUser2.getUserId()).isEqualTo(savedId2);
     }
 
-    @Test @DisplayName("User - Email로 검색")
+    @Test @DisplayName("Member - Email로 검색")
     public void findByEmail() throws Exception {
         // given
         String email1 = user1.getEmail();
@@ -89,8 +87,8 @@ class UserRepositoryTest {
 
 
         // when
-        User findUser1 = userRepository.findByEmail(email1);
-        User findUser2 = userRepository.findByEmail(email2);
+        Member findUser1 = memberRepository.findByEmail(email1);
+        Member findUser2 = memberRepository.findByEmail(email2);
 
         //then
         Assertions.assertThat(findUser1.getUserId()).isEqualTo(user1.getUserId());
