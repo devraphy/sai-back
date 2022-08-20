@@ -10,11 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import projectsai.saibackend.domain.Role;
 import projectsai.saibackend.domain.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,10 +34,13 @@ class UserRepositoryTest {
 
     @BeforeEach
     public void createMember() {
-        user1 = new User("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1);
-        user2 = new User("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1);
+
+        user1 = new User("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1, new ArrayList<>());
+        user2 = new User("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1, new ArrayList<>());
+
         savedId1 = userRepository.addMember(user1);
         savedId2 = userRepository.addMember(user2);
+
         em.flush();
         em.clear();
     }
@@ -43,7 +48,7 @@ class UserRepositoryTest {
     @Test @DisplayName("User - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        user1 = new User("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1);
+        user1 = new User("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1, new ArrayList<>());
 
         // when
         Long savedMemberId = userRepository.addMember(user1);

@@ -11,6 +11,9 @@ import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity @Getter
 @Table(name = "USERS")
@@ -34,16 +37,19 @@ public class User {
     @NotNull
     private Integer visibility;
 
-    // Constructor
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles = new ArrayList<>();
 
+    // Constructor
     public User() {}
 
     @Builder
-    public User(String name, String email, String password, Integer visibility) {
+    public User(String name, String email, String password, Integer visibility, List<Role> roles) {
         this.name = name;
         this.email = email.toLowerCase();
         this.password = password;
         this.visibility = visibility;
+        this.roles = roles;
     }
 
     public static User buildMember(JoinMemberRequest joinMemberRequest, PasswordEncoder passwordEncoder) {
@@ -52,6 +58,7 @@ public class User {
                 .email(joinMemberRequest.getEmail().toLowerCase())
                 .password(passwordEncoder.encode(joinMemberRequest.getPassword()))
                 .visibility(1)
+                .roles(new ArrayList<>())
                 .build();
     }
 
@@ -60,6 +67,10 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public void addRoleToUser(Role role) {
+        this.roles.add(role);
     }
 
     public void deleteMember() {
