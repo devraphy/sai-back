@@ -3,11 +3,13 @@ package projectsai.saibackend.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.domain.Role;
-import projectsai.saibackend.repository.RoleRepository;
 import projectsai.saibackend.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
@@ -18,19 +20,27 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor @Slf4j
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     @PersistenceContext EntityManager em;
     private final MemberRepository memberRepository;
-    private final RoleRepository roleRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(username);
+
+        if(member == null) {
+            throw new UsernameNotFoundException("존재하지 않는 email 입니다.");
+        }
+
+        return member;
+    }
 
     // 회원 가입
     @Transactional
     public boolean signUp(Member user) {
         try {
             if(emailValidation(user.getEmail())) {
-                Role role_user = roleRepository.findByPosition("ROLE_USER");
-                user.addRoleToUser(role_user);
                 memberRepository.addMember(user);
                 log.info("Member Service | signUp() Success: 저장 성공");
                 return true;
@@ -89,7 +99,7 @@ public class MemberService {
     public Boolean emailValidation(String email) {
         try {
             Member findUser = memberRepository.findByEmail(email);
-            if(findUser.getVisibility().equals(0)) {
+            if(findUser.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | emailValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
@@ -106,7 +116,8 @@ public class MemberService {
     public boolean loginValidation(String email, String password) {
         try {
             Member user = memberRepository.findByEmail(email);
-            if(user.getVisibility().equals(0)) {
+
+            if(user.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
@@ -130,7 +141,7 @@ public class MemberService {
         try {
             Member user = memberRepository.findByEmail(email);
 
-            if(user.getVisibility().equals(0)) {
+            if(user.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | updateMember() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
@@ -159,7 +170,7 @@ public class MemberService {
     public boolean deleteMember(String email) {
         try {
             Member user = memberRepository.findByEmail(email);
-            if(user.getVisibility().equals(0)) {
+            if(user.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | deleteMember() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }

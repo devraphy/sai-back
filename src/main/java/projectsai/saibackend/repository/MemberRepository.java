@@ -25,27 +25,27 @@ public class MemberRepository {
 
     // READ - ID로 검색
     public Member findById(Long memberId) {
-        return em.createQuery("select u from Member u " +
-                        "where u.id = :memberId " +
-                        "and u.visibility = :visibility", Member.class)
+        return em.createQuery("select m from Member m " +
+                        "where m.id = :memberId " +
+                        "and m.visibility = :visibility", Member.class)
                 .setParameter("memberId", memberId)
-                .setParameter("visibility", 1)
+                .setParameter("visibility", Boolean.TRUE)
                 .getSingleResult();
     }
 
     // READ - email로 검색
     public Member findByEmail(String email) {
-        return em.createQuery("select u from Member u " +
-                        "where u.email = :email", Member.class)
+        return em.createQuery("select m from Member m " +
+                        "where m.email = :email", Member.class)
                 .setParameter("email", email)
                 .getSingleResult();
     }
 
     // READ - 전체 검색
     public List<Member> findAll() {
-        return em.createQuery("select u from Member u " +
-                        "where u.visibility = :visibility", Member.class)
-                .setParameter("visibility", 1)
+        return em.createQuery("select m from Member m " +
+                        "where m.visibility = :visibility", Member.class)
+                .setParameter("visibility", Boolean.TRUE)
                 .getResultList();
     }
 }

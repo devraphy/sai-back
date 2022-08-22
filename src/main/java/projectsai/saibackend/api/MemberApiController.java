@@ -2,6 +2,7 @@ package projectsai.saibackend.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Member;
@@ -21,11 +22,13 @@ public class MemberApiController {
 
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
-        Member user = Member.buildMember(request, passwordEncoder);
+        Member member = new Member(request.getName(), request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                Boolean.TRUE, "ROLE_USER");
 
-        if(memberService.signUp(user)) {
+        if(memberService.signUp(member)) {
             log.info("Member API | joinMember() Success: 회원 가입 성공");
-            return new JoinMemberResponse(user.getMemberId(), Boolean.TRUE);
+            return new JoinMemberResponse(member.getMemberId(), Boolean.TRUE);
         }
         log.warn("Member API | joinMember() Fail: 회원 가입 실패");
         return new JoinMemberResponse(null, Boolean.FALSE);

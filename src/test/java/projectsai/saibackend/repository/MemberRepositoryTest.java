@@ -7,13 +7,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,9 +23,8 @@ import java.util.List;
 class MemberRepositoryTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired PasswordEncoder passwordEncoder;
+    @Autowired MemberRepository memberRepository;
+    BCryptPasswordEncoder passwordEncoder;
 
     private Member user1, user2;
     private Long savedId1, savedId2;
@@ -33,8 +32,10 @@ class MemberRepositoryTest {
     @BeforeEach
     public void createMember() {
 
-        user1 = new Member("이근형","abc@gmail.com", passwordEncoder.encode("abcabc"), 1, new ArrayList<>());
-        user2 = new Member("곽두팔","twoegiht@gmail.com", passwordEncoder.encode("2828"), 1, new ArrayList<>());
+        user1 = new Member("이근형","abc@gmail.com",
+                passwordEncoder.encode("abcabc"), Boolean.TRUE);
+        user2 = new Member("곽두팔","twoegiht@gmail.com",
+                passwordEncoder.encode("2828"), Boolean.TRUE);
 
         savedId1 = memberRepository.addMember(user1);
         savedId2 = memberRepository.addMember(user2);
@@ -46,13 +47,14 @@ class MemberRepositoryTest {
     @Test @DisplayName("Member - 회원 저장")
     public void saveMember() throws Exception {
         // given
-        user1 = new Member("저장테스트","save@gmail.com", passwordEncoder.encode("save"), 1, new ArrayList<>());
+        user1 = new Member("저장테스트","save@gmail.com",
+                passwordEncoder.encode("save"), Boolean.TRUE);
 
         // when
         Long savedMemberId = memberRepository.addMember(user1);
 
         // then
-        Assertions.assertThat(savedMemberId).isEqualTo(user1.getUserId());
+        Assertions.assertThat(savedMemberId).isEqualTo(user1.getMemberId());
     }
 
     @Test @DisplayName("Member - 전체 검색")
@@ -75,8 +77,8 @@ class MemberRepositoryTest {
         Member findUser2 = memberRepository.findById(savedId2);
 
         //then
-        Assertions.assertThat(findUser1.getUserId()).isEqualTo(savedId1);
-        Assertions.assertThat(findUser2.getUserId()).isEqualTo(savedId2);
+        Assertions.assertThat(findUser1.getMemberId()).isEqualTo(savedId1);
+        Assertions.assertThat(findUser2.getMemberId()).isEqualTo(savedId2);
     }
 
     @Test @DisplayName("Member - Email로 검색")
@@ -91,7 +93,7 @@ class MemberRepositoryTest {
         Member findUser2 = memberRepository.findByEmail(email2);
 
         //then
-        Assertions.assertThat(findUser1.getUserId()).isEqualTo(user1.getUserId());
-        Assertions.assertThat(findUser2.getUserId()).isEqualTo(user2.getUserId());
+        Assertions.assertThat(findUser1.getMemberId()).isEqualTo(user1.getMemberId());
+        Assertions.assertThat(findUser2.getMemberId()).isEqualTo(user2.getMemberId());
     }
 }

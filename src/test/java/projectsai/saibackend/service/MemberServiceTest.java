@@ -26,8 +26,8 @@ class MemberServiceTest {
 
     @BeforeEach
     void createMember() throws Exception {
-        user1 = new Member("이근형", "abc@gmail.com", "abcdefg", 1);
-        user2 = new Member("박근형", "def@gmail.com", "abcdefg", 1);
+        user1 = new Member("이근형", "abc@gmail.com", "abcdefg", Boolean.TRUE);
+        user2 = new Member("박근형", "def@gmail.com", "abcdefg", Boolean.TRUE);
         memberService.signUp(user1);
         memberService.signUp(user2);
     }
@@ -35,7 +35,7 @@ class MemberServiceTest {
     @Test @DisplayName("Member - 회원 가입")
     void signUp() throws Exception {
         // given
-        Member newUser = new Member("라파파", "rapapa@gmail.com", "abcdefg", 1);
+        Member newUser = new Member("라파파", "rapapa@gmail.com", "abcdefg", Boolean.TRUE);
 
         // when
         memberService.signUp(newUser);
