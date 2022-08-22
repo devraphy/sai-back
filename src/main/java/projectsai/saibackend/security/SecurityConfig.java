@@ -32,7 +32,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .addFilter(corsConfig.corsFilter())
-//                .addFilter(new LoginAuthenticationFilter(authenticationManagerBean()))
                 .csrf()
                     .disable()
                     .sessionManagement()
