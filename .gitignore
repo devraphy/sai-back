@@ -2,7 +2,8 @@ HELP.md
 .gradle
 application.yml
 application.properties
-Memo.txt
+DummyData.java
+memo.txt
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
