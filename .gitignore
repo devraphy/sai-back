@@ -2,6 +2,7 @@ HELP.md
 .gradle
 application.yml
 application.properties
+Memo.txt
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
