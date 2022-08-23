@@ -6,11 +6,13 @@
 4. JWT 개념 공부 할것 (Session, Cookie)
 
 
+ // 오늘 할일
+    1. JWT 토큰을 일일이 response 해주어야 하는가?
+    2. request 에서도 마찬가지 인가?(프론트에서 JWT를 어디에 저장하지?)
+    3. 준우 Todo Spring 코드에서 어떻게 구현했는지 물어볼 것
+    4. 페이지에 띄워놓은 UsernamePasswordAuthenticationFilter 포스팅 내용 확인할 것
+    5. 로그인 과정에서 비밀번호 확인하는 것을 UsernamePasswordAuthenticationFilter로 구현해야한다.
 
 
-        // Join 시점에는 Token이 없잖아?
-        // Login 시점에는 Token이 만료될 수 있잖아?
-        // 그런건 어떻게 처리하는데?
-        // 일단 2시간짜리 미국인 인강 먼저 어떻게 하는지 천천히 보자
-        // 그리고 문준님한테 물어보고
-        // 4시간짜리 Security 인강도 보자.
+// 깨달은 것
+   - final을 붙이면 Bean circular 오류가 발생한다. 왜지? final의 기능과 역할을 알아볼 것
