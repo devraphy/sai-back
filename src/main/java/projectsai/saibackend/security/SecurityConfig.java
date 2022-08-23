@@ -9,9 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import projectsai.saibackend.security.filter.JwtAuthenticationFilter;
-import projectsai.saibackend.security.jwt.JwtTokenProvider;
 
 
 @Configuration
@@ -20,7 +17,6 @@ import projectsai.saibackend.security.jwt.JwtTokenProvider;
 public class SecurityConfig {
 
     private final CorsConfig corsConfig;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,12 +35,7 @@ public class SecurityConfig {
         http.httpBasic().disable();
 
         http.authorizeRequests()
-                .antMatchers("/api/member/join", "/api/member/login").permitAll()
-                .anyRequest().authenticated();
-
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests();
+                .anyRequest().permitAll();
 
         return http.build();
     }
