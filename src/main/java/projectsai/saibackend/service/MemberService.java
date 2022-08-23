@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,21 +21,11 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor @Slf4j
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     @PersistenceContext EntityManager em;
     private final MemberRepository memberRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username);
-
-        if(member == null) {
-            throw new UsernameNotFoundException("존재하지 않는 email 입니다.");
-        }
-
-        return member;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     // 회원 가입
     @Transactional
@@ -122,8 +113,8 @@ public class MemberService implements UserDetailsService {
                 return false;
             }
 
-            else if(user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                log.info("Member Service | loginValidation() Success: 로그인 성공 => {}", email);
+            else if(user.getEmail().equals(email) && passwordEncoder.matches(password, user.getPassword())) {
+                log.info("Member Service | loginValidation() Success: 매칭 성공 => {}", email);
                 return true;
             }
         }

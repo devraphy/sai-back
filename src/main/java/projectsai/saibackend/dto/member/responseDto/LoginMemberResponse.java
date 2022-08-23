@@ -7,5 +7,6 @@ import lombok.Data;
 @Data @AllArgsConstructor
 public class LoginMemberResponse {
     private String email;
+    private String refreshToken;
     private Boolean result;
 }

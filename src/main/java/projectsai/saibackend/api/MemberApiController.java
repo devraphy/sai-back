@@ -1,13 +1,14 @@
 package projectsai.saibackend.api;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.dto.member.requestDto.*;
 import projectsai.saibackend.dto.member.responseDto.*;
+import projectsai.saibackend.security.jwt.JwtTokenProvider;
 import projectsai.saibackend.service.MemberService;
 
 import javax.validation.Valid;
@@ -19,29 +20,39 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/join") // 회원 - 가입
     public JoinMemberResponse joinMember(@RequestBody @Valid JoinMemberRequest request) {
         Member member = new Member(request.getName(), request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                Boolean.TRUE, "ROLE_USER");
+                passwordEncoder.encode(request.getPassword()), Boolean.TRUE, "ROLE_USER");
 
         if(memberService.signUp(member)) {
             log.info("Member API | joinMember() Success: 회원 가입 성공");
-            return new JoinMemberResponse(member.getMemberId(), Boolean.TRUE);
+            String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole());
+            return new JoinMemberResponse(member.getMemberId(), token, Boolean.TRUE);
         }
         log.warn("Member API | joinMember() Fail: 회원 가입 실패");
-        return new JoinMemberResponse(null, Boolean.FALSE);
+        return new JoinMemberResponse(null, null, Boolean.FALSE);
     }
 
     @PostMapping("/login") // 회원 - 로그인
     public LoginMemberResponse loginMember(@RequestBody @Valid LoginMemberRequest request) {
+
         if(memberService.loginValidation(request.getEmail().toLowerCase(), request.getPassword())) {
-            log.info("Member API | loginMember() Success: 로그인 성공");
-            return new LoginMemberResponse(request.getEmail().toLowerCase(), Boolean.TRUE);
+            try {
+                if (jwtTokenProvider.validateToken(request.getToken())) {
+                    return new LoginMemberResponse(request.getEmail().toLowerCase(), null, Boolean.TRUE);
+                }
+            }
+            catch (ExpiredJwtException e) {
+                log.info("Member API | loginMember() Success: 로그인 성공 및 refresh_token 발행");
+                String refreshToken = jwtTokenProvider.createToken(request.getEmail(), request.getRole());
+                return new LoginMemberResponse(request.getEmail().toLowerCase(), refreshToken, Boolean.TRUE);
+            }
         }
         log.warn("Member API | loginMember() Fail: 로그인 실패");
-        return new LoginMemberResponse(null, Boolean.FALSE);
+        return new LoginMemberResponse(null, null, Boolean.FALSE);
     }
 
     @PostMapping("/profile") // 회원 - 정보 조회

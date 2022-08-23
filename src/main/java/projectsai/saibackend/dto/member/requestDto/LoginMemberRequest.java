@@ -8,4 +8,6 @@ import javax.validation.constraints.NotNull;
 public class LoginMemberRequest {
     private String email;
     private String password;
+    private String role;
+    private String token;
 }
