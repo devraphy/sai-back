@@ -18,8 +18,6 @@ public class JwtTokenProvider {
     @Value("${JWT_SECRET_KEY}")
     private String jwt_secret_key;
 
-    // 토큰 유효시간 30분
-    private final long tokenValidTime = 1 * 60 * 1000L;
     private final UserDetailsService userDetailsService;
 
     @PostConstruct
@@ -27,21 +25,30 @@ public class JwtTokenProvider {
         jwt_secret_key = Base64.getEncoder().encodeToString(jwt_secret_key.getBytes());
     }
 
-    // JWT 토큰 생성
-    public String createToken(String email, String role) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("role", role);
+    // Access 토큰 생성
+    public String createAccessToken(String email, String role) {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
                 .setHeaderParam("typ","jwt")
-                .setClaims(claims)
+                .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .setExpiration(new Date(now.getTime() + 2 * 3600 * 1000)) // 2시간
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
                 .compact();
     }
 
-    // JWT 토큰에서 인증 정보 조회 (이거 필요한가?)
+    // Refresh 토큰 생성
+    public String createRefreshToken(String email) {
+        Date now = new Date(System.currentTimeMillis());
+        return Jwts.builder()
+                .setHeaderParam("typ","jwt")
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000)) // 7일
+                .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
+                .compact();
+    }
+
+    // JWT 토큰에서 인증 정보 조회
     public boolean getAuthentication(String token, String email) {
         String subject = Jwts.parser()
                 .setSigningKey(jwt_secret_key)
@@ -86,18 +93,6 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty. => {}", e.getMessage());
         }
         return false;
-    }
-
-    // 토큰 만료 검사
-    public boolean validateExpiration(String token) {
-        try {
-            Jwts.parser().setSigningKey(jwt_secret_key).parseClaimsJws(token);
-            return true;
-        }
-        catch(ExpiredJwtException e) {
-            log.warn("validateExpiration() | 토큰이 만료되었습니다. => {}", e.getMessage());
-            return false;
-        }
     }
 }
 
