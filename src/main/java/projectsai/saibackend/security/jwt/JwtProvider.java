@@ -42,6 +42,7 @@ public class JwtProvider {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
                 .setHeaderParam("typ","jwt")
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000)) // 7일
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)

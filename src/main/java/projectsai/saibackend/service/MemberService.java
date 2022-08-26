@@ -29,20 +29,14 @@ public class MemberService {
 
     // 회원 가입
     @Transactional
-    public boolean signUp(Member user) {
+    public boolean signUp(Member member) {
         try {
-            if(emailValidation(user.getEmail())) {
-                memberRepository.addMember(user);
-                log.info("Member Service | signUp() Success: 저장 성공");
-                return true;
-            }
-            else {
-                log.warn("Member Service | signUp() Fail: 저장 실패");
-                return false;
-            }
+            memberRepository.addMember(member);
+            log.info("Member Service | signUp() Success: 저장 성공");
+            return true;
         }
         catch(Exception e) {
-            log.warn("Member Service | signUp() Fail: 에러 발생 => {}", e.getMessage());
+            log.error("Member Service | signUp() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
@@ -50,12 +44,12 @@ public class MemberService {
     // 전체 회원 검색
     public List<Member> findAll() {
         try {
-            List<Member> userList = memberRepository.findAll();
-            log.info("Member Service | findAll() Success: 검색 성공");
-            return userList;
+            List<Member> memberList = memberRepository.findAll();
+            log.info("Member Service | findAll(): 검색 성공");
+            return memberList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Member Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
+            log.warn("Member Service | findAll(): 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -63,12 +57,12 @@ public class MemberService {
     // 특정 회원 검색
     public Member findMember(Long id) {
         try {
-            Member user = memberRepository.findById(id);
-            log.info("Member Service | findMember() Success: 검색 성공");
-            return user;
+            Member member = memberRepository.findById(id);
+            log.info("Member Service | findMember(): 검색 성공");
+            return member;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Member Service | findMember() Fail: 검색 결과 없음 => {}", e.getMessage());
+            log.warn("Member Service | findMember(): 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -76,12 +70,12 @@ public class MemberService {
     // email 회원 검색
     public Member findByEmail(String email) {
         try {
-            Member user = memberRepository.findByEmail(email);
-            log.info("Member Service | findByEmail() Success: 검색 성공");
-            return user;
+            Member member = memberRepository.findByEmail(email);
+            log.info("Member Service | findByEmail(): 검색 성공");
+            return member;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Member Service | findByEmail() Fail: 검색 결과 없음 => {}", e.getMessage());
+            log.warn("Member Service | findByEmail(): 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
@@ -89,8 +83,8 @@ public class MemberService {
     // 회원 가입 - email 중복 검사
     public Boolean emailValidation(String email) {
         try {
-            Member findUser = memberRepository.findByEmail(email);
-            if(findUser.getVisibility().equals(Boolean.FALSE)) {
+            Member member = memberRepository.findByEmail(email);
+            if(member.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | emailValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
@@ -106,14 +100,14 @@ public class MemberService {
     // 로그인 - email & password 검증
     public boolean loginValidation(String email, String password) {
         try {
-            Member user = memberRepository.findByEmail(email);
+            Member member = memberRepository.findByEmail(email);
 
-            if(user.getVisibility().equals(Boolean.FALSE)) {
+            if(member.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
 
-            else if(user.getEmail().equals(email) && passwordEncoder.matches(password, user.getPassword())) {
+            else if(member.getEmail().equals(email) && passwordEncoder.matches(password, member.getPassword())) {
                 log.info("Member Service | loginValidation() Success: 매칭 성공 => {}", email);
                 return true;
             }
@@ -130,14 +124,14 @@ public class MemberService {
     @Transactional
     public boolean updateMember(Long id, String email, String name, String password) {
         try {
-            Member user = memberRepository.findByEmail(email);
+            Member member = memberRepository.findByEmail(email);
 
-            if(user.getVisibility().equals(Boolean.FALSE)) {
+            if(member.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | updateMember() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
-            else if(user.getEmail().equals(email) && user.getMemberId().equals(id)) {
-                user.updateInfo(name, email, password);
+            else if(member.getEmail().equals(email) && member.getMemberId().equals(id)) {
+                member.updateInfo(name, email, password);
                 em.flush();
                 em.clear();
                 log.info("Member Service | updateMember() Success: 이메일 외 정보 수정 성공");
@@ -145,8 +139,8 @@ public class MemberService {
             }
         }
         catch(EmptyResultDataAccessException e) {
-            Member findUser = memberRepository.findById(id);
-            findUser.updateInfo(name, email, password);
+            Member member = memberRepository.findById(id);
+            member.updateInfo(name, email, password);
             em.flush();
             em.clear();
             log.info("Member Service | updateMember() Success: 이메일 포함 정보 수정 성공");
@@ -160,13 +154,13 @@ public class MemberService {
     @Transactional
     public boolean deleteMember(String email) {
         try {
-            Member user = memberRepository.findByEmail(email);
-            if(user.getVisibility().equals(Boolean.FALSE)) {
+            Member member = memberRepository.findByEmail(email);
+            if(member.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | deleteMember() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
             else {
-                user.deleteMember();
+                member.deleteMember();
                 log.info("Member Service | deleteMember() Success: 탈퇴 성공 => {}", email);
                 em.flush();
                 em.clear();

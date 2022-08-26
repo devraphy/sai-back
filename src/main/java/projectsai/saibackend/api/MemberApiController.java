@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.dto.member.requestDto.*;
 import projectsai.saibackend.dto.member.responseDto.*;
-import projectsai.saibackend.security.jwt.JwtTokenProvider;
+import projectsai.saibackend.security.jwt.JwtProvider;
 import projectsai.saibackend.service.MemberService;
 
 import javax.servlet.http.Cookie;
@@ -27,19 +27,32 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostMapping("/join") // 회원 - 가입
-    public void joinMember(@RequestBody @Valid JoinMemberRequest request, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
-        Member member = new Member(request.getName(), request.getEmail(),
-                passwordEncoder.encode(request.getPassword()), Boolean.TRUE, "ROLE_USER");
+    @PostMapping("/join/email/validation") // 이메일 중복 검증
+    public EmailValidationResponse emailValidation(@RequestBody @Valid EmailValidationRequest request) {
+        String email = request.getEmail().toLowerCase();
+
+        if(memberService.emailValidation(email)) {
+            log.info("Member API | emailValidation() Success: 신규 이메일 확인");
+            return new EmailValidationResponse(email, Boolean.TRUE);
+        }
+        log.warn("Member API | emailValidation() Fail: 중복된 이메일");
+        return new EmailValidationResponse(email, Boolean.FALSE);
+    }
+
+    @PostMapping("/join") // 회원 가입
+    public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+        Member member = new Member(requestDTO.getName(), requestDTO.getEmail().toLowerCase(),
+                passwordEncoder.encode(requestDTO.getPassword()), Boolean.TRUE, "ROLE_USER");
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         if(memberService.signUp(member)) {
-            String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
-            String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
+            String email = member.getEmail();
+            String accessToken = jwtProvider.createAccessToken(email, member.getRole());
+            String refreshToken = jwtProvider.createRefreshToken(email);
 
             Cookie access_cookie = tokenToCookie("access_token", accessToken, servletReq);
             Cookie refresh_cookie = tokenToCookie("refresh_token", refreshToken, servletReq);
@@ -49,7 +62,6 @@ public class MemberApiController {
             servletResp.setHeader("role", member.getRole());
 
             log.info("Member API | joinMember() Success: 회원 가입 성공");
-
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new JoinMemberResponse(member.getMemberId(), Boolean.TRUE));
         }
@@ -59,63 +71,118 @@ public class MemberApiController {
                 new JoinMemberResponse(null, Boolean.FALSE));
     }
 
-    @PostMapping("/login") // 회원 - 로그인
-    public void loginMember(@RequestBody @Valid LoginMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException{
+    @GetMapping("/login") // refresh_token 검증을 이용한 로그인 검증
+    public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         Cookie[] cookies = servletReq.getCookies();
-        String accessToken = servletReq.getCookies()[0].getValue();
-        String refreshToken = servletReq.getCookies()[1].getValue();
+        if(cookies.length > 0) {
+            String refreshToken = cookies[1].getValue();
 
+            try {
+                if(jwtProvider.validateToken(refreshToken)) {
+                    String email = jwtProvider.getUserPk(refreshToken);
+                    Member member = memberService.findByEmail(email);
+
+                    String newAccessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+                    String newRefreshToken = jwtProvider.createRefreshToken(member.getEmail());
+
+                    Cookie accessCookie = tokenToCookie("access_token", newAccessToken, servletReq);
+                    Cookie refreshCookie = tokenToCookie("refresh_token", newRefreshToken, servletReq);
+
+                    servletResp.addCookie(accessCookie);
+                    servletResp.addCookie(refreshCookie);
+                    servletResp.setHeader("role", member.getRole());
+                    servletResp.setStatus(HttpServletResponse.SC_OK);
+
+                    log.info("Member API | tokenLogin() Success: 토큰으로 로그인 성공 및 갱신");
+                    objectMapper.writeValue(servletResp.getOutputStream(),
+                            new TokenLoginResponse(Boolean.TRUE));
+                }
+            }
+            catch (ExpiredJwtException e) {
+                log.warn("Member API | tokenLogin() Fail: 토큰 만료됨 => {}", e.getMessage());
+                return;
+            }
+        }
+
+        log.warn("Member API | tokenLogin() Fail: 토큰으로 로그인 실패");
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(),
+                new TokenLoginResponse(Boolean.FALSE));
+    }
+
+    @PostMapping("/login") // 로그인
+    public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException{
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         if(memberService.loginValidation(requestDTO.getEmail().toLowerCase(), requestDTO.getPassword())) {
-            try {
-                if(jwtTokenProvider.validateToken(accessToken)) {
-                    log.info("Member API | loginMember() Success: 로그인 성공");
-                    objectMapper.writeValue(servletResp.getOutputStream(),
-                            new LoginMemberResponse(requestDTO.getEmail(), Boolean.TRUE));
-                }
-            }
-            catch(ExpiredJwtException e) {
 
-                // 여기서 TryCatch로 refreshToken 유효성 검증 및 예외 처리 해야한다??????
+            Member findMember = memberService.findByEmail(requestDTO.getEmail().toLowerCase());
+            String email = findMember.getEmail();
 
-                if(jwtTokenProvider.validateToken(refreshToken)) {
-                    log.info("Member API | loginMember() Success: 로그인 성공 및 JWT Token 갱신");
-                    accessToken = jwtTokenProvider.createAccessToken(requestDTO.getEmail(), requestDTO.getRole());
-                    refreshToken = jwtTokenProvider.createRefreshToken(requestDTO.getEmail());
+            String accessToken = jwtProvider.createAccessToken(email, findMember.getRole());
+            String refreshToken = jwtProvider.createRefreshToken(email);
 
-                    Cookie access_cookie = tokenToCookie("access_token", accessToken, servletReq);
-                    Cookie refresh_cookie = tokenToCookie("refresh_token", refreshToken, servletReq);
+            Cookie access_cookie = tokenToCookie("access_token", accessToken, servletReq);
+            Cookie refresh_cookie = tokenToCookie("refresh_token", refreshToken, servletReq);
 
-                    servletResp.addCookie(access_cookie);
-                    servletResp.addCookie(refresh_cookie);
-                    servletResp.setHeader("role", requestDTO.getRole());
-                    servletResp.setStatus(HttpServletResponse.SC_OK);
+            servletResp.addCookie(access_cookie);
+            servletResp.addCookie(refresh_cookie);
+            servletResp.setHeader("role", findMember.getRole());
+            servletResp.setStatus(HttpServletResponse.SC_OK);
 
-                    objectMapper.writeValue(servletResp.getOutputStream(),
-                            new LoginMemberResponse(requestDTO.getEmail(), Boolean.TRUE));
-                }
-            }
+            objectMapper.writeValue(servletResp.getOutputStream(),
+                    new LoginMemberResponse(email, Boolean.TRUE));
         }
+
         log.warn("Member API | loginMember() Fail: 로그인 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(),
                 new LoginMemberResponse(null, Boolean.FALSE));
     }
 
-    @PostMapping("/profile") // 회원 - 정보 조회
-    // 이미 로그인을 한 상태이니까 토큰 값만 확인하자.
-    // (프론트에서 role 확인해서 못들어오게 막을 것)
-    // ==> 이렇게 하려면 Role을 쿠키에 저장해야 하지 않을까?
-    public SearchMemberResponse searchMember(@RequestBody @Valid SearchMemberRequest request) {
-        if(memberService.loginValidation(request.getEmail(), request.getPassword())) {
-            Member findUser = memberService.findByEmail(request.getEmail());
-            log.info("Member API | searchMember() Success: 프로필 접근 성공");
-            return SearchMemberResponse.buildResponse(findUser);
+    // 이미 로그인을 한 상태이니까 토큰 값만 검증
+    // 프론트에서 role 확인해서 못들어오게 막을 것 ==> 이렇게 하려면 Role을 쿠키에 저장해야 하지 않을까?
+    @GetMapping("/profile") // 회원 - 정보 조회
+    public void searchMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+
+        Cookie[] cookies = servletReq.getCookies();
+        String accessToken = cookies[0].getValue();
+        String refreshToken = cookies[1].getValue();
+        String email = null;
+        boolean flag = false;
+
+        if(jwtProvider.validateToken(accessToken)) {
+            email = jwtProvider.getUserPk(accessToken);
+            flag = true;
         }
-        log.warn("Member API | searchMember() Fail: 프로필 접근 실패");
-        return new SearchMemberResponse(null, null, null, null, null, Boolean.FALSE);
+        else if(jwtProvider.validateToken(refreshToken)) {
+            email = jwtProvider.getUserPk(refreshToken);
+            flag = true;
+        }
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        if(flag) {
+            Member member = memberService.findByEmail(email);
+            String newAccessToken = jwtProvider.createAccessToken(email, member.getRole());
+            String newRefreshToken = jwtProvider.createRefreshToken(email);
+
+            Cookie access_cookie = tokenToCookie("access_token", accessToken, servletReq);
+            Cookie refresh_cookie = tokenToCookie("refresh_token", refreshToken, servletReq);
+
+            servletResp.addCookie(access_cookie);
+            servletResp.addCookie(refresh_cookie);
+            servletResp.setHeader("role", member.getRole());
+
+            servletResp.setStatus(HttpServletResponse.SC_OK);
+            objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
+        }
+
+        // HTTP Status 의미에 대해서 더 알아보자. BAD REQUEST 말고 사용할 수 있는 상태코드가 있을거야
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new SearchMemberResponse(null, null, null, null, Boolean.FALSE));
     }
 
     @PutMapping("/profile") // 회원 - 정보 수정
@@ -142,8 +209,9 @@ public class MemberApiController {
     }
 
 
-    private Cookie tokenToCookie(String key, String token, HttpServletRequest request) {
-        Cookie cookie = new Cookie(key, token);
+    // 비지니스 메서드
+    private Cookie tokenToCookie(String name, String token, HttpServletRequest request) {
+        Cookie cookie = new Cookie(name, token);
         cookie.setPath(request.getContextPath());
         cookie.setMaxAge(7 * 86400);
         return cookie;
