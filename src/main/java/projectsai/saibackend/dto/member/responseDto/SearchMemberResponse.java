@@ -12,16 +12,14 @@ public class SearchMemberResponse {
     private String email;
     private String name;
     private String password;
-    private Timestamp signUpDate;
     private Boolean result;
 
     @Builder
-    public SearchMemberResponse(Long id, String email, String name, String password, Timestamp signUpDate, Boolean result) {
+    public SearchMemberResponse(Long id, String email, String name, String password, Boolean result) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.password = password;
-        this.signUpDate = signUpDate;
         this.result = result;
     }
 
@@ -31,7 +29,6 @@ public class SearchMemberResponse {
                 .email(user.getEmail())
                 .name(user.getName())
                 .password(user.getPassword())
-                .signUpDate(user.getSignUpDate())
                 .result(Boolean.TRUE)
                 .build();
         return response;
