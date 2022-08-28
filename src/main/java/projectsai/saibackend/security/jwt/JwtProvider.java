@@ -26,10 +26,10 @@ public class JwtProvider {
     }
 
     // Access 토큰 생성
-    public String createAccessToken(String email, String role) {
+    public String createAccessToken(String email) {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
-                .setHeaderParam("typ","jwt")
+                .setHeaderParam("typ","access")
                 .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + 2 * 3600 * 1000)) // 2시간
@@ -41,7 +41,7 @@ public class JwtProvider {
     public String createRefreshToken(String email) {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
-                .setHeaderParam("typ","jwt")
+                .setHeaderParam("typ","refresh")
                 .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000)) // 7일
@@ -63,7 +63,7 @@ public class JwtProvider {
     }
 
     // 토큰에서 회원 정보 추출
-    public String getUserPk(String token) {
+    public String getUserEmail(String token) {
         return Jwts.parser()
                 .setSigningKey(jwt_secret_key)
                 .parseClaimsJws(token)

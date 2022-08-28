@@ -55,6 +55,6 @@ public class Member {
     }
 
     public void deleteMember() {
-        this.visibility = Boolean.TRUE;
+        this.visibility = Boolean.FALSE;
     }
 }
