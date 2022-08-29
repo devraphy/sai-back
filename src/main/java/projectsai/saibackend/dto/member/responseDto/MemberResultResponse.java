@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LogoutMemberResponse {
+public class MemberResultResponse {
     private Boolean result;
 }

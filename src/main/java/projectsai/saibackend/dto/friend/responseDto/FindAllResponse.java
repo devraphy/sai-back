@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 
 @Data @AllArgsConstructor
-public class SearchFriendResponse {
+public class FindAllResponse {
 
     private Long id;
     private String name;
@@ -19,7 +19,7 @@ public class SearchFriendResponse {
     private String memo;
     private LocalDate birthDate;
 
-    public SearchFriendResponse(Friend friend) {
+    public FindAllResponse(Friend friend) {
         this.id = friend.getFriendId();
         this.name = friend.getName();
         this.type = friend.getType();

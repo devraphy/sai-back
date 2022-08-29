@@ -1,7 +1,6 @@
 package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,8 +46,8 @@ public class MemberApiController {
     }
 
     @PostMapping("/join") // 회원 가입
-    public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO, HttpServletRequest servletReq,
-                           HttpServletResponse servletResp) throws IOException {
+    public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
+                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         Member member = new Member(requestDTO.getName(), requestDTO.getEmail().toLowerCase(),
                 passwordEncoder.encode(requestDTO.getPassword()), Boolean.TRUE, "ROLE_USER");
@@ -78,25 +77,20 @@ public class MemberApiController {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            Cookie[] cookies = servletReq.getCookies();
-            String refreshToken = cookies[1].getValue();
+            if(jwtCookieService.validateRefreshToken(servletReq)) {
+                Cookie[] cookies = servletReq.getCookies();
+                String refreshToken = cookies[1].getValue();
 
-            try {
-                if(jwtProvider.validateToken(refreshToken)) {
-                    String email = jwtProvider.getUserEmail(refreshToken);
-                    Member member = memberService.findByEmail(email);
-                    String role = member.getRole();
+                String email = jwtProvider.getUserEmail(refreshToken);
+                Member member = memberService.findByEmail(email);
+                String role = member.getRole();
 
-                    jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
-                    servletResp.setStatus(HttpServletResponse.SC_OK);
+                jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
-                    log.info("Member API | tokenLogin() Success: refresh 토큰으로 로그인 성공 및 모든 토큰 갱신");
-                    objectMapper.writeValue(servletResp.getOutputStream(), new TokenLoginResponse(Boolean.TRUE));
-                    return;
-                }
-            }
-            catch (ExpiredJwtException e) {
-                log.warn("Member API | tokenLogin() Fail: 모든 토큰 만료됨 => {}", e.getMessage());
+                log.info("Member API | tokenLogin() Success: refresh 토큰으로 로그인 성공 및 모든 토큰 갱신");
+                servletResp.setStatus(HttpServletResponse.SC_OK);
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+                return;
             }
         }
         catch (Exception e) {
@@ -105,13 +99,12 @@ public class MemberApiController {
 
         log.warn("Member API | tokenLogin() Fail: 토큰으로 로그인 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        objectMapper.writeValue(servletResp.getOutputStream(), new TokenLoginResponse(Boolean.FALSE));
-
+        objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
     @PostMapping("/login") // 로그인
-    public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO, HttpServletRequest servletReq,
-                           HttpServletResponse servletResp) throws IOException {
+    public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO,
+                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -139,15 +132,15 @@ public class MemberApiController {
     public void logoutMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateCookie(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq)) {
                 log.info("Member API | memberLogout() Success: 로그아웃 성공");
                 jwtCookieService.terminateCookie(servletResp);
-                objectMapper.writeValue(servletResp.getOutputStream(), new LogoutMemberResponse(Boolean.TRUE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         else {
             log.warn("Member API | memberLogout() Fail: 로그아웃 실패 => 로그아웃 대상이 아님");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new LogoutMemberResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 
@@ -158,7 +151,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateCookie(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq)) {
             Cookie[] cookies = servletReq.getCookies();
             String accessToken = cookies[0].getValue();
 
@@ -179,45 +172,44 @@ public class MemberApiController {
     }
 
     @PutMapping("/profile") // 회원 - 정보 수정
-    public void updateMember(@RequestBody @Valid UpdateMemberRequest requestDTO, HttpServletRequest servletReq,
-                             HttpServletResponse servletResp) throws IOException {
+    public void updateMember(@RequestBody @Valid UpdateMemberRequest requestDTO,
+                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateCookie(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq)) {
             boolean result = memberService.updateMember(requestDTO.getId(), requestDTO.getEmail().toLowerCase(),
                     requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
             if(result) {
                 log.info("Member API | updateMember() Success: 프로필 수정 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), new UpdateMemberResponse(Boolean.TRUE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
             }
         }
-
         else {
             log.warn("Member API | updateMember() Fail: 프로필 수정 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new UpdateMemberResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 
     @DeleteMapping("/profile") // 회원 - 탈퇴
-    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO, HttpServletRequest servletReq,
-                                             HttpServletResponse servletResp) throws IOException {
+    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO,
+                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateCookie(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq)) {
             if(memberService.deleteMember(requestDTO.getEmail())) {
                 log.info("Member API | deleteMember() Success: 탈퇴 성공");
                 jwtCookieService.terminateCookie(servletResp);
-                objectMapper.writeValue(servletResp.getOutputStream(), new DeleteMemberResponse(Boolean.TRUE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
             }
         }
         else {
             log.warn("Member API | deleteMember() Fail: 탈퇴 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new DeleteMemberResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 }
