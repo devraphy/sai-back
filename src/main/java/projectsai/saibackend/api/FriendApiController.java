@@ -47,7 +47,7 @@ public class FriendApiController {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         if(jwtCookieService.validateAccessToken(servletReq)) {
-            int score = setInitialScore(requestDTO.getStatus());
+            int score = friendService.setInitialScore(requestDTO.getStatus());
             Member owner = em.find(Member.class, requestDTO.getOwnerId());
             Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
                     requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
@@ -75,7 +75,7 @@ public class FriendApiController {
                 List<Friend> allFriends = friendService.findAll(memberService.findByEmail(email));
 
                 List<FindAllResponse> result = allFriends.stream()
-                        .map(o -> new FindAllResponse(o)).collect(toList());
+                        .map(FindAllResponse::new).collect(toList());
 
                 log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), result);
@@ -93,7 +93,7 @@ public class FriendApiController {
     public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
 
         try {
-            Integer score = setInitialScore(request.getStatus());
+            Integer score = friendService.setInitialScore(request.getStatus());
             friendService.updateFriend(request.getFriendId(), request.getName(), request.getType(),
                     request.getStatus(), score, request.getMemo(), request.getBirthDate());
         }
@@ -117,15 +117,5 @@ public class FriendApiController {
         }
         log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
         return new DeleteFriendResponse(Boolean.FALSE);
-    }
-
-    // Business Methods
-    private int setInitialScore(RelationStatus status) {
-
-        if(status.equals(RelationStatus.BAD)) return 10;
-        else if(status.equals(RelationStatus.NEGATIVE)) return 30;
-        else if(status.equals(RelationStatus.NORMAL)) return 50;
-        else if(status.equals(RelationStatus.POSITIVE)) return 70;
-        else return 90;
     }
 }

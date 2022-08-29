@@ -217,4 +217,12 @@ public class FriendService {
             return false;
         }
     }
+
+    public int setInitialScore(RelationStatus status) {
+        if(status.equals(RelationStatus.BAD)) return 10;
+        else if(status.equals(RelationStatus.NEGATIVE)) return 30;
+        else if(status.equals(RelationStatus.NORMAL)) return 50;
+        else if(status.equals(RelationStatus.POSITIVE)) return 70;
+        else return 90;
+    }
 }
