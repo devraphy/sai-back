@@ -10,6 +10,7 @@ import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.dto.member.requestDto.*;
 import projectsai.saibackend.dto.member.responseDto.*;
 import projectsai.saibackend.security.jwt.JwtProvider;
+import projectsai.saibackend.service.JwtCookieService;
 import projectsai.saibackend.service.MemberService;
 
 import javax.servlet.http.Cookie;
@@ -26,6 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final JwtCookieService jwtCookieService;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -57,7 +59,7 @@ public class MemberApiController {
             String email = member.getEmail();
             String role = member.getRole();
 
-            setTokenInCookie(email, role, servletReq, servletResp);
+            jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
             log.info("Member API | joinMember() Success: 회원 가입 성공");
             objectMapper.writeValue(servletResp.getOutputStream(),
@@ -85,7 +87,7 @@ public class MemberApiController {
                     Member member = memberService.findByEmail(email);
                     String role = member.getRole();
 
-                    setTokenInCookie(email, role, servletReq, servletResp);
+                    jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
                     servletResp.setStatus(HttpServletResponse.SC_OK);
 
                     log.info("Member API | tokenLogin() Success: refresh 토큰으로 로그인 성공 및 모든 토큰 갱신");
@@ -114,7 +116,7 @@ public class MemberApiController {
             Member member = memberService.findByEmail(requestDTO.getEmail().toLowerCase());
             String email = member.getEmail();
 
-            setTokenInCookie(email, member.getRole(), servletReq, servletResp);
+            jwtCookieService.setTokenInCookie(email, member.getRole(), servletReq, servletResp);
             servletResp.setStatus(HttpServletResponse.SC_OK);
             objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
         }
@@ -127,6 +129,22 @@ public class MemberApiController {
         }
     }
 
+    @GetMapping("/logout")
+    public void logoutMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        if(jwtCookieService.validateCookie(servletReq)) {
+                log.info("Member API | memberLogout() Success: 로그아웃 성공");
+                jwtCookieService.terminateCookie(servletResp);
+                objectMapper.writeValue(servletResp.getOutputStream(), new LogoutMemberResponse(Boolean.TRUE));
+        }
+        else {
+            log.warn("Member API | memberLogout() Fail: 로그아웃 실패 => 로그아웃 대상이 아님");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(servletResp.getOutputStream(), new LogoutMemberResponse(Boolean.FALSE));
+        }
+    }
+
     // 이미 로그인을 한 상태이니까 토큰 값만 검증
     // 프론트에서 role 확인해서 못들어오게 막을 것 ==> 이렇게 하려면 Role을 쿠키에 저장해야 하지 않을까?
     @GetMapping("/profile") // 회원 - 정보 조회
@@ -134,7 +152,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(validateTokenInCookie(servletReq)) {
+        if(jwtCookieService.validateCookie(servletReq)) {
             Cookie[] cookies = servletReq.getCookies();
             String accessToken = cookies[0].getValue();
 
@@ -158,7 +176,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(validateTokenInCookie(servletReq)) {
+        if(jwtCookieService.validateCookie(servletReq)) {
             boolean result = memberService.updateMember(requestDTO.getId(), requestDTO.getEmail().toLowerCase(),
                     requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
@@ -181,18 +199,10 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(validateTokenInCookie(servletReq)) {
+        if(jwtCookieService.validateCookie(servletReq)) {
             if(memberService.deleteMember(requestDTO.getEmail())) {
                 log.info("Member API | deleteMember() Success: 탈퇴 성공");
-                Cookie accessCookie = new Cookie("access_token", null);
-                Cookie refreshCookie = new Cookie("refresh_token", null);
-
-                accessCookie.setMaxAge(0);
-                refreshCookie.setMaxAge(0);
-
-                servletResp.addCookie(accessCookie);
-                servletResp.addCookie(refreshCookie);
-
+                jwtCookieService.terminateCookie(servletResp);
                 objectMapper.writeValue(servletResp.getOutputStream(), new DeleteMemberResponse(Boolean.TRUE));
             }
         }
@@ -202,43 +212,4 @@ public class MemberApiController {
             objectMapper.writeValue(servletResp.getOutputStream(), new DeleteMemberResponse(Boolean.FALSE));
         }
     }
-
-
-    // ================================= 비지니스 메서드 =================================
-
-    // Token을 담은 Cookie 객체를 생성하는 기능
-    private Cookie tokenToCookie(String name, String token, HttpServletRequest request) {
-        Cookie cookie = new Cookie(name, token);
-        cookie.setPath(request.getContextPath());
-        cookie.setMaxAge(7 * 86400);
-        return cookie;
-    }
-
-    // Token을 발행하고 이를 담은 Cookie 객체를 생성한 다음 HttpSerletResponse에 저장하는 기능
-    private void setTokenInCookie(String email, String role, HttpServletRequest servletReq,
-                                  HttpServletResponse servletResp) {
-
-        String accessToken = jwtProvider.createAccessToken(email);
-        String refreshToken = jwtProvider.createRefreshToken(email);
-
-        Cookie access_cookie = tokenToCookie("access_token", accessToken, servletReq);
-        Cookie refresh_cookie = tokenToCookie("refresh_token", refreshToken, servletReq);
-
-        servletResp.addCookie(access_cookie);
-        servletResp.addCookie(refresh_cookie);
-        servletResp.setHeader("Role", role);
-    }
-
-    // SHttpServletRequest로부터 전달된 Cookie 내부의 토큰 값을 검증하는 기능
-    private boolean validateTokenInCookie(HttpServletRequest servletReq) {
-        Cookie[] cookies = servletReq.getCookies();
-        String accessToken = cookies[0].getValue();
-        String refreshToken = cookies[1].getValue();
-
-        if(jwtProvider.validateToken(accessToken) && jwtProvider.validateToken(refreshToken)) {
-            return true;
-        }
-        return false;
-    }
-
 }
