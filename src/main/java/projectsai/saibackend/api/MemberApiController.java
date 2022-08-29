@@ -32,16 +32,17 @@ public class MemberApiController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/email/validation") // 이메일 중복 검증
-    public EmailValidationResponse emailValidation(@RequestBody @Valid EmailValidationRequest request) {
+    public void emailValidation(@RequestBody @Valid EmailValidationRequest request,
+                                                   HttpServletResponse servletResp) throws IOException {
         String email = request.getEmail().toLowerCase();
 
         if(memberService.emailValidation(email)) {
             log.info("Member API | emailValidation() Success: 신규 이메일 확인");
-            return new EmailValidationResponse(email, Boolean.TRUE);
+            objectMapper.writeValue(servletResp.getOutputStream(), new EmailValidationResponse(email, Boolean.TRUE));
         }
         else {
             log.warn("Member API | emailValidation() Fail: 중복된 이메일");
-            return new EmailValidationResponse(email, Boolean.FALSE);
+            objectMapper.writeValue(servletResp.getOutputStream(), new EmailValidationResponse(email, Boolean.FALSE));
         }
     }
 
