@@ -1,5 +1,6 @@
 package projectsai.saibackend.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -8,20 +9,24 @@ import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.dto.friend.requestDto.AddFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
-import projectsai.saibackend.dto.friend.requestDto.SearchFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.UpdateFriendRequest;
-import projectsai.saibackend.dto.friend.responseDto.AddFriendResponse;
-import projectsai.saibackend.dto.friend.responseDto.DeleteFriendResponse;
-import projectsai.saibackend.dto.friend.responseDto.SearchFriendResponse;
-import projectsai.saibackend.dto.friend.responseDto.UpdateFriendResponse;
+import projectsai.saibackend.dto.friend.responseDto.*;
+import projectsai.saibackend.security.jwt.JwtProvider;
 import projectsai.saibackend.service.FriendService;
+import projectsai.saibackend.service.JwtCookieService;
+import projectsai.saibackend.service.MemberService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
@@ -30,40 +35,58 @@ public class FriendApiController {
 
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
+    private final MemberService memberService;
+    private final JwtCookieService jwtCookieService;
+    private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/add") // 친구 추가
-    public AddFriendResponse addFriend(@RequestBody @Valid AddFriendRequest request) {
+    public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
+                          HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        int score = setInitialScore(request.getStatus());
-        Member owner = em.find(Member.class, request.getOwnerId());
-        Friend friend = new Friend(owner, request.getName(), request.getType(),
-                request.getStatus(), score, request.getMemo(), request.getBirthDate());
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(friendService.addFriend(friend)) {
-            log.info("Friend API | addFriend() Success: 친구 저장 성공");
-            return new AddFriendResponse(Boolean.TRUE);
+        if(jwtCookieService.validateAccessToken(servletReq)) {
+            int score = setInitialScore(requestDTO.getStatus());
+            Member owner = em.find(Member.class, requestDTO.getOwnerId());
+            Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
+                    requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+
+            if(friendService.addFriend(friend)) {
+                log.info("Friend API | addFriend() Success: 친구 저장 성공");
+                objectMapper.writeValue(servletResp.getOutputStream(), new AddFriendResponse(Boolean.TRUE));
+                return;
+            }
         }
         log.warn("Friend API | addFriend() Fail: 친구 저장 실패");
-        return new AddFriendResponse(Boolean.FALSE);
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new AddFriendResponse(Boolean.FALSE));
     }
 
-    @PostMapping("/search") // 모든 친구 검색
-    public List<SearchFriendResponse> findAll(@RequestBody @Valid SearchFriendRequest request) {
+    @GetMapping("/search") // 모든 친구 검색
+    public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        try {
-            Member owner = em.find(Member.class, request.getOwnerId());
-            List<Friend> allFriends = friendService.findAll(owner);
+        if(jwtCookieService.validateAccessToken(servletReq)) {
+            Cookie[] cookies = servletReq.getCookies();
+            String accessToken = cookies[0].getValue();
+            String email = jwtProvider.getUserEmail(accessToken);
 
-            List<SearchFriendResponse> result = allFriends.stream()
-                    .map(o -> new SearchFriendResponse(o)).collect(toList());
+            try {
+                List<Friend> allFriends = friendService.findAll(memberService.findByEmail(email));
 
-            log.info("Friend API | findAll() Success: 검색 성공");
-            return result;
+                List<FindAllResponse> result = allFriends.stream()
+                        .map(o -> new FindAllResponse(o)).collect(toList());
+
+                log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
+                objectMapper.writeValue(servletResp.getOutputStream(), result);
+                return;
+            }
+            catch(Exception e) {
+                log.error("Friend API | findAll() Fail: 오류 발생 => {}", e.getMessage());
+            }
         }
-        catch(Exception e) {
-            log.warn("Friend API | findAll() Fail: 검색 실피");
-            return null;
-        }
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(),new FriendResultResponse(Boolean.FALSE));
     }
 
     @PutMapping("/update") // 친구 수정
