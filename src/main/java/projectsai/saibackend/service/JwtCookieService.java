@@ -1,5 +1,6 @@
 package projectsai.saibackend.service;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,21 +40,46 @@ public class JwtCookieService {
     }
 
     // HttpServletRequest 내부의 Cookie(= 토큰 값) 검증
-    public boolean validateCookie(HttpServletRequest servletRequest) {
+    public boolean validateAccessToken(HttpServletRequest servletRequest) {
         try {
             Cookie[] cookies = servletRequest.getCookies();
             String accessToken = cookies[0].getValue();
+
+            if(jwtProvider.validateToken(accessToken)) {
+                log.info("JwtCookieService | validateAccessToken() Success: Access 토큰 유효함");
+                return true;
+            }
+            log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료");
+            return false;
+        }
+        catch (ExpiredJwtException e) {
+            log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료됨 => {}", e.getMessage());
+        }
+        catch (Exception e) {
+            log.error("JwtCookieService | validateAccessToken() Fail: 에러 발생 => {}", e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean validateRefreshToken(HttpServletRequest servletRequest) {
+        try {
+            Cookie[] cookies = servletRequest.getCookies();
             String refreshToken = cookies[1].getValue();
 
             if(jwtProvider.validateToken(refreshToken)) {
+                log.info("JwtCookieService | validateRefreshToken() Success: Refresh 토큰 유효함");
                 return true;
             }
+            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료");
             return false;
+        }
+        catch (ExpiredJwtException e) {
+            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료됨 => {}", e.getMessage());
         }
         catch (Exception e) {
-            log.warn("JwtCookieService | validateCookie() Fail: 쿠키 조회 에러 => {}", e.getMessage());
-            return false;
+            log.error("JwtCookieService | validateRefreshToken() Fail: 에러 발생 => {}", e.getMessage());
         }
+        return false;
     }
 
     // Client(= 브라우저) 쿠키 말소
