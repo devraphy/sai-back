@@ -46,14 +46,12 @@ public class JwtCookieService {
             String refreshToken = cookies[1].getValue();
 
             if(jwtProvider.validateToken(refreshToken)) {
-                log.info("JwtCookieService | validateCookie() Success: JWT 유효함");
                 return true;
             }
-            log.info("JwtCookieService | validateCookie() Fail: JWT 만료");
             return false;
         }
-        catch (NullPointerException e) {
-            log.warn("JwtCookieService | validateCookie() Fail: 쿠키 없음 => {}", e.getMessage());
+        catch (Exception e) {
+            log.warn("JwtCookieService | validateCookie() Fail: 쿠키 조회 에러 => {}", e.getMessage());
             return false;
         }
     }

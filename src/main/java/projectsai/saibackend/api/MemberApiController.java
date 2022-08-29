@@ -92,14 +92,15 @@ public class MemberApiController {
 
                     log.info("Member API | tokenLogin() Success: refresh 토큰으로 로그인 성공 및 모든 토큰 갱신");
                     objectMapper.writeValue(servletResp.getOutputStream(), new TokenLoginResponse(Boolean.TRUE));
+                    return;
                 }
             }
             catch (ExpiredJwtException e) {
                 log.warn("Member API | tokenLogin() Fail: 모든 토큰 만료됨 => {}", e.getMessage());
             }
         }
-        catch (NullPointerException e) {
-            log.warn("Member API | tokenLogin() Fail: 쿠키 없음 => {}", e.getMessage());
+        catch (Exception e) {
+            log.error("Member API | tokenLogin() Fail: 쿠키 조회 에러 => {}", e.getMessage());
         }
 
         log.warn("Member API | tokenLogin() Fail: 토큰으로 로그인 실패");
