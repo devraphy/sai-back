@@ -77,8 +77,8 @@ public class MemberApiController {
     public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        Cookie[] cookies = servletReq.getCookies();
-        if(cookies != null) {
+        try {
+            Cookie[] cookies = servletReq.getCookies();
             String refreshToken = cookies[1].getValue();
 
             try {
@@ -98,11 +98,14 @@ public class MemberApiController {
                 log.warn("Member API | tokenLogin() Fail: 모든 토큰 만료됨 => {}", e.getMessage());
             }
         }
-        else {
-            log.warn("Member API | tokenLogin() Fail: 토큰으로 로그인 실패");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new TokenLoginResponse(Boolean.FALSE));
+        catch (NullPointerException e) {
+            log.warn("Member API | tokenLogin() Fail: 쿠키 없음 => {}", e.getMessage());
         }
+
+        log.warn("Member API | tokenLogin() Fail: 토큰으로 로그인 실패");
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new TokenLoginResponse(Boolean.FALSE));
+
     }
 
     @PostMapping("/login") // 로그인
@@ -117,12 +120,14 @@ public class MemberApiController {
             String email = member.getEmail();
 
             jwtCookieService.setTokenInCookie(email, member.getRole(), servletReq, servletResp);
+
+            log.warn("Member API | basicLogin() Success: 로그인 성공");
             servletResp.setStatus(HttpServletResponse.SC_OK);
             objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
         }
 
         else {
-            log.warn("Member API | loginMember() Fail: 로그인 실패");
+            log.warn("Member API | basicLogin() Fail: 로그인 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new LoginMemberResponse(null, Boolean.FALSE));
@@ -148,7 +153,7 @@ public class MemberApiController {
     // 이미 로그인을 한 상태이니까 토큰 값만 검증
     // 프론트에서 role 확인해서 못들어오게 막을 것 ==> 이렇게 하려면 Role을 쿠키에 저장해야 하지 않을까?
     @GetMapping("/profile") // 회원 - 정보 조회
-    public void searchMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -159,11 +164,13 @@ public class MemberApiController {
             String email = jwtProvider.getUserEmail(accessToken);
             Member member = memberService.findByEmail(email);
 
+            log.info("Member API | showMember() Success: 프로필 요청 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
         }
 
         else {
             // HTTP Status 의미에 대해서 더 알아보자. BAD REQUEST 말고 사용할 수 있는 상태코드가 있을거야
+            log.warn("Member API | showMember() Fail: 프로필 요청 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new SearchMemberResponse(null, null, null, null, Boolean.FALSE));

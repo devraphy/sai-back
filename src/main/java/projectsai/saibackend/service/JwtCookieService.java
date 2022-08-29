@@ -40,14 +40,22 @@ public class JwtCookieService {
 
     // HttpServletRequest 내부의 Cookie(= 토큰 값) 검증
     public boolean validateCookie(HttpServletRequest servletRequest) {
-        Cookie[] cookies = servletRequest.getCookies();
-        String accessToken = cookies[0].getValue();
-        String refreshToken = cookies[1].getValue();
+        try {
+            Cookie[] cookies = servletRequest.getCookies();
+            String accessToken = cookies[0].getValue();
+            String refreshToken = cookies[1].getValue();
 
-        if(jwtProvider.validateToken(accessToken) && jwtProvider.validateToken(refreshToken)) {
-            return true;
+            if(jwtProvider.validateToken(refreshToken)) {
+                log.info("JwtCookieService | validateCookie() Success: JWT 유효함");
+                return true;
+            }
+            log.info("JwtCookieService | validateCookie() Fail: JWT 만료");
+            return false;
         }
-        return false;
+        catch (NullPointerException e) {
+            log.warn("JwtCookieService | validateCookie() Fail: 쿠키 없음 => {}", e.getMessage());
+            return false;
+        }
     }
 
     // Client(= 브라우저) 쿠키 말소
