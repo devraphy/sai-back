@@ -42,20 +42,30 @@ public class JwtCookieService {
     }
 
     // HttpServletRequest 내부의 Cookie(= 토큰 값) 검증
-    public boolean validateAccessToken(HttpServletRequest servletRequest) {
+    public boolean validateAccessToken(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             Cookie[] cookies = servletRequest.getCookies();
             String accessToken = cookies[0].getValue();
+            String refreshToken = cookies[1].getValue();
 
-            if(jwtProvider.validateToken(accessToken)) {
-                log.info("JwtCookieService | validateAccessToken() Success: Access 토큰 유효함");
-                return true;
+            try {
+                if(jwtProvider.validateToken(accessToken)) {
+                    log.info("JwtCookieService | validateAccessToken() Success: Access 토큰 유효함");
+                    return true;
+                }
             }
-            log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료");
-            return false;
-        }
-        catch (ExpiredJwtException e) {
-            log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료됨 => {}", e.getMessage());
+            catch (ExpiredJwtException e) {
+                log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료됨 => {}", e.getMessage());
+                if(jwtProvider.validateToken(refreshToken)) {
+                    String userEmail = jwtProvider.getUserEmail(refreshToken);
+                    String newAccessToken = jwtProvider.createAccessToken(userEmail);
+                    Cookie access_cookie = createCookie("access_token", newAccessToken, servletRequest);
+                    servletResponse.addCookie(access_cookie);
+                    log.info("JwtCookieService | validateAccessToken(): Access 토큰 갱신");
+                    return true;
+                }
+                log.warn("JwtCookieService | validateAccessToken() Fail: 모든 토큰 만료됨");
+            }
         }
         catch (Exception e) {
             log.error("JwtCookieService | validateAccessToken() Fail: 에러 발생 => {}", e.getMessage());
