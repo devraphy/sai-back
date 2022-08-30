@@ -31,11 +31,13 @@ public class SecurityConfig {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.formLogin().disable();
-        http.httpBasic().disable();
-
         http.authorizeRequests()
                 .anyRequest().permitAll();
+
+        http.formLogin().disable();
+        http.httpBasic().disable();
+        http.rememberMe().disable();
+        http.logout().disable();
 
         return http.build();
     }
