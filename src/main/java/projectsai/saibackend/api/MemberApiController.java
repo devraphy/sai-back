@@ -38,12 +38,12 @@ public class MemberApiController {
 
         if(memberService.emailValidation(email)) {
             log.info("Member API | emailValidation() Success: 신규 이메일 확인");
-            objectMapper.writeValue(servletResp.getOutputStream(), new EmailValidationResponse(email, Boolean.TRUE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         else {
             log.warn("Member API | emailValidation() Fail: 중복된 이메일");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new EmailValidationResponse(email, Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 
@@ -70,7 +70,7 @@ public class MemberApiController {
             log.warn("Member API | joinMember() Fail: 회원 가입 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
-                    new JoinMemberResponse(null, Boolean.FALSE));
+                    new MemberResultResponse(Boolean.FALSE));
         }
     }
 
@@ -116,7 +116,7 @@ public class MemberApiController {
         else {
             log.warn("Member API | basicLogin() Fail: 로그인 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(null, Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 
@@ -124,7 +124,7 @@ public class MemberApiController {
     public void logoutMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
                 log.info("Member API | memberLogout() Success: 로그아웃 성공");
                 jwtCookieService.terminateCookie(servletResp);
                 objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
@@ -143,7 +143,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             Cookie[] cookies = servletReq.getCookies();
             String accessToken = cookies[0].getValue();
 
@@ -159,7 +159,7 @@ public class MemberApiController {
             log.warn("Member API | showMember() Fail: 프로필 요청 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
-                    new SearchMemberResponse(null, null, null, null, Boolean.FALSE));
+                    new MemberResultResponse(Boolean.FALSE));
         }
     }
 
@@ -169,7 +169,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             boolean result = memberService.updateMember(requestDTO.getId(), requestDTO.getEmail().toLowerCase(),
                     requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
@@ -191,7 +191,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             if(memberService.deleteMember(requestDTO.getEmail())) {
                 log.info("Member API | deleteMember() Success: 탈퇴 성공");
                 jwtCookieService.terminateCookie(servletResp);
