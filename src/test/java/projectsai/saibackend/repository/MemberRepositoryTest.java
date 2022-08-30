@@ -33,9 +33,9 @@ class MemberRepositoryTest {
     public void createMember() {
 
         user1 = new Member("이근형","abc@gmail.com",
-                passwordEncoder.encode("abcabc"), Boolean.TRUE);
+                passwordEncoder.encode("abcabc"), Boolean.TRUE, "ROLE_USER");
         user2 = new Member("곽두팔","twoegiht@gmail.com",
-                passwordEncoder.encode("2828"), Boolean.TRUE);
+                passwordEncoder.encode("2828"), Boolean.TRUE, "ROLE_USER");
 
         savedId1 = memberRepository.addMember(user1);
         savedId2 = memberRepository.addMember(user2);
@@ -48,7 +48,7 @@ class MemberRepositoryTest {
     public void saveMember() throws Exception {
         // given
         user1 = new Member("저장테스트","save@gmail.com",
-                passwordEncoder.encode("save"), Boolean.TRUE);
+                passwordEncoder.encode("save"), Boolean.TRUE, "ROLE_USER");
 
         // when
         Long savedMemberId = memberRepository.addMember(user1);

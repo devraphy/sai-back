@@ -18,8 +18,6 @@ public class JwtProvider {
     @Value("${JWT_SECRET_KEY}")
     private String jwt_secret_key;
 
-    private final UserDetailsService userDetailsService;
-
     @PostConstruct
     protected void init() {
         jwt_secret_key = Base64.getEncoder().encodeToString(jwt_secret_key.getBytes());

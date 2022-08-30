@@ -21,6 +21,8 @@ public class JwtCookieService {
         Cookie cookie = new Cookie(name, token);
         cookie.setMaxAge(7 * 86400);
         cookie.setComment("JWT");
+        cookie.setHttpOnly(true);
+        cookie.setPath(request.getContextPath());
         return cookie;
     }
 

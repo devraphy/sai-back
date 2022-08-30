@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.repository.MemberRepository;
@@ -23,11 +24,12 @@ class MemberServiceTest {
     MemberRepository memberRepository;
 
     private Member user1, user2;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
     void createMember() throws Exception {
-        user1 = new Member("이근형", "abc@gmail.com", "abcdefg", Boolean.TRUE);
-        user2 = new Member("박근형", "def@gmail.com", "abcdefg", Boolean.TRUE);
+        user1 = new Member("이근형", "abc@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
+        user2 = new Member("박근형", "def@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
         memberService.signUp(user1);
         memberService.signUp(user2);
     }
@@ -35,7 +37,7 @@ class MemberServiceTest {
     @Test @DisplayName("Member - 회원 가입")
     void signUp() throws Exception {
         // given
-        Member newUser = new Member("라파파", "rapapa@gmail.com", "abcdefg", Boolean.TRUE);
+        Member newUser = new Member("라파파", "rapapa@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
 
         // when
         memberService.signUp(newUser);

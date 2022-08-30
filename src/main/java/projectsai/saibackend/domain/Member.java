@@ -1,6 +1,7 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Entity @Getter
+@Entity @Getter @NoArgsConstructor
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -37,8 +38,6 @@ public class Member {
     private String role;
 
     // Constructor
-    public Member() {}
-
     public Member(String name, String email, String password, Boolean visibility, String role) {
         this.name = name;
         this.email = email;

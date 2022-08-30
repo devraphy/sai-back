@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
@@ -30,10 +31,11 @@ class FriendServiceTest {
 
     private Member owner;
     private Friend friend1, friend2, friend3, business1, business2, business3;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
     private void createMember() {
-        owner = new Member("라파파", "rapapa@gmail.com", "abcde", Boolean.TRUE);
+        owner = new Member("라파파", "rapapa@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
         em.persist(owner);
     }
 

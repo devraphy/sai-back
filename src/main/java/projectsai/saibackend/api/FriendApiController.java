@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
-import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.dto.friend.requestDto.AddFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.UpdateFriendRequest;
@@ -72,10 +71,10 @@ public class FriendApiController {
             String email = jwtProvider.getUserEmail(accessToken);
 
             try {
-                List<Friend> allFriends = friendService.findAll(memberService.findByEmail(email));
+                List<Friend> friendList = friendService.findAll(memberService.findByEmail(email));
 
-                List<FindAllResponse> result = allFriends.stream()
-                        .map(FindAllResponse::new).collect(toList());
+                List<FindFriendResponse> result = friendList.stream()
+                        .map(FindFriendResponse::new).collect(toList());
 
                 log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), result);
@@ -85,37 +84,46 @@ public class FriendApiController {
                 log.error("Friend API | findAll() Fail: 오류 발생 => {}", e.getMessage());
             }
         }
+        log.info("Friend API | findAll() Fail: 친구 검색 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(),new FriendResultResponse(Boolean.FALSE));
     }
 
     @PutMapping("/update") // 친구 수정
-    public UpdateFriendResponse updateFriend(@RequestBody @Valid UpdateFriendRequest request) {
+    public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
+                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        try {
-            Integer score = friendService.setInitialScore(request.getStatus());
-            friendService.updateFriend(request.getFriendId(), request.getName(), request.getType(),
-                    request.getStatus(), score, request.getMemo(), request.getBirthDate());
-        }
-        catch(Exception e) {
-            log.info("Friend API | updateFriend() Fail: 친구 수정 실패");
-            return new UpdateFriendResponse(Boolean.FALSE);
+        if(jwtCookieService.validateAccessToken(servletReq)) {
+            try {
+                Integer score = friendService.setInitialScore(requestDTO.getStatus());
+                friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
+                        requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+            }
+            catch(Exception e) {
+                log.info("Friend API | updateFriend() Fail: 친구 수정 실패");
+                servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
+                return;
+            }
         }
         log.info("Friend API | updateFriend() Success: 친구 수정 성공");
-        return new UpdateFriendResponse(Boolean.TRUE);
+        objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
     }
 
     @DeleteMapping("/delete")
-    public DeleteFriendResponse deleteFriend(@RequestBody @Valid DeleteFriendRequest request) {
+    public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
+                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        Friend friend = friendService.findById(request.getFriendId());
-        boolean result = friendService.deleteFriend(friend);
-
-        if(result) {
-            log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
-            return new DeleteFriendResponse(Boolean.TRUE);
+        if(jwtCookieService.validateAccessToken(servletReq)) {
+            Friend friend = friendService.findById(request.getFriendId());
+            if(friendService.deleteFriend(friend)) {
+                log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
+                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
+                return;
+            }
         }
         log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
-        return new DeleteFriendResponse(Boolean.FALSE);
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
 }
