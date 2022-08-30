@@ -45,7 +45,7 @@ public class FriendApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             int score = friendService.setInitialScore(requestDTO.getStatus());
             Member owner = em.find(Member.class, requestDTO.getOwnerId());
             Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
@@ -53,19 +53,19 @@ public class FriendApiController {
 
             if(friendService.addFriend(friend)) {
                 log.info("Friend API | addFriend() Success: 친구 저장 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), new AddFriendResponse(Boolean.TRUE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                 return;
             }
         }
         log.warn("Friend API | addFriend() Fail: 친구 저장 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        objectMapper.writeValue(servletResp.getOutputStream(), new AddFriendResponse(Boolean.FALSE));
+        objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
 
     @GetMapping("/search") // 모든 친구 검색
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             Cookie[] cookies = servletReq.getCookies();
             String accessToken = cookies[0].getValue();
             String email = jwtProvider.getUserEmail(accessToken);
@@ -93,7 +93,7 @@ public class FriendApiController {
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             try {
                 Integer score = friendService.setInitialScore(requestDTO.getStatus());
                 friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
@@ -114,7 +114,7 @@ public class FriendApiController {
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq)) {
+        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             Friend friend = friendService.findById(request.getFriendId());
             if(friendService.deleteFriend(friend)) {
                 log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
