@@ -101,9 +101,10 @@ public class FriendApiController {
         if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
             try {
                 Integer score = friendService.setInitialScore(requestDTO.getStatus());
-                if(friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
-                        requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate())) {
+                boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
+                        requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
 
+                if(result) {
                     log.info("Friend API | updateFriend() Success: 친구 업데이트 성공");
                     objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                     return;
