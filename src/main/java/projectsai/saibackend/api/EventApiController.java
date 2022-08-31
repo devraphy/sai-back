@@ -20,13 +20,14 @@ import projectsai.saibackend.service.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController @Slf4j
 @RequiredArgsConstructor
@@ -38,37 +39,35 @@ public class EventApiController {
     private final MemberService memberService;
     private final FriendService friendService;
     private final RecordService recordService;
-    private final JwtCookieService jwtCookieService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/add") // 이벤트 - 저장
     public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
-                         HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                         HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            try {
-                Member owner = memberService.findByEmail(requestDTO.getEmail());
-                Event event = new Event(owner, requestDTO.getDate(), requestDTO.getPurpose(),
-                        requestDTO.getName(), requestDTO.getEvaluation());
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-                eventService.addEvent(event);
+        try {
+            Member owner = memberService.findByEmail(requestDTO.getEmail());
+            Event event = new Event(owner, requestDTO.getDate(), requestDTO.getPurpose(),
+                    requestDTO.getName(), requestDTO.getEvaluation());
 
-                for (Long id : requestDTO.getParticipants()) {
-                    Friend friend = friendService.findById(id);
-                    recordService.addRecord(new Record(event, friend));
-                    friendService.updateScoreStatus(friend, requestDTO.getEvaluation());
-                }
-                log.info("Event API | addEvent() Success: 이벤트 저장 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-                return;
+            eventService.addEvent(event);
+
+            for (Long id : requestDTO.getParticipants()) {
+                Friend friend = friendService.findById(id);
+                recordService.addRecord(new Record(event, friend));
+                friendService.updateScoreStatus(friend, requestDTO.getEvaluation());
             }
-            catch(Exception e) {
-                log.error("Event API | addEvent() Fail: 에러 발생 => {}", e.getMessage());
-            }
+            log.info("Event API | addEvent() Success: 이벤트 저장 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Event API | addEvent() Fail: 이벤트 저장 실패(모든 토큰 만료)");
+        catch(Exception e) {
+            log.error("Event API | addEvent() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Event API | addEvent() Fail: 이벤트 저장 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
 
@@ -76,40 +75,42 @@ public class EventApiController {
 
     @PostMapping("/search") // 이벤트 - 소유한 전체 이벤트 검색
     public void searchEvents(@RequestBody @Valid SearchEventRequest requestDTO,
-                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                             HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            try {
-                List<SearchEventResponse> result = new ArrayList<>();
-                Member owner = em.find(Member.class, requestDTO.getOwnerId());
-                List<Event> allEvents = eventService.findAll(owner);
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-                for (Event event : allEvents) {
-                    List<Record> recordList = recordService.findAll(event);
-                    List<Long> friendIds = recordList.stream().map(o -> o.getFriend().getFriendId()).collect(Collectors.toList());
-                    List<Friend> friendList = friendService.findFriends(friendIds);
-                    result.add(new SearchEventResponse(event, friendList));
-                }
-                log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), result);
-                return;
+        try {
+            List<SearchEventResponse> result = new ArrayList<>();
+            Member owner = em.find(Member.class, requestDTO.getOwnerId());
+            List<Event> allEvents = eventService.findAll(owner);
+
+            for (Event event : allEvents) {
+                List<Record> recordList = recordService.findAll(event);
+                List<Long> friendIds = recordList.stream().map(o ->
+                        o.getFriend().getFriendId()).collect(Collectors.toList());
+                List<Friend> friendList = friendService.findFriends(friendIds);
+                result.add(new SearchEventResponse(event, friendList));
             }
-            catch(Exception e) {
-                log.error("Event API | searchEvents() Fail: 오류 발생 => {}", e.getMessage());
-            }
+            log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), result);
+            return;
         }
-        else {
-            log.warn("Event API | searchEvents() Fail: 이벤트 검색 실패(모든 토큰 만료)");
+        catch(Exception e) {
+            log.error("Event API | searchEvents() Fail: 오류 발생 => {}", e.getMessage());
         }
+
+        log.warn("Event API | searchEvents() Fail: 이벤트 검색 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
     @PutMapping("/update") // 이벤트 - 특정 이벤트 수정
     public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO,
-                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                            HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
             Event event = eventService.findById(requestDTO.getEventId());
             EventEvaluation curnEvaluation = requestDTO.getEvaluation();
             EventEvaluation prevEvaluation = event.getEvaluation();
@@ -117,7 +118,7 @@ public class EventApiController {
             List<Record> recordList = recordService.findAll(event);
             List<Friend> curnParticipants = friendService.findFriends(participants);
             List<Friend> prevParticipants = recordList.stream()
-                    .map(o -> o.getFriend()).collect(Collectors.toList());
+                    .map(Record::getFriend).collect(Collectors.toList());
 
             if(curnParticipants.containsAll(prevParticipants) && !curnEvaluation.equals(prevEvaluation)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
@@ -139,11 +140,12 @@ public class EventApiController {
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
                 return;
             }
-            log.warn("Event API | updateEvent() Fail: 이벤트 업데이트 실패");
         }
-        else {
-            log.warn("Event API | updateEvent() Fail: 이벤트 업데이트 실패(모든 토큰 만료)");
+        catch (Exception e) {
+            log.error("Event API | updateEvent() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Event API | updateEvent() Fail: 이벤트 업데이트 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
 
@@ -151,9 +153,11 @@ public class EventApiController {
 
     @DeleteMapping("/delete") // 이벤트 - 삭제
     public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO,
-                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                            HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
             Event event = em.find(Event.class, requestDTO.getEventId());
             boolean result = eventService.deleteEvent(event);
             if(result) {
@@ -161,11 +165,13 @@ public class EventApiController {
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
                 return;
             }
-            log.warn("Event API | deleteEvent() Fail: 이벤트 삭제 실패");
+
         }
-        else {
-            log.warn("Event API | deleteEvent() Fail: 이벤트 삭제 실패(모든 토큰 만료)");
+        catch (Exception e) {
+            log.error("Event API | deleteEvent() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Event API | deleteEvent() Fail: 이벤트 삭제 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
