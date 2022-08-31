@@ -44,7 +44,7 @@ public class MemberApiController {
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         else {
-            log.warn("Member API | emailValidation() Fail: 중복된 이메일");
+            log.warn("Member API | emailValidation() Fail: 사용할 수 없는 이메일");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }

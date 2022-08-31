@@ -2,11 +2,8 @@ package projectsai.saibackend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +12,7 @@ import projectsai.saibackend.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 
@@ -104,10 +102,6 @@ public class MemberService {
         catch (EmptyResultDataAccessException e) {
             log.info("Member Service | emailValidation() Success: 신규 이메일 => {}", email);
             return true;
-        }
-        catch (Exception e) {
-            log.error("Member Service | emailValidation() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
         }
         log.warn("Member Service | emailValidation() Fail: 사용중인 이메일 => {}", email);
         return false;
