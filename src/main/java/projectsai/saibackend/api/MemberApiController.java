@@ -33,7 +33,10 @@ public class MemberApiController {
 
     @PostMapping("/email/validation") // 이메일 중복 검증
     public void emailValidation(@RequestBody @Valid EmailValidationRequest request,
-                                                   HttpServletResponse servletResp) throws IOException {
+                                HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
         String email = request.getEmail().toLowerCase();
 
         if(memberService.emailValidation(email)) {
@@ -76,32 +79,30 @@ public class MemberApiController {
 
     @GetMapping("/login") // refresh_token 검증을 이용한 로그인 검증
     public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateRefreshToken(servletReq)) {
-            try {
-                Cookie[] cookies = servletReq.getCookies();
-                String refreshToken = cookies[1].getValue();
+        try {
+            Cookie[] cookies = servletReq.getCookies();
+            String refreshToken = cookies[1].getValue();
 
-                String email = jwtProvider.getUserEmail(refreshToken);
-                Member member = memberService.findByEmail(email);
-                String role = member.getRole();
+            String email = jwtProvider.getUserEmail(refreshToken);
+            Member member = memberService.findByEmail(email);
+            String role = member.getRole();
 
-                jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
+            jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
-                log.info("Member API | tokenLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
-                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-                return;
-            }
-            catch (Exception e) {
-                log.error("Member API | tokenLogin() Fail: 에러 발생 => {}", e.getMessage());
-            }
+            log.info("Member API | tokenLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Member API | tokenLogin() Fail: 토큰 로그인 실패");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        catch (Exception e) {
+            log.error("Member API | tokenLogin() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Member API | tokenLogin() Fail: 토큰 로그인 실패");
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
     @PostMapping("/login") // 로그인
@@ -118,32 +119,29 @@ public class MemberApiController {
 
             log.info("Member API | basicLogin() Success: 로그인 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Member API | basicLogin() Fail: 로그인 실패");
-        }
+        log.warn("Member API | basicLogin() Fail: 로그인 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
     @GetMapping("/logout")
-    public void logoutMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void logoutMember(HttpServletResponse servletResp) throws IOException {
+
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            try {
-                log.info("Member API | memberLogout() Success: 로그아웃 성공");
-                jwtCookieService.terminateCookie(servletResp);
-                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-                return;
-            }
-            catch (Exception e) {
-                log.error("Member API | memberLogout() Fail: 에러 발생 => {}", e.getMessage());
-            }
+        try {
+            log.info("Member API | memberLogout() Success: 로그아웃 성공");
+            jwtCookieService.terminateCookie(servletResp);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Member API | memberLogout() Fail: 로그아웃 대상이 아니거나 모든 토큰이 만료");
+        catch (Exception e) {
+            log.error("Member API | memberLogout() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Member API | memberLogout() Fail: 로그아웃 대상이 아니거나 모든 토큰이 만료");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
@@ -153,25 +151,22 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            try {
-                Cookie[] cookies = servletReq.getCookies();
-                String accessToken = cookies[0].getValue();
+        try {
+            Cookie[] cookies = servletReq.getCookies();
+            String accessToken = cookies[0].getValue();
 
-                String email = jwtProvider.getUserEmail(accessToken);
-                Member member = memberService.findByEmail(email);
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member member = memberService.findByEmail(email);
 
-                log.info("Member API | showMember() Success: 프로필 요청 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
-                return;
-            }
-            catch (Exception e) {
-                log.error("Member API | showMember() Fail: 에러 발생 => {}", e.getMessage());
-            }
+            log.info("Member API | showMember() Success: 프로필 요청 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
+            return;
         }
-        else {
-            log.warn("Member API | showMember() Fail: 프로필 요청 실패(모든 토큰 만료)");
+        catch (Exception e) {
+            log.error("Member API | showMember() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Member API | showMember() Fail: 프로필 요청 실패(모든 토큰 만료)");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
@@ -182,43 +177,36 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            boolean result = memberService.updateMember(requestDTO.getId(), requestDTO.getEmail().toLowerCase(),
-                    requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
+        boolean result = memberService.updateMember(requestDTO.getId(), requestDTO.getEmail().toLowerCase(),
+                requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
-            if(result) {
-                log.info("Member API | updateMember() Success: 프로필 업데이트 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-                return;
-            }
-            log.warn("Member API | updateMember() Fail: 프로필 업데이트 실패");
+        if(result) {
+            log.info("Member API | updateMember() Success: 프로필 업데이트 성공");
+            jwtCookieService.setTokenInCookie(requestDTO.getEmail(), "ROLE_USER", servletReq, servletResp);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Member API | updateMember() Fail: 프로필 업데이트 실패(모든 토큰 만료)");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
-        }
+
+        log.warn("Member API | updateMember() Fail: 프로필 업데이트 실패");
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
     @DeleteMapping("/profile") // 회원 - 탈퇴
     public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO,
-                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                             HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            if(memberService.deleteMember(requestDTO.getEmail())) {
-                log.info("Member API | deleteMember() Success: 탈퇴 성공");
-                jwtCookieService.terminateCookie(servletResp);
-                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-                return;
-            }
-            log.warn("Member API | deleteMember() Fail: 탈퇴 실패");
+        if(memberService.deleteMember(requestDTO.getEmail())) {
+            log.info("Member API | deleteMember() Success: 탈퇴 성공");
+            jwtCookieService.terminateCookie(servletResp);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+            return;
         }
-        else {
-            log.warn("Member API | deleteMember() Fail: 탈퇴 실패(모든 토큰 만료)");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
-        }
+
+        log.warn("Member API | deleteMember() Fail: 탈퇴 실패");
+        servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 }
