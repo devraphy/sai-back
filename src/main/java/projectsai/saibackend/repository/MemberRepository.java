@@ -5,6 +5,7 @@ import projectsai.saibackend.domain.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Repository
@@ -16,7 +17,7 @@ public class MemberRepository {
     // *********************************** CREATE
 
     // CREATE - Member 객체 영속화
-    public Long addMember(Member user) throws Exception{
+    public Long addMember(Member user) {
         em.persist(user);
         return user.getMemberId();
     }
@@ -24,7 +25,7 @@ public class MemberRepository {
     // *********************************** READ
 
     // READ - ID로 검색
-    public Member findById(Long memberId) throws Exception {
+    public Member findById(Long memberId) {
         return em.createQuery("select m from Member m " +
                         "where m.id = :memberId " +
                         "and m.visibility = :visibility", Member.class)
@@ -34,7 +35,7 @@ public class MemberRepository {
     }
 
     // READ - email로 검색
-    public Member findByEmail(String email) throws Exception {
+    public Member findByEmail(String email) {
         return em.createQuery("select m from Member m " +
                         "where m.email = :email", Member.class)
                 .setParameter("email", email)
@@ -42,7 +43,7 @@ public class MemberRepository {
     }
 
     // READ - 전체 검색
-    public List<Member> findAll() throws Exception {
+    public List<Member> findAll() {
         return em.createQuery("select m from Member m " +
                         "where m.visibility = :visibility", Member.class)
                 .setParameter("visibility", Boolean.TRUE)
