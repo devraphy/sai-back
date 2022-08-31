@@ -45,7 +45,7 @@ public class FriendApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
+        try {
             int score = friendService.setInitialScore(requestDTO.getStatus());
             Member owner = em.find(Member.class, requestDTO.getOwnerId());
             Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
@@ -56,11 +56,12 @@ public class FriendApiController {
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                 return;
             }
-            log.warn("Friend API | findAll() Fail: 친구 검색 실패");
         }
-        else {
-            log.warn("Friend API | addFriend() Fail: 친구 저장 실패(모든 토큰 만료)");
+        catch (Exception e) {
+            log.error("Friend API | addFriend() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Friend API | findAll() Fail: 친구 검색 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
@@ -68,28 +69,27 @@ public class FriendApiController {
     @GetMapping("/search") // 모든 친구 검색
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            Cookie[] cookies = servletReq.getCookies();
-            String accessToken = cookies[0].getValue();
-            String email = jwtProvider.getUserEmail(accessToken);
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-            try {
-                List<Friend> friendList = friendService.findAll(memberService.findByEmail(email));
+        Cookie[] cookies = servletReq.getCookies();
+        String accessToken = cookies[0].getValue();
+        String email = jwtProvider.getUserEmail(accessToken);
 
-                List<FindFriendResponse> result = friendList.stream()
-                        .map(FindFriendResponse::new).collect(toList());
+        try {
+            List<Friend> friendList = friendService.findAll(memberService.findByEmail(email));
 
-                log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
-                objectMapper.writeValue(servletResp.getOutputStream(), result);
-                return;
-            }
-            catch(Exception e) {
-                log.error("Friend API | findAll() Fail: 오류 발생 => {}", e.getMessage());
-            }
+            List<FindFriendResponse> result = friendList.stream()
+                    .map(FindFriendResponse::new).collect(toList());
+
+            log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), result);
+            return;
         }
-        else {
-            log.warn("Friend API | findAll() Fail: 친구 검색 실패(모든 토큰 만료)");
+        catch(Exception e) {
+            log.error("Friend API | findAll() Fail: 오류 발생 => {}", e.getMessage());
         }
+
+        log.warn("Friend API | findAll() Fail: 친구 검색 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
@@ -98,26 +98,25 @@ public class FriendApiController {
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
-            try {
-                Integer score = friendService.setInitialScore(requestDTO.getStatus());
-                boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
-                        requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-                if(result) {
-                    log.info("Friend API | updateFriend() Success: 친구 업데이트 성공");
-                    objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
-                    return;
-                }
-                log.warn("Friend API | updateFriend() Success: 친구 업데이트 실패");
+        try {
+            Integer score = friendService.setInitialScore(requestDTO.getStatus());
+            boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
+                    requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+
+            if(result) {
+                log.info("Friend API | updateFriend() Success: 친구 업데이트 성공");
+                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
+                return;
             }
-            catch(Exception e) {
-                log.error("Friend API | updateFriend() Fail: 에러 발생 => {}", e.getMessage());
-            }
+            log.warn("Friend API | updateFriend() Success: 친구 업데이트 실패");
         }
-        else {
-            log.warn("Friend API | updateFriend() Success: 친구 업데이트 실패(모든 토큰 만료)");
+        catch(Exception e) {
+            log.error("Friend API | updateFriend() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Friend API | updateFriend() Success: 친구 업데이트 실패(모든 토큰 만료)");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
@@ -126,18 +125,22 @@ public class FriendApiController {
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        if(jwtCookieService.validateAccessToken(servletReq, servletResp)) {
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
             Friend friend = friendService.findById(request.getFriendId());
+
             if(friendService.deleteFriend(friend)) {
                 log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                 return;
             }
-            log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
         }
-        else {
-            log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패(모든 토큰 만료)");
+        catch (Exception e) {
+            log.error("Friend API | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
         }
+
+        log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
         servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
