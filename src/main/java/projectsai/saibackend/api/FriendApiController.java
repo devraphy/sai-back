@@ -37,7 +37,7 @@ public class FriendApiController {
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostMapping("/add") // 친구 추가
+    @PostMapping // 친구 추가
     public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
                           HttpServletResponse servletResp) throws IOException {
 
@@ -64,7 +64,7 @@ public class FriendApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
 
-    @GetMapping("/search") // 모든 친구 검색
+    @GetMapping // 모든 친구 검색
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
@@ -92,7 +92,7 @@ public class FriendApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
 
-    @PutMapping("/update") // 친구 수정
+    @PutMapping // 친구 수정
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {
 
@@ -119,7 +119,7 @@ public class FriendApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletResponse servletResp) throws IOException {
 
