@@ -12,7 +12,6 @@ import projectsai.saibackend.dto.friend.requestDto.UpdateFriendRequest;
 import projectsai.saibackend.dto.friend.responseDto.*;
 import projectsai.saibackend.security.jwt.JwtProvider;
 import projectsai.saibackend.service.FriendService;
-import projectsai.saibackend.service.JwtCookieService;
 import projectsai.saibackend.service.MemberService;
 
 import javax.persistence.EntityManager;
@@ -35,13 +34,12 @@ public class FriendApiController {
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
     private final MemberService memberService;
-    private final JwtCookieService jwtCookieService;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/add") // 친구 추가
     public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
-                          HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                          HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -96,7 +94,7 @@ public class FriendApiController {
 
     @PutMapping("/update") // 친구 수정
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
-                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                             HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -123,7 +121,7 @@ public class FriendApiController {
 
     @DeleteMapping("/delete")
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
-                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                             HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
