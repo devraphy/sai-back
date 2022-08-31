@@ -45,11 +45,15 @@ public class MemberService {
     public List<Member> findAll() {
         try {
             List<Member> memberList = memberRepository.findAll();
-            log.info("Member Service | findAll(): 검색 성공");
+            log.info("Member Service | findAll() Success: 검색 성공");
             return memberList;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Member Service | findAll(): 검색 결과 없음 => {}", e.getMessage());
+            log.warn("Member Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
+            return null;
+        }
+        catch (Exception e) {
+            log.error("Member Service | findAll() Fail: 에러 발생  => {}", e.getMessage());
             return null;
         }
     }
@@ -58,11 +62,15 @@ public class MemberService {
     public Member findMember(Long id) {
         try {
             Member member = memberRepository.findById(id);
-            log.info("Member Service | findMember(): 검색 성공");
+            log.info("Member Service | findMember() Success: 검색 성공");
             return member;
         }
         catch (EmptyResultDataAccessException e) {
-            log.warn("Member Service | findMember(): 검색 결과 없음 => {}", e.getMessage());
+            log.warn("Member Service | findMember() Fail: 검색 결과 없음 => {}", e.getMessage());
+            return null;
+        }
+        catch (Exception e) {
+            log.error("Member Service | findMember() Fail: 에러 발생 => {}", e.getMessage());
             return null;
         }
     }
@@ -76,6 +84,10 @@ public class MemberService {
         }
         catch (EmptyResultDataAccessException e) {
             log.warn("Member Service | findByEmail(): 검색 결과 없음 => {}", e.getMessage());
+            return null;
+        }
+        catch (Exception e) {
+            log.error("Member Service | findByEmail(): 에러 발생 => {}", e.getMessage());
             return null;
         }
     }
@@ -93,6 +105,10 @@ public class MemberService {
             log.info("Member Service | emailValidation() Success: 신규 이메일 => {}", email);
             return true;
         }
+        catch (Exception e) {
+            log.error("Member Service | emailValidation() Fail: 에러 발생 => {}", e.getMessage());
+            return false;
+        }
         log.warn("Member Service | emailValidation() Fail: 사용중인 이메일 => {}", email);
         return false;
     }
@@ -106,7 +122,6 @@ public class MemberService {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
             }
-
             else if(member.getEmail().equals(email) && passwordEncoder.matches(password, member.getPassword())) {
                 log.info("Member Service | loginValidation() Success: 매칭 성공 => {}", email);
                 return true;
@@ -114,6 +129,10 @@ public class MemberService {
         }
         catch(EmptyResultDataAccessException e) {
             log.warn("Member Service | loginValidation() Fail: 존재하지 않는 회원 => {}", e.getMessage());
+            return false;
+        }
+        catch (Exception e) {
+            log.error("Member Service | loginValidation() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
         log.warn("Member Service | loginValidation() Fail: 비밀번호 불일치");
@@ -139,12 +158,22 @@ public class MemberService {
             }
         }
         catch(EmptyResultDataAccessException e) {
-            Member member = memberRepository.findById(id);
-            member.updateInfo(name, email, password);
-            em.flush();
-            em.clear();
-            log.info("Member Service | updateMember() Success: 이메일 포함 정보 수정 성공");
-            return true;
+            try {
+                Member member = memberRepository.findById(id);
+                member.updateInfo(name, email, password);
+                em.flush();
+                em.clear();
+                log.info("Member Service | updateMember() Success: 이메일 포함 정보 수정 성공");
+                return true;
+            }
+            catch (Exception ex) {
+                log.error("Member Service | updateMember() Fail: findById() 에러 발생 => {}", e.getMessage());
+                return false;
+            }
+        }
+        catch (Exception e) {
+            log.error("Member Service | updateMember() Fail: 에러 발생 => {}", e.getMessage());
+            return false;
         }
         log.warn("Member Service | updateMember() Fail: 사용중인 이메일 => {}", email);
         return false;
@@ -169,6 +198,10 @@ public class MemberService {
         }
         catch(EmptyResultDataAccessException e) {
             log.warn("Member Service | deleteMember() Fail: 존재하지 않는 회원 => {}", e.getMessage());
+            return false;
+        }
+        catch (Exception e) {
+            log.error("Member Service | deleteMember() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }

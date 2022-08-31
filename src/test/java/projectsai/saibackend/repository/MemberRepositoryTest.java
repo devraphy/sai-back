@@ -30,7 +30,7 @@ class MemberRepositoryTest {
     private Long savedId1, savedId2;
 
     @BeforeEach
-    public void createMember() {
+    public void createMember() throws Exception {
 
         user1 = new Member("이근형","abc@gmail.com",
                 passwordEncoder.encode("abcabc"), Boolean.TRUE, "ROLE_USER");
