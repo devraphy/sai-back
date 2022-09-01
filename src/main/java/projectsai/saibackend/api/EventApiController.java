@@ -1,6 +1,7 @@
 package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +13,21 @@ import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.dto.event.requestDto.AddEventRequest;
 import projectsai.saibackend.dto.event.requestDto.DeleteEventRequest;
-import projectsai.saibackend.dto.event.requestDto.SearchEventRequest;
 import projectsai.saibackend.dto.event.requestDto.UpdateEventRequest;
 import projectsai.saibackend.dto.event.responseDto.EventResultResponse;
 import projectsai.saibackend.dto.event.responseDto.SearchEventResponse;
+import projectsai.saibackend.security.jwt.JwtProvider;
 import projectsai.saibackend.service.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,16 +43,21 @@ public class EventApiController {
     private final MemberService memberService;
     private final FriendService friendService;
     private final RecordService recordService;
+    private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostMapping("/add") // 이벤트 - 저장
+    @PostMapping // 이벤트 - 저장
     public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
-                         HttpServletResponse servletResp) throws IOException {
+                         HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            Member owner = memberService.findByEmail(requestDTO.getEmail());
+            Cookie[] cookies = servletReq.getCookies();
+            String accessToken = cookies[0].getValue();
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member owner = memberService.findByEmail(email);
+
             Event event = new Event(owner, requestDTO.getDate(), requestDTO.getPurpose(),
                     requestDTO.getName(), requestDTO.getEvaluation());
 
@@ -73,24 +82,29 @@ public class EventApiController {
 
     }
 
-    @PostMapping("/search") // 이벤트 - 소유한 전체 이벤트 검색
-    public void searchEvents(@RequestBody @Valid SearchEventRequest requestDTO,
-                             HttpServletResponse servletResp) throws IOException {
+    @GetMapping // 이벤트 - 소유한 전체 이벤트 검색
+    public void searchEvents(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
+        objectMapper.registerModule(new JavaTimeModule());
 
         try {
-            List<SearchEventResponse> result = new ArrayList<>();
-            Member owner = em.find(Member.class, requestDTO.getOwnerId());
+            Cookie[] cookies = servletReq.getCookies();
+            String accessToken = cookies[0].getValue();
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member owner = memberService.findByEmail(email);
+
             List<Event> allEvents = eventService.findAll(owner);
+            List<SearchEventResponse> result = new ArrayList<>();
 
             for (Event event : allEvents) {
                 List<Record> recordList = recordService.findAll(event);
-                List<Long> friendIds = recordList.stream().map(o ->
-                        o.getFriend().getFriendId()).collect(Collectors.toList());
+                List<Long> friendIds = recordList.stream()
+                        .map(o -> o.getFriend().getFriendId()).collect(Collectors.toList());
                 List<Friend> friendList = friendService.findFriends(friendIds);
                 result.add(new SearchEventResponse(event, friendList));
             }
+
             log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
             return;
@@ -104,7 +118,7 @@ public class EventApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
-    @PutMapping("/update") // 이벤트 - 특정 이벤트 수정
+    @PutMapping // 이벤트 - 특정 이벤트 수정
     public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {
 
@@ -112,26 +126,25 @@ public class EventApiController {
 
         try {
             Event event = eventService.findById(requestDTO.getEventId());
-            EventEvaluation curnEvaluation = requestDTO.getEvaluation();
+            EventEvaluation postEvaluation = requestDTO.getEvaluation();
             EventEvaluation prevEvaluation = event.getEvaluation();
-            List<Long> participants = requestDTO.getParticipants();
+            List<Long> updatedParticipantsIds = requestDTO.getParticipants();
             List<Record> recordList = recordService.findAll(event);
-            List<Friend> curnParticipants = friendService.findFriends(participants);
+            List<Friend> postParticipants = friendService.findFriends(updatedParticipantsIds);
             List<Friend> prevParticipants = recordList.stream()
                     .map(Record::getFriend).collect(Collectors.toList());
 
-            if(curnParticipants.containsAll(prevParticipants) && !curnEvaluation.equals(prevEvaluation)) {
+            if(postParticipants.equals(prevParticipants) && !postEvaluation.equals(prevEvaluation)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
-                friendService.renewMultipleScore(curnParticipants, curnEvaluation);
+                friendService.renewMultipleScore(postParticipants, postEvaluation);
             }
 
-            else {
+            else if(!postParticipants.equals(prevParticipants)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
                 recordService.deleteAllRecords(event);
-                friendService.renewMultipleScore(curnParticipants, curnEvaluation);
-                recordService.addMultipleRecords(event, curnParticipants);
+                recordService.addMultipleRecords(event, postParticipants);
+                friendService.renewMultipleScore(postParticipants, postEvaluation);
             }
-
             boolean result = eventService.updateEvent(event.getEventId(), requestDTO.getName(), requestDTO.getDate(),
                     requestDTO.getPurpose(), requestDTO.getEvaluation());
 
@@ -151,7 +164,7 @@ public class EventApiController {
 
     }
 
-    @DeleteMapping("/delete") // 이벤트 - 삭제
+    @DeleteMapping // 이벤트 - 삭제
     public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {
 
