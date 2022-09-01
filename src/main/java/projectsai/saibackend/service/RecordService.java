@@ -97,9 +97,6 @@ public class RecordService {
                 log.warn("Record Service | deleteAllRecord() Fail: 삭제된 데이터가 없음");
                 return;
             }
-
-            em.flush();
-            em.clear();
             log.info("Record Service | deleteAllRecord() Success: 삭제 성공");
         }
         catch (Exception e) {

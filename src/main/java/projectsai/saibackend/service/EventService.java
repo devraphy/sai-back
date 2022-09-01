@@ -128,9 +128,6 @@ public class EventService {
             Event findEvent = eventRepository.findById(eventId);
             findEvent.updateInfo(name, date, purpose, evaluation);
 
-            em.flush();
-            em.clear();
-
             log.info("Event Service | updateEvent() Success: 수정 성공");
             return true;
         }
@@ -152,9 +149,6 @@ public class EventService {
             }
             recordRepository.deleteAllRecords(event);
             eventRepository.deleteEvent(event);
-
-            em.flush();
-            em.clear();
 
             log.info("Event Service | deleteEvent() Success: 삭제 성공");
             return true;

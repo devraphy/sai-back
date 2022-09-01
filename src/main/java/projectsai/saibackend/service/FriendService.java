@@ -129,9 +129,6 @@ public class FriendService {
             findFriend.updateInfo(name, type, score, status, memo, birthDate);
             findFriend.calcStatus();
 
-            em.flush();
-            em.clear();
-
             log.info("Friend Service | updateFriend() Success: 수정 완료");
             return true;
         }
@@ -142,14 +139,12 @@ public class FriendService {
     }
 
     // 다수의 친구 점수를 복구(수정)
+    @Transactional
     public void restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) {
         try {
             for (Friend friend : prevParticipants) {
                 friend.restoreScore(prevEvaluation);
             }
-            em.flush();
-            em.clear();
-
             log.info("Friend Service | restoreScore() Success: 수정 성공");
         }
         catch(Exception e) {
@@ -158,15 +153,13 @@ public class FriendService {
     }
 
     // 다수의 친구 점수 및 상태를 갱신(수정)
+    @Transactional
     public void renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) {
         try {
             for (Friend friend : curnParticipants) {
                 friend.calcScore(curnEvaluation);
                 friend.calcStatus();
             }
-            em.flush();
-            em.clear();
-
             log.info("Friend Service | renewMultipleScore() Success: 수정 성공");
         }
         catch (Exception e) {
@@ -174,13 +167,11 @@ public class FriendService {
         }
     }
 
+    @Transactional
     public void updateScoreStatus(Friend friend, EventEvaluation evaluation) {
         try {
             friend.calcScore(evaluation);
             friend.calcStatus();
-
-            em.flush();
-            em.clear();
 
             log.info("Friend Service | updateScoreStatus() Success: 친구 점수 업데이트");
         }
@@ -199,10 +190,6 @@ public class FriendService {
             }
 
             friendRepository.deleteFriend(friend);
-
-            em.flush();
-            em.clear();
-
             log.warn("Friend Service | deleteFriend() Success: 삭제 성공");
             return true;
         }

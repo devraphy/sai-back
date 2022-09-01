@@ -2,7 +2,6 @@ package projectsai.saibackend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import projectsai.saibackend.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 
@@ -148,8 +146,6 @@ public class MemberService {
             }
             else if(member.getEmail().equals(email) && member.getMemberId().equals(id)) {
                 member.updateInfo(name, email, password);
-                em.flush();
-                em.clear();
                 log.info("Member Service | updateMember() Success: 이메일 외 정보 수정 성공");
                 return true;
             }
@@ -158,8 +154,6 @@ public class MemberService {
             try {
                 Member member = memberRepository.findById(id);
                 member.updateInfo(name, email, password);
-                em.flush();
-                em.clear();
                 log.info("Member Service | updateMember() Success: 이메일 포함 정보 수정 성공");
                 return true;
             }
@@ -188,8 +182,6 @@ public class MemberService {
             else {
                 member.deleteMember();
                 log.info("Member Service | deleteMember() Success: 탈퇴 성공 => {}", email);
-                em.flush();
-                em.clear();
                 return true;
             }
         }
