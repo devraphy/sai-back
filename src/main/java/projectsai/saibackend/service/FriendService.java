@@ -5,19 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
+import projectsai.saibackend.repository.EventRepository;
 import projectsai.saibackend.repository.FriendRepository;
 import projectsai.saibackend.repository.RecordRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service @Slf4j
 @Transactional(readOnly = true)
@@ -27,6 +32,7 @@ public class FriendService {
     @PersistenceContext EntityManager em;
     private final FriendRepository friendRepository;
     private final RecordRepository recordRepository;
+    private final EventRepository eventRepository;
 
     // 친구 저장
     @Transactional
@@ -187,8 +193,16 @@ public class FriendService {
     public boolean deleteFriend(Friend friend) {
         try {
             List<Record> friendList = recordRepository.findByParticipant(friend);
+            Set<Event> eventSet = new HashSet<>();
             for (Record record : friendList) {
                 recordRepository.deleteRecord(record);
+                eventSet.add(record.getEvent());
+            }
+
+            for (Event event : eventSet) {
+                if(recordRepository.findAll(event).size() == 0) {
+                    eventRepository.deleteEvent(event);
+                }
             }
 
             friendRepository.deleteFriend(friend);
