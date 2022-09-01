@@ -18,7 +18,6 @@ public class Friend {
     @Column(name = "friend_id")
     private Long friendId;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member owner;
@@ -46,9 +45,9 @@ public class Friend {
     // Constructor
     public Friend() {}
 
-    public Friend(Member owner, String name, RelationType type, RelationStatus status,
+    public Friend(Member member, String name, RelationType type, RelationStatus status,
                   int score, @Nullable String memo, @Nullable LocalDate birthDate) {
-        this.owner = owner;
+        this.owner = member;
         this.name = name;
         this.type = type;
         this.status = status;
@@ -58,8 +57,8 @@ public class Friend {
     }
 
     // Business Methods
-    public void setOwner(Member user) {
-        this.owner = user;
+    public void setOwner(Member member) {
+        this.owner = member;
     }
 
     public void updateInfo(String name, RelationType type, Integer score, RelationStatus status, String memo, LocalDate birthDate) {

@@ -1,19 +1,13 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
 
-@Entity @Getter @NoArgsConstructor
+@Entity @Getter
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -38,6 +32,8 @@ public class Member {
     private String role;
 
     // Constructor
+    public Member() {}
+
     public Member(String name, String email, String password, Boolean visibility, String role) {
         this.name = name;
         this.email = email;
