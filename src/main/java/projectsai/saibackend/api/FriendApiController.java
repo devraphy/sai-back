@@ -12,6 +12,7 @@ import projectsai.saibackend.dto.friend.requestDto.UpdateFriendRequest;
 import projectsai.saibackend.dto.friend.responseDto.*;
 import projectsai.saibackend.security.jwt.JwtProvider;
 import projectsai.saibackend.service.FriendService;
+import projectsai.saibackend.service.JwtCookieService;
 import projectsai.saibackend.service.MemberService;
 
 import javax.persistence.EntityManager;
@@ -34,6 +35,7 @@ public class FriendApiController {
     @PersistenceContext EntityManager em;
     private final FriendService friendService;
     private final MemberService memberService;
+    private final JwtCookieService jwtCookieService;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,8 +71,7 @@ public class FriendApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        Cookie[] cookies = servletReq.getCookies();
-        String accessToken = cookies[0].getValue();
+        String accessToken = jwtCookieService.getAccessToken(servletReq);
         String email = jwtProvider.getUserEmail(accessToken);
 
         try {

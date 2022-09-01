@@ -5,10 +5,10 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -30,7 +30,7 @@ public class JwtProvider {
                 .setHeaderParam("typ","access")
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + 2 * 3600 * 1000)) // 2시간
+                .setExpiration(new Date(now.getTime() + 1 * 86400 * 1000))
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
                 .compact();
     }
@@ -42,7 +42,7 @@ public class JwtProvider {
                 .setHeaderParam("typ","refresh")
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000)) // 7일
+                .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000))
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
                 .compact();
     }
@@ -60,17 +60,12 @@ public class JwtProvider {
         return false;
     }
 
-    // 토큰에서 회원 정보 추출
+    // 토큰에서 회원 email 추출
     public String getUserEmail(String token) {
         return Jwts.parser()
                 .setSigningKey(jwt_secret_key)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
-    }
-
-    // Request의 Header에서 token 값을 가져옴. "X-AUTH-TOKEN" : "TOKEN값'
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("X-AUTH-TOKEN");
     }
 
     // Jwt 토큰 유효성 검사

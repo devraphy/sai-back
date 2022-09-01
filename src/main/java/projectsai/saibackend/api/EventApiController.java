@@ -43,6 +43,7 @@ public class EventApiController {
     private final MemberService memberService;
     private final FriendService friendService;
     private final RecordService recordService;
+    private final JwtCookieService jwtCookieService;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,8 +54,7 @@ public class EventApiController {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            Cookie[] cookies = servletReq.getCookies();
-            String accessToken = cookies[0].getValue();
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
             String email = jwtProvider.getUserEmail(accessToken);
             Member owner = memberService.findByEmail(email);
 
@@ -89,8 +89,7 @@ public class EventApiController {
         objectMapper.registerModule(new JavaTimeModule());
 
         try {
-            Cookie[] cookies = servletReq.getCookies();
-            String accessToken = cookies[0].getValue();
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
             String email = jwtProvider.getUserEmail(accessToken);
             Member owner = memberService.findByEmail(email);
 

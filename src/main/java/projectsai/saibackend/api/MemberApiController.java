@@ -83,9 +83,7 @@ public class MemberApiController {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            Cookie[] cookies = servletReq.getCookies();
-            String refreshToken = cookies[1].getValue();
-
+            String refreshToken = jwtCookieService.getRefreshToken(servletReq);
             String email = jwtProvider.getUserEmail(refreshToken);
             Member member = memberService.findByEmail(email);
             String role = member.getRole();
@@ -152,9 +150,7 @@ public class MemberApiController {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            Cookie[] cookies = servletReq.getCookies();
-            String accessToken = cookies[0].getValue();
-
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
             String email = jwtProvider.getUserEmail(accessToken);
             Member member = memberService.findByEmail(email);
 

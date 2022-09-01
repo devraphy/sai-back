@@ -44,9 +44,8 @@ public class JwtCookieService {
     // HttpServletRequest 내부의 Cookie(= 토큰 값) 검증
     public boolean validateAccessToken(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
-            Cookie[] cookies = servletRequest.getCookies();
-            String accessToken = cookies[0].getValue();
-            String refreshToken = cookies[1].getValue();
+            String accessToken = this.getAccessToken(servletRequest);
+            String refreshToken = this.getRefreshToken(servletRequest);
 
             try {
                 if(jwtProvider.validateToken(accessToken)) {
@@ -75,8 +74,7 @@ public class JwtCookieService {
 
     public boolean validateRefreshToken(HttpServletRequest servletRequest) {
         try {
-            Cookie[] cookies = servletRequest.getCookies();
-            String refreshToken = cookies[1].getValue();
+            String refreshToken = this.getRefreshToken(servletRequest);
 
             if(jwtProvider.validateToken(refreshToken)) {
                 log.info("JwtCookieService | validateRefreshToken() Success: Refresh 토큰 유효함");
@@ -105,5 +103,15 @@ public class JwtCookieService {
         servletResponse.addCookie(accessCookie);
         servletResponse.addCookie(refreshCookie);
         servletResponse.setHeader("Role", null);
+    }
+
+    // Header Cookie에서 Access 토큰 가져오기
+    public String getAccessToken(HttpServletRequest servletRequest) {
+        return servletRequest.getCookies()[0].getValue();
+    }
+
+    // Header Cookie에서 Refresh 토큰 가져오기
+    public String getRefreshToken(HttpServletRequest servletRequest) {
+        return servletRequest.getCookies()[1].getValue();
     }
 }
