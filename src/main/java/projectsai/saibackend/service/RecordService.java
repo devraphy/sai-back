@@ -23,30 +23,28 @@ public class RecordService {
     private final RecordRepository recordRepository;
 
     // 단일 이벤트 참가자 기록 저장
-    public boolean addRecord(Record record) {
+    @Transactional
+    public void addRecord(Record record) {
         try {
             recordRepository.addRecord(record);
             log.info("Record Service | addRecord() Success: 저장 성공");
-            return true;
         }
         catch(Exception e) {
             log.warn("Record Service | addRecord() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 
     // 다수의 이벤트 참가자 기록 저장
-    public boolean addMultipleRecords(Event event, List<Friend> curnParticipants) {
+    @Transactional
+    public void addMultipleRecords(Event event, List<Friend> curnParticipants) {
         try {
             for (Friend friend : curnParticipants) {
                 recordRepository.addRecord(new Record(event, friend));
             }
             log.info("Record Service | addMultipleRecords() Success: 저장 성공");
-            return true;
         }
         catch (Exception e) {
             log.warn("Record Service | addMultipleRecords() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 
@@ -91,39 +89,21 @@ public class RecordService {
 
     // 특정 이벤트의 모든 참가자 기록을 삭제
     @Transactional
-    public boolean deleteAllRecords(Event event) {
+    public void deleteAllRecords(Event event) {
         try {
             int result = recordRepository.deleteAllRecords(event);
 
             if(result < 1) {
                 log.warn("Record Service | deleteAllRecord() Fail: 삭제된 데이터가 없음");
-                return false;
+                return;
             }
 
             em.flush();
             em.clear();
             log.info("Record Service | deleteAllRecord() Success: 삭제 성공");
-            return true;
         }
         catch (Exception e) {
             log.warn("Record Service | deleteAllRecord() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
-        }
-    }
-
-    // 특정 기록을 삭제
-    @Transactional
-    public boolean deleteRecord(Record record) {
-        try {
-            recordRepository.deleteRecord(record);
-            em.flush();
-            em.clear();
-            log.info("Record Service | deleteRecordById() Success: 삭제 성공");
-            return true;
-        }
-        catch(Exception e) {
-            log.warn("Record Service | deleteRecordById() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 }

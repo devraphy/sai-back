@@ -142,7 +142,7 @@ public class FriendService {
     }
 
     // 다수의 친구 점수를 복구(수정)
-    public boolean restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) {
+    public void restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) {
         try {
             for (Friend friend : prevParticipants) {
                 friend.restoreScore(prevEvaluation);
@@ -151,16 +151,14 @@ public class FriendService {
             em.clear();
 
             log.info("Friend Service | restoreScore() Success: 수정 성공");
-            return true;
         }
         catch(Exception e) {
             log.warn("Friend Service | restoreScore() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 
     // 다수의 친구 점수 및 상태를 갱신(수정)
-    public boolean renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) {
+    public void renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) {
         try {
             for (Friend friend : curnParticipants) {
                 friend.calcScore(curnEvaluation);
@@ -170,15 +168,13 @@ public class FriendService {
             em.clear();
 
             log.info("Friend Service | renewMultipleScore() Success: 수정 성공");
-            return true;
         }
         catch (Exception e) {
             log.warn("Friend Service | renewMultipleScore() Success: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 
-    public boolean updateScoreStatus(Friend friend, EventEvaluation evaluation) {
+    public void updateScoreStatus(Friend friend, EventEvaluation evaluation) {
         try {
             friend.calcScore(evaluation);
             friend.calcStatus();
@@ -186,12 +182,10 @@ public class FriendService {
             em.flush();
             em.clear();
 
-            log.info("Friend Service | updateScoreStatus() Success: 수정 성공");
-            return true;
+            log.info("Friend Service | updateScoreStatus() Success: 친구 점수 업데이트");
         }
         catch (Exception e) {
             log.warn("Friend Service | updateScoreStatus() Success: 에러 발생 => {}", e.getMessage());
-            return false;
         }
     }
 
