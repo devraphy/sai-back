@@ -145,7 +145,7 @@ public class EventService {
     public boolean deleteEvent(Event event) {
         try {
             List<Record> recordList = recordRepository.findAll(event);
-            List<Friend> friendList = recordList.stream().map(o -> o.getFriend()).collect(Collectors.toList());
+            List<Friend> friendList = recordList.stream().map(Record::getFriend).collect(Collectors.toList());
             for (Friend friend : friendList) {
                 friend.restoreScore(event.getEvaluation());
                 friend.calcStatus();
