@@ -15,7 +15,7 @@ public class Record {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "friend_id", nullable = false)
     private Friend friend;
 
