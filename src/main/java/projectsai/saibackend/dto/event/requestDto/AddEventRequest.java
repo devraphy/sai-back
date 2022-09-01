@@ -10,7 +10,6 @@ import java.util.List;
 
 @Data @NotNull
 public class AddEventRequest {
-    private String email;
     private String name;
     private LocalDate date;
     private EventPurpose purpose;
