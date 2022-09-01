@@ -147,6 +147,8 @@ public class MemberService {
             else if(member.getEmail().equals(email) && member.getMemberId().equals(id)) {
                 member.updateInfo(name, email, password);
                 log.info("Member Service | updateMember() Success: 이메일 외 정보 수정 성공");
+                em.flush();
+                em.clear();
                 return true;
             }
         }
@@ -155,6 +157,8 @@ public class MemberService {
                 Member member = memberRepository.findById(id);
                 member.updateInfo(name, email, password);
                 log.info("Member Service | updateMember() Success: 이메일 포함 정보 수정 성공");
+                em.flush();
+                em.clear();
                 return true;
             }
             catch (Exception ex) {
@@ -182,6 +186,8 @@ public class MemberService {
             else {
                 member.deleteMember();
                 log.info("Member Service | deleteMember() Success: 탈퇴 성공 => {}", email);
+                em.flush();
+                em.clear();
                 return true;
             }
         }

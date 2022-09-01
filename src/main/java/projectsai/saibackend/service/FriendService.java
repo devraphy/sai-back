@@ -130,6 +130,8 @@ public class FriendService {
             findFriend.calcStatus();
 
             log.info("Friend Service | updateFriend() Success: 수정 완료");
+            em.flush();
+            em.clear();
             return true;
         }
         catch(EmptyResultDataAccessException e) {
@@ -190,6 +192,10 @@ public class FriendService {
             }
 
             friendRepository.deleteFriend(friend);
+
+            em.flush();
+            em.clear();
+
             log.warn("Friend Service | deleteFriend() Success: 삭제 성공");
             return true;
         }
