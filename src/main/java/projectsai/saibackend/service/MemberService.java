@@ -103,6 +103,9 @@ public class MemberService {
             log.info("Member Service | emailValidation() Success: 신규 이메일 => {}", email);
             return true;
         }
+        catch (Exception e) {
+            log.error("Member Service | emailValidation() Fail: 에러 발생 => {}", e.getMessage());
+        }
         log.warn("Member Service | emailValidation() Fail: 사용중인 이메일 => {}", email);
         return false;
     }
