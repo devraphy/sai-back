@@ -18,7 +18,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class JwtFilter implements Filter {
 
     private final JwtCookieService jwtCookieService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,15 +35,14 @@ public class JwtFilter implements Filter {
                 servletRequest.getRequestURI().equals("/api/login")) {
             chain.doFilter(request, response);
         }
-
         else if(jwtCookieService.validateAccessToken(servletRequest, servletResponse)) {
             chain.doFilter(request, response);
         }
         else {
-            response.setContentType(APPLICATION_JSON_VALUE);
+            servletResponse.setContentType(APPLICATION_JSON_VALUE);
+            servletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             objectMapper.writeValue(servletResponse.getOutputStream(), new FilterResponse(Boolean.FALSE));
         }
-
     }
 
     @Override
