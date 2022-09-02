@@ -11,6 +11,4 @@ public class LoginMemberRequest {
     private String email;
     @ApiModelProperty(example = "비밀번호")
     private String password;
-    @ApiModelProperty(example = "권한")
-    private String role;
 }
