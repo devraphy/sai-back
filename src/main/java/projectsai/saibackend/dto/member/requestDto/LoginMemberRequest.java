@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 public class LoginMemberRequest {
     @ApiModelProperty(example = "이메일")
     private String email;
+
     @ApiModelProperty(example = "비밀번호")
     private String password;
 }
