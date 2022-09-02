@@ -7,12 +7,12 @@ import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class JoinMemberRequest {
-    @ApiModelProperty(example = "이메일")
+    @ApiModelProperty(example = "사용할 이메일")
     private String email;
 
-    @ApiModelProperty(example = "사용자 이름")
+    @ApiModelProperty(example = "사용할 이름")
     private String name;
 
-    @ApiModelProperty(example = "비밀번호")
+    @ApiModelProperty(example = "사용할 비밀번호")
     private String password;
 }

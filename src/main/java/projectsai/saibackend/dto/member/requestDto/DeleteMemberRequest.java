@@ -7,6 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class DeleteMemberRequest {
-    @ApiModelProperty(example = "사용자 이메일")
+    @ApiModelProperty(example = "삭제할 사용자 이메일")
     private String email;
 }

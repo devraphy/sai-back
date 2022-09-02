@@ -11,23 +11,23 @@ import java.time.LocalDate;
 
 @Data @NotNull
 public class UpdateFriendRequest {
-    @ApiModelProperty(example = "친구 객체 PK")
+    @ApiModelProperty(example = "친구 ID")
     private Long friendId;
 
-    @ApiModelProperty(example = "친구 이름")
+    @ApiModelProperty(example = "변경할 친구 이름")
     private String name;
 
-    @ApiModelProperty(example = "관계 종류(friend, business)")
+    @ApiModelProperty(example = "변경할 관계 종류(friend, business)")
     private RelationType type;
 
-    @ApiModelProperty(example = "관계 상태(great, positive, normal, negative, bad)")
+    @ApiModelProperty(example = "변경할 관계 상태(great, positive, normal, negative, bad)")
     private RelationStatus status;
 
     @Nullable
-    @ApiModelProperty(example = "추가 정보")
+    @ApiModelProperty(example = "변경할 추가 정보")
     private String memo;
 
     @Nullable
-    @ApiModelProperty(example = "친구 생일")
+    @ApiModelProperty(example = "변경할 친구 생일")
     private LocalDate birthDate;
 }

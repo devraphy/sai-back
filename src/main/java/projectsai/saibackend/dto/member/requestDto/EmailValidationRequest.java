@@ -7,6 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class EmailValidationRequest {
-    @ApiModelProperty(example = "이메일")
+    @ApiModelProperty(example = "중복 검사할 이메일")
     private String email;
 }

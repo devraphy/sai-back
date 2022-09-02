@@ -7,6 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class DeleteFriendRequest {
-    @ApiModelProperty(example = "친구 객체 PK")
+    @ApiModelProperty(example = "삭제할 친구 ID")
     private Long friendId;
 }
