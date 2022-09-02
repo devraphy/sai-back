@@ -57,7 +57,7 @@ public class EventService {
     }
 
     // 이벤트 전체 검색
-    public List<Event> findAll(Member owner) {
+    public List<Event> findAll(Member owner) throws Exception {
         try {
             List<Event> eventList = eventRepository.findAll(owner);
             log.info("Event Service | findAll() Success: 검색 성공");

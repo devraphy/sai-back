@@ -42,8 +42,8 @@ public class FriendApiController {
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(value = "친구 추가")
-    @ApiResponse(code = 200, message = "친구 추가 성공")
+    @ApiOperation(value = "친구 등록")
+    @ApiResponse(code = 200, message = "친구 등록 완료")
     @PostMapping
     public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -60,7 +60,7 @@ public class FriendApiController {
                     requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
 
             if(friendService.addFriend(friend)) {
-                log.info("Friend API | addFriend() Success: 친구 저장 성공");
+                log.info("Friend API | addFriend() Success: 친구 등록 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             }
         }
@@ -71,8 +71,8 @@ public class FriendApiController {
         }
     }
 
-    @ApiOperation(value = "모든 친구 검색")
-    @ApiResponse(code = 200, message = "검색 성공")
+    @ApiOperation(value = "모든 친구 검색", notes = "사용자 소유의 모든 친구 검색")
+    @ApiResponse(code = 200, message = "검색 완료")
     @GetMapping
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -87,7 +87,7 @@ public class FriendApiController {
             List<FindFriendResponse> result = friendList.stream()
                     .map(FindFriendResponse::new).collect(toList());
 
-            log.info("Friend API | findAll() Success: 모든 친구 검색 성공");
+            log.info("Friend API | findAll() Success: 모든 친구 검색 완료");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
         }
         catch(Exception e) {
@@ -98,7 +98,7 @@ public class FriendApiController {
     }
 
     @ApiOperation(value = "친구 정보 변경")
-    @ApiResponses({@ApiResponse(code = 200, message = "변경 성공"), @ApiResponse(code = 400, message = "변경 실패")})
+    @ApiResponses({@ApiResponse(code = 200, message = "변경 완료"), @ApiResponse(code = 400, message = "변경 실패")})
     @PutMapping
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {
@@ -111,7 +111,7 @@ public class FriendApiController {
                     requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
 
             if(result) {
-                log.info("Friend API | updateFriend() Success: 친구 업데이트 성공");
+                log.info("Friend API | updateFriend() Success: 친구 업데이트 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                 return;
             }
@@ -127,7 +127,7 @@ public class FriendApiController {
     }
 
     @ApiOperation(value = "친구 삭제")
-    @ApiResponses({@ApiResponse(code = 200, message = "삭제 성공"), @ApiResponse(code = 400, message = "삭제 실패")})
+    @ApiResponses({@ApiResponse(code = 200, message = "삭제 완료"), @ApiResponse(code = 400, message = "삭제 실패")})
     @DeleteMapping
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletResponse servletResp) throws IOException {
@@ -138,7 +138,7 @@ public class FriendApiController {
             Friend friend = friendService.findById(request.getFriendId());
 
             if(friendService.deleteFriend(friend)) {
-                log.info("Friend API | deleteFriend() Success: 친구 삭제 성공");
+                log.info("Friend API | deleteFriend() Success: 친구 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             }
             else {
