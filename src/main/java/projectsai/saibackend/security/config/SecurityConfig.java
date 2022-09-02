@@ -1,4 +1,4 @@
-package projectsai.saibackend.security;
+package projectsai.saibackend.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
