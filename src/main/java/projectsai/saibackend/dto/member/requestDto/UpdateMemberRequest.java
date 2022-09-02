@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class UpdateMemberRequest {
-    private Long id;
     private String email;
     private String name;
     private String password;
