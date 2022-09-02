@@ -1,5 +1,9 @@
 package projectsai.saibackend.security.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -27,6 +31,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket swaggerApi() {
+        // header의 Cookie를 사용하게 하려면 어떻게 해야하지?????
         return new Docket(DocumentationType.SWAGGER_2)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
