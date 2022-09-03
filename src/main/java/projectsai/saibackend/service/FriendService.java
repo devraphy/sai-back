@@ -24,112 +24,99 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FriendService {
 
-    @PersistenceContext EntityManager em;
+    @PersistenceContext
+    EntityManager em;
     private final FriendRepository friendRepository;
     private final RecordRepository recordRepository;
     private final EventRepository eventRepository;
 
-    // 친구 저장
     @Transactional
-    public boolean addFriend(Friend friend) {
+    public boolean addFriend(Friend friend) { // 친구 저장
         try {
             friendRepository.addFriend(friend);
             log.info("Friend Service | addFriend() Success: 저장 성공");
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | addFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
 
-    // 친구 전체 검색
-    public List<Friend> findAll(Member owner) {
+    public List<Friend> findAll(Member owner) { // 친구 전체 검색
         try {
             List<Friend> result = friendRepository.findAll(owner);
             log.info("Friend Service | findAll() Success: 검색 성공");
             return result;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 친구 ID 검색
-    public Friend findById(Long id) {
+    public Friend findById(Long id) { // 친구 ID 검색
         try {
             Friend friend = friendRepository.findById(id);
-                log.info("Friend Service | findById() Success: 검색 성공");
-                return friend;
-        }
-        catch(EmptyResultDataAccessException e) {
+            log.info("Friend Service | findById() Success: 검색 성공");
+            return friend;
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findById() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 친구 이름 검색
-    public List<Friend> findByName(Member owner, String name) {
+    public List<Friend> findByName(Member owner, String name) { // 친구 이름 검색
         try {
             List<Friend> friendList = friendRepository.findByName(owner, name);
             log.info("Friend Service | findByName() Success: 검색 성공");
             return friendList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByName() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 친구 종류 검색
-    public List<Friend> findByType(Member owner, RelationType type) {
+    public List<Friend> findByType(Member owner, RelationType type) { // 친구 종류 검색
         try {
             List<Friend> friendList = friendRepository.findByType(owner, type);
             log.info("Friend Service | findByType() Success: 검색 성공");
             return friendList;
-        }
-        catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByType() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 친구 상태 검색
-    public List<Friend> findByStatus(Member owner, RelationStatus status) {
+    public List<Friend> findByStatus(Member owner, RelationStatus status) { // 친구 상태 검색
         try {
             List<Friend> friendList = friendRepository.findByStatus(owner, status);
             log.info("Friend Service | findByStatus() Success: 검색 성공");
             return friendList;
-        }
-        catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByStatus() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 다수의 Id를 이용한 친구 검색
-    public List<Friend> findFriends(List<Long> friendIds) {
+    public List<Friend> findFriends(List<Long> friendIds) { // 다수의 Id를 이용한 친구 검색
         try {
             List<Friend> friendList = friendRepository.findByIds(friendIds);
             log.info("Friend Service | findFriends() Success: 검색 성공");
             return friendList;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | findFriends() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 단일 친구 정보 수정
     @Transactional
     public boolean updateFriend(Long friendId, String name, RelationType type,
-                                RelationStatus status, Integer score, String memo) {
+                                RelationStatus status, Integer score, String memo) { // 단일 친구 정보 변경
         try {
             Friend findFriend = friendRepository.findById(friendId);
             findFriend.updateInfo(name, type, score, status, memo);
@@ -139,58 +126,51 @@ public class FriendService {
             em.flush();
             em.clear();
             return true;
-        }
-        catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.info("Friend Service | updateFriend() Fail: 존재하지 않는 ID => {}", e.getMessage());
             return false;
         }
     }
 
-    // 다수의 친구 점수를 복구(수정)
     @Transactional
-    public void restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) {
+    public void restoreMultipleScore(List<Friend> prevParticipants, EventEvaluation prevEvaluation) { // 다수의 친구 점수를 복구
         try {
             for (Friend friend : prevParticipants) {
                 friend.restoreScore(prevEvaluation);
             }
             log.info("Friend Service | restoreScore() Success: 수정 성공");
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | restoreScore() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
 
-    // 다수의 친구 점수 및 상태를 갱신(수정)
     @Transactional
-    public void renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) {
+    public void renewMultipleScore(List<Friend> curnParticipants, EventEvaluation curnEvaluation) { // 다수의 친구 점수 및 상태를 갱신
         try {
             for (Friend friend : curnParticipants) {
                 friend.calcScore(curnEvaluation);
                 friend.calcStatus();
             }
             log.info("Friend Service | renewMultipleScore() Success: 수정 성공");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | renewMultipleScore() Success: 에러 발생 => {}", e.getMessage());
         }
     }
 
     @Transactional
-    public void updateScoreStatus(Friend friend, EventEvaluation evaluation) {
+    public void updateScoreStatus(Friend friend, EventEvaluation evaluation) { // 친구 객체의 점수를 갱신
         try {
             friend.calcScore(evaluation);
             friend.calcStatus();
 
             log.info("Friend Service | updateScoreStatus() Success: 친구 점수 업데이트");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | updateScoreStatus() Success: 에러 발생 => {}", e.getMessage());
         }
     }
 
-    // 친구 삭제
     @Transactional
-    public boolean deleteFriend(Friend friend) {
+    public boolean deleteFriend(Friend friend) { // 친구 삭제
         try {
             List<Record> friendList = recordRepository.findByParticipant(friend);
             Set<Event> eventSet = new HashSet<>();
@@ -200,7 +180,7 @@ public class FriendService {
             }
 
             for (Event event : eventSet) {
-                if(recordRepository.findAll(event).size() == 0) {
+                if (recordRepository.findAll(event).size() == 0) {
                     eventRepository.deleteEvent(event);
                 }
             }
@@ -212,18 +192,17 @@ public class FriendService {
 
             log.warn("Friend Service | deleteFriend() Success: 삭제 성공");
             return true;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
     }
 
-    public int setInitialScore(RelationStatus status) {
-        if(status.equals(RelationStatus.BAD)) return 10;
-        else if(status.equals(RelationStatus.NEGATIVE)) return 30;
-        else if(status.equals(RelationStatus.NORMAL)) return 50;
-        else if(status.equals(RelationStatus.POSITIVE)) return 70;
+    public int setInitialScore(RelationStatus status) { // 친구 생성 시 관계 상태에 따라 점수 설정
+        if (status.equals(RelationStatus.BAD)) return 10;
+        else if (status.equals(RelationStatus.NEGATIVE)) return 30;
+        else if (status.equals(RelationStatus.NORMAL)) return 50;
+        else if (status.equals(RelationStatus.POSITIVE)) return 70;
         else return 90;
     }
 }

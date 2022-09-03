@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class LoginMemberResponse {
     private String email;
     private Boolean result;

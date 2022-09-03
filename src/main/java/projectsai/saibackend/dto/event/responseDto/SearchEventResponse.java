@@ -7,7 +7,8 @@ import projectsai.saibackend.domain.Friend;
 
 import java.util.List;
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class SearchEventResponse {
     private Event event;
     private List<Friend> participants;

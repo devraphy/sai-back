@@ -34,7 +34,8 @@ class MemberServiceTest {
         memberService.signUp(user2);
     }
 
-    @Test @DisplayName("Member - 회원 가입")
+    @Test
+    @DisplayName("Member - 회원 가입")
     void signUp() throws Exception {
         // given
         Member newUser = new Member("라파파", "rapapa@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
@@ -46,7 +47,8 @@ class MemberServiceTest {
         Assertions.assertEquals(newUser.getMemberId(), memberRepository.findByEmail("rapapa@gmail.com").getMemberId());
     }
 
-    @Test @DisplayName("Member - 전체 검색")
+    @Test
+    @DisplayName("Member - 전체 검색")
     void findAll() throws Exception {
         // given
 
@@ -57,7 +59,8 @@ class MemberServiceTest {
         Assertions.assertEquals(5, allUsers.size());
     }
 
-    @Test @DisplayName("Member - ID 검색")
+    @Test
+    @DisplayName("Member - ID 검색")
     void findMember() throws Exception {
         // given
 
@@ -70,7 +73,8 @@ class MemberServiceTest {
         Assertions.assertEquals(user2.getMemberId(), findUser2.getMemberId());
     }
 
-    @Test @DisplayName("Member - Email 검색")
+    @Test
+    @DisplayName("Member - Email 검색")
     void findByEmail() throws Exception {
         // given
         String email1 = user1.getEmail();
@@ -82,7 +86,8 @@ class MemberServiceTest {
         Assertions.assertEquals(email1, findUser.getEmail());
     }
 
-    @Test @DisplayName("Member - Email 중복 검증")
+    @Test
+    @DisplayName("Member - Email 중복 검증")
     void emailValidation() throws Exception {
         // given
         String email = user1.getEmail();
@@ -94,27 +99,29 @@ class MemberServiceTest {
         Assertions.assertFalse(result);
     }
 
-    @Test @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함
+    @Test
+    @DisplayName("Member - 로그인 검증") // 추후에 암호화 적용해야함
     public void loginValidation() throws Exception {
-       //given
+        //given
         String email = user1.getEmail();
         String password = user1.getPassword();
 
-       //when
+        //when
         boolean result = memberService.loginValidation(email, password);
 
         //then
         Assertions.assertTrue(result);
     }
 
-    @Test @DisplayName("Member - 회원 정보 수정")
+    @Test
+    @DisplayName("Member - 회원 정보 수정")
     public void updateMember() throws Exception {
-       //given
+        //given
 
-       //when
+        //when
         memberService.updateMember(user1.getMemberId(), "바꾼이메일", "바꾼이름", "바꾼비밀번호");
 
-       //then
+        //then
         Assertions.assertEquals("바꾼이메일", memberService.findMember(user1.getMemberId()).getEmail());
     }
 }

@@ -27,7 +27,9 @@ import java.io.IOException;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping("/api")
-@RestController @Slf4j @RequiredArgsConstructor
+@RestController
+@Slf4j
+@RequiredArgsConstructor
 @Tag(name = "Member API", description = "회원 관련 CRUD 기능을 제공합니다.")
 @ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class MemberApiController {
@@ -49,7 +51,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(jwtCookieService.validateRefreshToken(servletReq)) {
+        if (jwtCookieService.validateRefreshToken(servletReq)) {
             try {
                 String refreshToken = jwtCookieService.getRefreshToken(servletReq);
                 String email = jwtProvider.getUserEmail(refreshToken);
@@ -60,14 +62,12 @@ public class MemberApiController {
 
                 log.info("Member API | tokenLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
                 objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.error("Member API | tokenLogin() Fail: 에러 발생 => {}", e.getMessage());
                 servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
             }
-        }
-        else {
+        } else {
             log.warn("Member API | tokenLogin() Fail: refresh 토큰 만료");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
@@ -86,8 +86,7 @@ public class MemberApiController {
             log.info("Member API | logoutMember() Success: 로그아웃 성공");
             jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Member API | logoutMember() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
@@ -110,8 +109,7 @@ public class MemberApiController {
 
             log.info("Member API | showMember() Success: 프로필 요청 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Member API | showMember() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
@@ -131,11 +129,10 @@ public class MemberApiController {
 
         String email = request.getEmail().toLowerCase();
 
-        if(memberService.emailValidation(email)) {
+        if (memberService.emailValidation(email)) {
             log.info("Member API | emailValidation() Success: 중복 검증 통과");
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-        }
-        else {
+        } else {
             log.warn("Member API | emailValidation() Fail: 중복 검증 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
@@ -153,7 +150,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(memberService.signUp(member)) {
+        if (memberService.signUp(member)) {
             String email = member.getEmail();
             String role = member.getRole();
 
@@ -162,8 +159,7 @@ public class MemberApiController {
             log.info("Member API | joinMember() Success: 회원 가입 완료");
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new JoinMemberResponse(member.getMemberId(), Boolean.TRUE));
-        }
-        else {
+        } else {
             log.warn("Member API | joinMember() Fail: 회원 가입 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
@@ -179,7 +175,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(memberService.loginValidation(requestDTO.getEmail().toLowerCase(), requestDTO.getPassword())) {
+        if (memberService.loginValidation(requestDTO.getEmail().toLowerCase(), requestDTO.getPassword())) {
             Member member = memberService.findByEmail(requestDTO.getEmail().toLowerCase());
             String email = member.getEmail();
 
@@ -213,7 +209,7 @@ public class MemberApiController {
         boolean result = memberService.updateMember(member.getMemberId(), requestDTO.getEmail().toLowerCase(),
                 requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
-        if(result) {
+        if (result) {
             log.info("Member API | updateMember() Success: 프로필 업데이트 완료");
             jwtCookieService.setTokenInCookie(requestDTO.getEmail(), "ROLE_USER", servletReq, servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
@@ -237,7 +233,7 @@ public class MemberApiController {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if(memberService.deleteMember(requestDTO.getEmail())) {
+        if (memberService.deleteMember(requestDTO.getEmail())) {
             log.info("Member API | deleteMember() Success: 탈퇴 완료");
             jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));

@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public class RecordRepository {
 
-    @PersistenceContext EntityManager em;
+    @PersistenceContext
+    EntityManager em;
 
     public Long addRecord(Record record) {
         em.persist(record);

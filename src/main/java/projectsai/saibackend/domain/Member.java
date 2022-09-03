@@ -7,9 +7,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
-@Entity @Getter
+@Entity
+@Getter
 public class Member {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "member_id")
     private Long memberId;
 
@@ -32,7 +34,8 @@ public class Member {
     private String role;
 
     // Constructor
-    public Member() {}
+    public Member() {
+    }
 
     public Member(String name, String email, String password, Boolean visibility, String role) {
         this.name = name;

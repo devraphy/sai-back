@@ -20,110 +20,98 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventService {
 
-    @PersistenceContext EntityManager em;
+    @PersistenceContext
+    EntityManager em;
     private final EventRepository eventRepository;
     private final RecordRepository recordRepository;
 
-    // 이벤트 저장
     @Transactional
-    public Long addEvent(Event event) {
+    public Long addEvent(Event event) { // 이벤트 저장
         try {
             Long savedEventId = eventRepository.addEvent(event);
             log.info("Event Service | addEvent() Success: 저장 성공");
             return savedEventId;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Event Service | addEvent() Fail: 에러 발생 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 ID 검색
-    public Event findById(Long eventId) {
+    public Event findById(Long eventId) { // 이벤트 ID 검색
         try {
             Event event = eventRepository.findById(eventId);
             log.info("Event Service | findById() Success: 검색 성공");
             return event;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findById() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 전체 검색
-    public List<Event> findAll(Member owner) throws Exception {
+    public List<Event> findAll(Member owner) throws Exception { // 이벤트 전체 검색
         try {
             List<Event> eventList = eventRepository.findAll(owner);
             log.info("Event Service | findAll() Success: 검색 성공");
             return eventList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 이름 검색
-    public List<Event> findByName(Member owner, String name) {
+    public List<Event> findByName(Member owner, String name) { // 이벤트 이름 검색
         try {
             List<Event> eventList = eventRepository.findByEventName(owner, name);
             log.info("Event Service | findByName() Success: 검색 성공");
             return eventList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findByName() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 날짜 검색
-    public List<Event> findByDate(Member owner, LocalDate date) {
+    public List<Event> findByDate(Member owner, LocalDate date) { // 이벤트 날짜 검색
         try {
             List<Event> eventList = eventRepository.findByDate(owner, date);
             log.info("Event Service | findByDate() Success: 검색 성공");
             return eventList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findByDate() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 목적 검색
-    public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
+    public List<Event> findByPurpose(Member owner, EventPurpose purpose) { // 이벤트 목적 검색
         try {
             List<Event> eventList = eventRepository.findByPurpose(owner, purpose);
             log.info("Event Service | findByPurpose() Success: 검색 성공");
             return eventList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findByPurpose() Fail: 검색 결과 없음=> {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 평가 검색
-    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
+    public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) { // 이벤트 평가 검색
         try {
             List<Event> eventList = eventRepository.findByEvaluation(owner, evaluation);
             log.info("Event Service | findByEvaluation() Success: 검색 성공");
             return eventList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Event Service | findByEvaluation() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
     }
 
-    // 이벤트 정보 수정
     @Transactional
-    public boolean updateEvent(Long eventId, String name, LocalDate date, EventPurpose purpose, EventEvaluation evaluation) {
+    public boolean updateEvent(Long eventId, String name, LocalDate date,
+                               EventPurpose purpose, EventEvaluation evaluation) { // 이벤트 정보 수정
         try {
             Event findEvent = eventRepository.findById(eventId);
             findEvent.updateInfo(name, date, purpose, evaluation);
@@ -133,16 +121,14 @@ public class EventService {
             em.flush();
             em.clear();
             return true;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Event Service | updateEvent() Fail: 에러 발생=> {}", e.getMessage());
             return false;
         }
     }
 
-    // 이벤트 삭제
     @Transactional
-    public boolean deleteEvent(Event event) {
+    public boolean deleteEvent(Event event) { // 이벤트 삭제
         try {
             List<Record> recordList = recordRepository.findAll(event);
             List<Friend> friendList = recordList.stream().map(Record::getFriend).collect(Collectors.toList());
@@ -158,8 +144,7 @@ public class EventService {
             em.flush();
             em.clear();
             return true;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.warn("Event Service | deleteEvent() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }

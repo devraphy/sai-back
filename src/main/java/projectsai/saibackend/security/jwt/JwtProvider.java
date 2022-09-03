@@ -12,7 +12,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Component @Slf4j
+@Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
     @Value("${JWT_SECRET_KEY}")
@@ -27,7 +28,7 @@ public class JwtProvider {
     public String createAccessToken(String email) {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
-                .setHeaderParam("typ","access")
+                .setHeaderParam("typ", "access")
                 .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + 1 * 86400 * 1000))
@@ -39,10 +40,10 @@ public class JwtProvider {
     public String createRefreshToken(String email) {
         Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
-                .setHeaderParam("typ","refresh")
+                .setHeaderParam("typ", "refresh")
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+ 7 * 86400 * 1000))
+                .setExpiration(new Date(now.getTime() + 7 * 86400 * 1000))
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
                 .compact();
     }
@@ -54,7 +55,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody().getSubject();
 
-        if(subject.equals(email)) {
+        if (subject.equals(email)) {
             return true;
         }
         return false;
@@ -73,17 +74,13 @@ public class JwtProvider {
         try {
             Jwts.parser().setSigningKey(jwt_secret_key).parseClaimsJws(token);
             return true;
-        }
-        catch (SignatureException e) {
+        } catch (SignatureException e) {
             log.error("Invalid JWT signature => {}", e.getMessage());
-        }
-        catch (MalformedJwtException e) {
+        } catch (MalformedJwtException e) {
             log.error("Invalid JWT token => {}", e.getMessage());
-        }
-        catch (UnsupportedJwtException e) {
+        } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token => {}", e.getMessage());
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty. => {}", e.getMessage());
         }
         return false;

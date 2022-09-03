@@ -20,11 +20,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest @Transactional @Slf4j
+@SpringBootTest
+@Transactional
+@Slf4j
 class RecordRepositoryTest {
 
-    @PersistenceContext EntityManager em;
-    @Autowired RecordRepository recordRepository;
+    @PersistenceContext
+    EntityManager em;
+    @Autowired
+    RecordRepository recordRepository;
 
     private Event event;
     private Friend friend;
@@ -32,12 +36,13 @@ class RecordRepositoryTest {
 
     @BeforeEach
     void createEventFriendRecord() {
-        event = em.find(Event.class, Long.valueOf(6));
-        friend = em.find(Friend.class, Long.valueOf(14));
+        event = em.find(Event.class, 6L);
+        friend = em.find(Friend.class, 14L);
         record = new Record(event, friend);
     }
 
-    @Test @DisplayName("Record - 기록 저장")
+    @Test
+    @DisplayName("Record - 기록 저장")
     void addRecord() throws Exception {
         // given
 
@@ -48,7 +53,8 @@ class RecordRepositoryTest {
         Assertions.assertThat(savedRecordId).isEqualTo(record.getRecordId());
     }
 
-    @Test @DisplayName("Record - Id로 기록 검색")
+    @Test
+    @DisplayName("Record - Id로 기록 검색")
     public void findById() throws Exception {
         //given
         Long savedRecordId = recordRepository.addRecord(record);
@@ -61,7 +67,8 @@ class RecordRepositoryTest {
 
     }
 
-    @Test @DisplayName("Record - 이벤트로 모든 기록 검색")
+    @Test
+    @DisplayName("Record - 이벤트로 모든 기록 검색")
     void findAll() throws Exception {
         // given
 
@@ -74,7 +81,8 @@ class RecordRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Record - 단일 참가자로 기록 검색")
+    @Test
+    @DisplayName("Record - 단일 참가자로 기록 검색")
     void findByParticipant() throws Exception {
         // given
 
@@ -87,7 +95,8 @@ class RecordRepositoryTest {
         }
     }
 
-    @Test @DisplayName("Record - 특정 기록 검색")
+    @Test
+    @DisplayName("Record - 특정 기록 검색")
     void findOne() throws Exception {
         // given
         recordRepository.addRecord(record);
@@ -99,7 +108,8 @@ class RecordRepositoryTest {
         Assertions.assertThat(oneRecord.getRecordId()).isEqualTo(record.getRecordId());
     }
 
-    @Test @DisplayName("Record - 이벤트로 모든 기록 삭제")
+    @Test
+    @DisplayName("Record - 이벤트로 모든 기록 삭제")
     public void deleteAllRecord() throws Exception {
         //given
 
@@ -111,7 +121,8 @@ class RecordRepositoryTest {
 
     }
 
-    @Test @DisplayName("Record - 특정 기록 삭제")
+    @Test
+    @DisplayName("Record - 특정 기록 삭제")
     public void deleteRecord() throws Exception {
         //given
         Long savedRecordId = recordRepository.addRecord(record);

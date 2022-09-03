@@ -6,7 +6,8 @@ import projectsai.saibackend.domain.Member;
 
 import java.sql.Timestamp;
 
-@Data @Builder
+@Data
+@Builder
 public class SearchMemberResponse {
     private Long id;
     private String email;

@@ -39,12 +39,15 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping("/api/event")
-@RestController @Slf4j @RequiredArgsConstructor
+@RestController
+@Slf4j
+@RequiredArgsConstructor
 @Tag(name = "Event API", description = "이벤트 관련 CRUD 기능을 제공합니다.")
 @ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class EventApiController {
 
-    @PersistenceContext EntityManager em;
+    @PersistenceContext
+    EntityManager em;
     private final EventService eventService;
     private final MemberService memberService;
     private final FriendService friendService;
@@ -84,8 +87,7 @@ public class EventApiController {
 
             log.info("Event API | searchEvents() Success: 이벤트 검색 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Event API | searchEvents() Fail: 오류 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
@@ -122,8 +124,7 @@ public class EventApiController {
             }
             log.info("Event API | addEvent() Success: 이벤트 저장 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Event API | addEvent() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
@@ -152,12 +153,10 @@ public class EventApiController {
             List<Friend> prevParticipants = recordList.stream()
                     .map(Record::getFriend).collect(Collectors.toList());
 
-            if(postParticipants.equals(prevParticipants) && !postEvaluation.equals(prevEvaluation)) {
+            if (postParticipants.equals(prevParticipants) && !postEvaluation.equals(prevEvaluation)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
                 friendService.renewMultipleScore(postParticipants, postEvaluation);
-            }
-
-            else if(!postParticipants.equals(prevParticipants)) {
+            } else if (!postParticipants.equals(prevParticipants)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
                 recordService.deleteAllRecords(event);
                 recordService.addMultipleRecords(event, postParticipants);
@@ -166,17 +165,15 @@ public class EventApiController {
             boolean result = eventService.updateEvent(event.getEventId(), requestDTO.getName(), requestDTO.getDate(),
                     requestDTO.getPurpose(), requestDTO.getEvaluation());
 
-            if(result) {
+            if (result) {
                 log.info("Event API | updateEvent() Success: 이벤트 업데이트 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
                 return;
-            }
-            else {
+            } else {
                 log.warn("Event API | updateEvent() Fail: 이벤트 업데이트 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event API | updateEvent() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -198,17 +195,15 @@ public class EventApiController {
         try {
             Event event = em.find(Event.class, requestDTO.getEventId());
             boolean result = eventService.deleteEvent(event);
-            if(result) {
+            if (result) {
                 log.info("Event API | deleteEvent() Success: 이벤트 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
                 return;
-            }
-            else {
+            } else {
                 log.warn("Event API | deleteEvent() Fail: 이벤트 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event API | deleteEvent() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

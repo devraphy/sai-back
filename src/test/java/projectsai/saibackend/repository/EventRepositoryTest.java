@@ -21,11 +21,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@SpringBootTest @Slf4j @Transactional
+@SpringBootTest
+@Slf4j
+@Transactional
 class EventRepositoryTest {
 
-    @Autowired EventRepository eventRepository;
-    @PersistenceContext EntityManager em;
+    @Autowired
+    EventRepository eventRepository;
+    @PersistenceContext
+    EntityManager em;
 
     private Member owner;
     private Friend friend1, friend2, business1, business2;
@@ -33,11 +37,11 @@ class EventRepositoryTest {
 
     @BeforeEach
     public void createMemberAndFriend() {
-        owner = new Member("이근형","abc@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
-        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null, null);
-        business1 = new Friend(owner, "동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
-        business2 = new Friend(owner, "동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        owner = new Member("이근형", "abc@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
+        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
+        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.POSITIVE, 80, null);
+        business1 = new Friend(owner, "동료1", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
+        business2 = new Friend(owner, "동료2", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
 
         em.persist(owner);
         em.persist(friend1);
@@ -59,7 +63,8 @@ class EventRepositoryTest {
         em.persist(businessEvent2);
     }
 
-    @Test @DisplayName("Event - 이벤트 저장")
+    @Test
+    @DisplayName("Event - 이벤트 저장")
     public void addEvent() throws Exception {
         //given
         Event testEvent = new Event(owner, LocalDate.now(), EventPurpose.CHILL, "테스트 모임", EventEvaluation.NORMAL);
@@ -71,7 +76,8 @@ class EventRepositoryTest {
         Assertions.assertThat(testEvent.getName()).isEqualTo("테스트 모임");
     }
 
-    @Test @DisplayName("Event - ID로 이벤트 검색")
+    @Test
+    @DisplayName("Event - ID로 이벤트 검색")
     public void findById() throws Exception {
         //given
         Event testEvent = new Event(owner, LocalDate.now(), EventPurpose.CHILL, "테스트 모임", EventEvaluation.NORMAL);
@@ -84,7 +90,8 @@ class EventRepositoryTest {
         Assertions.assertThat(findEvent.getEventId()).isEqualTo(savedEventId);
     }
 
-    @Test @DisplayName("Event - 전체 검색")
+    @Test
+    @DisplayName("Event - 전체 검색")
     void findAll() throws Exception {
         //given
 
@@ -92,12 +99,13 @@ class EventRepositoryTest {
         List<Event> allEvent = eventRepository.findAll(owner);
 
         //then
-        for(Event event : allEvent) {
+        for (Event event : allEvent) {
             Assertions.assertThat(event.getName()).isIn("친구 모임", "비지니스 모임");
         }
     }
 
-    @Test @DisplayName("Event - 이름으로 검색")
+    @Test
+    @DisplayName("Event - 이름으로 검색")
     void findByEventName() throws Exception {
         //given
 
@@ -105,12 +113,13 @@ class EventRepositoryTest {
         List<Event> eventList = eventRepository.findByEventName(owner, "친구 모임");
 
         //then
-        for(Event event: eventList) {
+        for (Event event : eventList) {
             Assertions.assertThat(event.getName()).isEqualTo("친구 모임");
         }
     }
 
-    @Test @DisplayName("Event - 날짜로 검색")
+    @Test
+    @DisplayName("Event - 날짜로 검색")
     void findByDate() throws Exception {
         //given
 
@@ -118,12 +127,13 @@ class EventRepositoryTest {
         List<Event> eventList = eventRepository.findByDate(owner, LocalDate.now());
 
         //then
-        for(Event event : eventList) {
+        for (Event event : eventList) {
             Assertions.assertThat(event.getDate()).isEqualTo(LocalDate.now());
         }
     }
 
-    @Test @DisplayName("Event - 목적으로 검색")
+    @Test
+    @DisplayName("Event - 목적으로 검색")
     void findByPurpose() throws Exception {
         //given
 
@@ -132,16 +142,17 @@ class EventRepositoryTest {
         List<Event> businessEvents = eventRepository.findByPurpose(owner, EventPurpose.WORK);
 
         //then
-        for(Event event : chillEvents) {
+        for (Event event : chillEvents) {
             Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.CHILL);
         }
 
-        for(Event event : businessEvents) {
+        for (Event event : businessEvents) {
             Assertions.assertThat(event.getPurpose()).isEqualTo(EventPurpose.WORK);
         }
     }
 
-    @Test @DisplayName("Event - 평가로 검색")
+    @Test
+    @DisplayName("Event - 평가로 검색")
     void findByEvaluation() throws Exception {
         //given
 
@@ -150,16 +161,17 @@ class EventRepositoryTest {
         List<Event> positiveEvents = eventRepository.findByEvaluation(owner, EventEvaluation.POSITIVE);
 
         //then
-        for(Event event : normalEvents) {
+        for (Event event : normalEvents) {
             Assertions.assertThat(event.getEvaluation()).isEqualTo(EventEvaluation.NORMAL);
         }
 
-        for(Event event : positiveEvents) {
+        for (Event event : positiveEvents) {
             Assertions.assertThat(event.getEvaluation()).isEqualTo(EventEvaluation.POSITIVE);
         }
     }
 
-    @Test @DisplayName("Event - 이벤트 삭제")
+    @Test
+    @DisplayName("Event - 이벤트 삭제")
     public void deleteEvent() throws Exception {
         //given
         Event testEvent = new Event(owner, LocalDate.now(), EventPurpose.CHILL, "테스트 모임", EventEvaluation.NORMAL);

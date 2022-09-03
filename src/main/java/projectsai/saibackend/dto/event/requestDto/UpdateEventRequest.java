@@ -9,7 +9,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data @NotNull
+@Data
+@NotNull
 public class UpdateEventRequest {
     @Schema(description = "이벤트 ID", example = "1")
     private Long eventId;

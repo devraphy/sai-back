@@ -5,7 +5,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
-@Data @NotNull
+@Data
+@NotNull
 public class LoginMemberRequest {
     @Schema(description = "이메일", example = "abc@gmail.com")
     private String email;

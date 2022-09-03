@@ -8,7 +8,8 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.validation.constraints.NotNull;
 
-@Data @NotNull
+@Data
+@NotNull
 public class AddFriendRequest {
     @Schema(description = "친구 이름", example = "곽두팔")
     private String name;

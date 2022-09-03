@@ -25,28 +25,28 @@ import java.util.List;
 @Transactional
 class EventServiceTest {
 
-    @PersistenceContext EntityManager em;
-    @Autowired EventService eventService;
+    @PersistenceContext
+    EntityManager em;
+    @Autowired
+    EventService eventService;
 
     private Member owner;
-    private Friend friend1, friend2, friend3;
     private Event event1, event2, event3, event4;
-    private List<Friend> friendList;
     private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
     void createMemberFriendEvent() {
         owner = new Member("라파파", "rapapa@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
-        friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
-        friend3 = new Friend(owner, "친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null, null);
+        Friend friend1 = new Friend(owner, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
+        Friend friend2 = new Friend(owner, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
+        Friend friend3 = new Friend(owner, "친구3", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
 
         em.persist(owner);
         em.persist(friend1);
         em.persist(friend2);
         em.persist(friend3);
 
-        friendList = new ArrayList<>();
+        List<Friend> friendList = new ArrayList<>();
         friendList.add(friend1);
         friendList.add(friend2);
         friendList.add(friend3);
@@ -57,7 +57,8 @@ class EventServiceTest {
         event4 = new Event(owner, LocalDate.of(2022, 7, 7), EventPurpose.WORK, "7월 결산 회의", EventEvaluation.NORMAL);
     }
 
-    @Test @DisplayName("Event - 이벤트 저장")
+    @Test
+    @DisplayName("Event - 이벤트 저장")
     void addEvent() throws Exception {
         // given
 
@@ -68,7 +69,8 @@ class EventServiceTest {
         Assertions.assertEquals(savedEventId, event1.getEventId());
     }
 
-    @Test @DisplayName("Event - ID로 이벤트 검색")
+    @Test
+    @DisplayName("Event - ID로 이벤트 검색")
     void findById() throws Exception {
         // given
         Long savedEventId = eventService.addEvent(event1);
@@ -80,7 +82,8 @@ class EventServiceTest {
         Assertions.assertEquals(savedEventId, findEvent.getEventId());
     }
 
-    @Test @DisplayName("Event - 모든 이벤트 검색")
+    @Test
+    @DisplayName("Event - 모든 이벤트 검색")
     void findAll() throws Exception {
         // given
         Long savedEventId1 = eventService.addEvent(event1);
@@ -92,14 +95,15 @@ class EventServiceTest {
         List<Event> findEventList = eventService.findAll(owner);
 
         // then
-        if(findEventList.isEmpty()) {
+        if (findEventList.isEmpty()) {
             Assertions.fail("findAll() => findEventList is empty.");
         }
 
         Assertions.assertEquals(events, findEventList);
     }
 
-    @Test @DisplayName("Event - 이름으로 이벤트 검색 ")
+    @Test
+    @DisplayName("Event - 이름으로 이벤트 검색 ")
     void findByName() throws Exception {
         // given
         eventService.addEvent(event1);
@@ -108,16 +112,17 @@ class EventServiceTest {
         List<Event> findEventList = eventService.findByName(owner, "오늘 코딩");
 
         // then
-        if(findEventList.isEmpty()) {
+        if (findEventList.isEmpty()) {
             Assertions.fail("findByName() => findEventList is empty.");
         }
 
-        for(Event event : findEventList) {
+        for (Event event : findEventList) {
             Assertions.assertEquals(event1.getName(), event.getName());
         }
     }
 
-    @Test @DisplayName("Event - 날짜로 이벤트 검색")
+    @Test
+    @DisplayName("Event - 날짜로 이벤트 검색")
     void findByDate() throws Exception {
         // given
         eventService.addEvent(event1);
@@ -129,16 +134,17 @@ class EventServiceTest {
         List<Event> findEventList = eventService.findByDate(owner, LocalDate.now());
 
         // then
-        if(findEventList.isEmpty()) {
+        if (findEventList.isEmpty()) {
             Assertions.fail("findByDate() => findEventList is empty.");
         }
 
-        for(Event event : findEventList) {
+        for (Event event : findEventList) {
             Assertions.assertEquals(event1.getName(), event.getName());
         }
     }
 
-    @Test @DisplayName("Event - 목적으로 이벤트 검색")
+    @Test
+    @DisplayName("Event - 목적으로 이벤트 검색")
     void findByPurpose() throws Exception {
         // given
         eventService.addEvent(event1);
@@ -151,24 +157,25 @@ class EventServiceTest {
         List<Event> businessEvents = eventService.findByPurpose(owner, EventPurpose.WORK);
 
         // then
-        if(chillEvents.isEmpty()) {
+        if (chillEvents.isEmpty()) {
             Assertions.fail("findByPurpose() => chillEvents is empty.");
         }
 
-        if(businessEvents.isEmpty()) {
+        if (businessEvents.isEmpty()) {
             Assertions.fail("findByPurpose() => businessEvents is empty.");
         }
 
-        for(Event event : chillEvents) {
+        for (Event event : chillEvents) {
             Assertions.assertEquals(EventPurpose.CHILL, event.getPurpose());
         }
 
-        for(Event event : businessEvents) {
+        for (Event event : businessEvents) {
             Assertions.assertEquals(EventPurpose.WORK, event.getPurpose());
         }
     }
 
-    @Test @DisplayName("Event - 평가로 이벤트 검색")
+    @Test
+    @DisplayName("Event - 평가로 이벤트 검색")
     void findByEvaluation() throws Exception {
         // given
         eventService.addEvent(event1);
@@ -182,40 +189,42 @@ class EventServiceTest {
 
         // then
 
-        if(normalEvents.isEmpty()) {
+        if (normalEvents.isEmpty()) {
             Assertions.fail("findByEvaluation() => normalEvents is empty.");
         }
 
-        if(positiveEvents.isEmpty()) {
+        if (positiveEvents.isEmpty()) {
             Assertions.fail("findByEvaluation() => positiveEvents is empty.");
         }
 
-        for(Event event : normalEvents) {
+        for (Event event : normalEvents) {
             Assertions.assertEquals(EventEvaluation.NORMAL, event.getEvaluation());
         }
 
-        for(Event event : positiveEvents) {
+        for (Event event : positiveEvents) {
             Assertions.assertEquals(EventEvaluation.POSITIVE, event.getEvaluation());
         }
     }
 
-    @Test @DisplayName("Event - 이벤트 수정")
+    @Test
+    @DisplayName("Event - 이벤트 수정")
     public void updateEvent() throws Exception {
-       //given
+        //given
         Long savedEventId = eventService.addEvent(event1);
 
         //when
         eventService.updateEvent(savedEventId,
-                "이벤트업데이트", LocalDate.of(2022, 8,8),
+                "이벤트업데이트", LocalDate.of(2022, 8, 8),
                 EventPurpose.CHILL, EventEvaluation.NORMAL);
 
-       //then
+        //then
         Assertions.assertEquals("이벤트업데이트", event1.getName());
     }
 
-    @Test @DisplayName("Event - 이벤트 삭제")
+    @Test
+    @DisplayName("Event - 이벤트 삭제")
     public void deleteEvent() throws Exception {
-       //given
+        //given
         Long savedEventId = eventService.addEvent(event1);
 
         //when

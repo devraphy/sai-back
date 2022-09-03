@@ -9,7 +9,8 @@ import projectsai.saibackend.domain.enums.RelationType;
 import java.time.LocalDate;
 
 
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class FindFriendResponse {
 
     private Long id;

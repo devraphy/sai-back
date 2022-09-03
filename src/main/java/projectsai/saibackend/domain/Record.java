@@ -4,10 +4,12 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
-@Entity @Getter
+@Entity
+@Getter
 public class Record {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "record_id")
     private Long recordId;
 
@@ -20,7 +22,8 @@ public class Record {
     private Friend friend;
 
     // Constructor
-    public Record() {}
+    public Record() {
+    }
 
     public Record(Event event, Friend friend) {
         this.event = event;

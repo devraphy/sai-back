@@ -63,8 +63,8 @@ public class EventRepository {
     // READ - 목적으로 검색
     public List<Event> findByPurpose(Member owner, EventPurpose purpose) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner = :owner " +
-                                "and e.purpose = :purpose", Event.class)
+                        "where e.owner = :owner " +
+                        "and e.purpose = :purpose", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("purpose", purpose)
                 .getResultList();
@@ -73,8 +73,8 @@ public class EventRepository {
     // READ - 평가로 검색
     public List<Event> findByEvaluation(Member owner, EventEvaluation evaluation) {
         return em.createQuery("select e from Event e " +
-                                "where e.owner = :owner " +
-                                "and e.evaluation = :evaluation", Event.class)
+                        "where e.owner = :owner " +
+                        "and e.evaluation = :evaluation", Event.class)
                 .setParameter("owner", owner)
                 .setParameter("evaluation", evaluation)
                 .getResultList();

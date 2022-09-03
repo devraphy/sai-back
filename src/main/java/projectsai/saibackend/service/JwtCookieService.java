@@ -10,7 +10,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @RequiredArgsConstructor
 public class JwtCookieService {
 
@@ -29,7 +30,7 @@ public class JwtCookieService {
     // Access & Refresh Token을 생성하고 Cookie에 저장
     // Header에 Role을 저장
     public void setTokenInCookie(String email, String role, HttpServletRequest servletRequest,
-                                  HttpServletResponse servletResponse) {
+                                 HttpServletResponse servletResponse) {
 
         String accessToken = jwtProvider.createAccessToken(email);
         String refreshToken = jwtProvider.createRefreshToken(email);
@@ -49,14 +50,13 @@ public class JwtCookieService {
             String refreshToken = this.getRefreshToken(servletRequest);
 
             try {
-                if(jwtProvider.validateToken(accessToken)) {
+                if (jwtProvider.validateToken(accessToken)) {
                     log.info("JwtCookieService | validateAccessToken() Success: Access 토큰 유효함");
                     return true;
                 }
-            }
-            catch (ExpiredJwtException e) {
+            } catch (ExpiredJwtException e) {
                 log.warn("JwtCookieService | validateAccessToken() Fail: Access 토큰 만료됨 => {}", e.getMessage());
-                if(jwtProvider.validateToken(refreshToken)) {
+                if (jwtProvider.validateToken(refreshToken)) {
                     String userEmail = jwtProvider.getUserEmail(refreshToken);
                     String newAccessToken = jwtProvider.createAccessToken(userEmail);
                     Cookie access_cookie = createCookie("access_token", newAccessToken, servletRequest);
@@ -66,8 +66,7 @@ public class JwtCookieService {
                 }
                 log.warn("JwtCookieService | validateAccessToken() Fail: 모든 토큰 만료됨");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("JwtCookieService | validateAccessToken() Fail: 에러 발생 => {}", e.getMessage());
         }
         return false;
@@ -78,17 +77,15 @@ public class JwtCookieService {
         try {
             String refreshToken = this.getRefreshToken(servletRequest);
 
-            if(jwtProvider.validateToken(refreshToken)) {
+            if (jwtProvider.validateToken(refreshToken)) {
                 log.info("JwtCookieService | validateRefreshToken() Success: Refresh 토큰 유효함");
                 return true;
             }
             log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료");
             return false;
-        }
-        catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료됨 => {}", e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("JwtCookieService | validateRefreshToken() Fail: 에러 발생 => {}", e.getMessage());
         }
         return false;

@@ -20,11 +20,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional @Slf4j
+@Transactional
+@Slf4j
 class RecordServiceTest {
 
-    @PersistenceContext EntityManager em;
-    @Autowired RecordService recordService;
+    @PersistenceContext
+    EntityManager em;
+    @Autowired
+    RecordService recordService;
 
     private Event event;
     private Friend friend;
@@ -32,12 +35,13 @@ class RecordServiceTest {
 
     @BeforeEach
     void createEventFriendRecord() {
-        event = em.find(Event.class, Long.valueOf(6));
-        friend = em.find(Friend.class, Long.valueOf(14));
+        event = em.find(Event.class, 6L);
+        friend = em.find(Friend.class, 14L);
         record = new Record(event, friend);
     }
 
-    @Test @DisplayName("Record - 이벤트 기록 저장")
+    @Test
+    @DisplayName("Record - 이벤트 기록 저장")
     void addRecord() {
         // given
 
@@ -49,7 +53,8 @@ class RecordServiceTest {
 
     }
 
-    @Test @DisplayName("Record - 특정 이벤트의 모든 기록 검색")
+    @Test
+    @DisplayName("Record - 특정 이벤트의 모든 기록 검색")
     void findAllParticipants() {
         // given
 
@@ -62,7 +67,8 @@ class RecordServiceTest {
         }
     }
 
-    @Test @DisplayName("Record - 특정 참가자의 모든 이벤트 기록 검색")
+    @Test
+    @DisplayName("Record - 특정 참가자의 모든 이벤트 기록 검색")
     void findByParticipant() {
         // given
 
@@ -75,7 +81,8 @@ class RecordServiceTest {
         }
     }
 
-    @Test @DisplayName("Record - 특정한 이벤트 기록 검색")
+    @Test
+    @DisplayName("Record - 특정한 이벤트 기록 검색")
     void findOne() {
         // given
         recordService.addRecord(record);

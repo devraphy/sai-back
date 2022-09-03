@@ -10,10 +10,12 @@ import projectsai.saibackend.domain.enums.RelationType;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity @Getter
+@Entity
+@Getter
 public class Friend {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "friend_id")
     private Long friendId;
 
@@ -40,7 +42,8 @@ public class Friend {
     private String memo;
 
     // Constructor
-    public Friend() {}
+    public Friend() {
+    }
 
     public Friend(Member member, String name, RelationType type,
                   RelationStatus status, int score, @Nullable String memo) {
@@ -66,26 +69,26 @@ public class Friend {
     }
 
     public void calcScore(EventEvaluation curnEvaluation) {
-        if(curnEvaluation.equals(EventEvaluation.BAD)) this.score -= 10;
-        if(curnEvaluation.equals(EventEvaluation.NEGATIVE)) this.score -= 5;
-        if(curnEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
-        if(curnEvaluation.equals(EventEvaluation.POSITIVE)) this.score += 5;
-        if(curnEvaluation.equals(EventEvaluation.GREAT)) this.score += 10;
+        if (curnEvaluation.equals(EventEvaluation.BAD)) this.score -= 10;
+        if (curnEvaluation.equals(EventEvaluation.NEGATIVE)) this.score -= 5;
+        if (curnEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
+        if (curnEvaluation.equals(EventEvaluation.POSITIVE)) this.score += 5;
+        if (curnEvaluation.equals(EventEvaluation.GREAT)) this.score += 10;
     }
 
     public void restoreScore(EventEvaluation prevEvaluation) {
-        if(prevEvaluation.equals(EventEvaluation.BAD)) this.score += 10;
-        if(prevEvaluation.equals(EventEvaluation.NEGATIVE)) this.score += 5;
-        if(prevEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
-        if(prevEvaluation.equals(EventEvaluation.POSITIVE)) this.score -= 5;
-        if(prevEvaluation.equals(EventEvaluation.GREAT)) this.score -= 10;
+        if (prevEvaluation.equals(EventEvaluation.BAD)) this.score += 10;
+        if (prevEvaluation.equals(EventEvaluation.NEGATIVE)) this.score += 5;
+        if (prevEvaluation.equals(EventEvaluation.NORMAL)) this.score += 0;
+        if (prevEvaluation.equals(EventEvaluation.POSITIVE)) this.score -= 5;
+        if (prevEvaluation.equals(EventEvaluation.GREAT)) this.score -= 10;
     }
 
     public void calcStatus() {
-        if(this.score <= 20) this.status = RelationStatus.BAD;
-        else if(this.score <= 40) this.status = RelationStatus.NEGATIVE;
-        else if(this.score <= 60) this.status = RelationStatus.NORMAL;
-        else if(this.score <= 80) this.status = RelationStatus.POSITIVE;
+        if (this.score <= 20) this.status = RelationStatus.BAD;
+        else if (this.score <= 40) this.status = RelationStatus.NEGATIVE;
+        else if (this.score <= 60) this.status = RelationStatus.NORMAL;
+        else if (this.score <= 80) this.status = RelationStatus.POSITIVE;
         else this.status = RelationStatus.GREAT;
     }
 }

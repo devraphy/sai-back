@@ -32,7 +32,9 @@ import static java.util.stream.Collectors.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping("/api/friend")
-@RestController @Slf4j @RequiredArgsConstructor
+@RestController
+@Slf4j
+@RequiredArgsConstructor
 @Tag(name = "Friend API", description = "친구 관련 CRUD 기능을 제공합니다.")
 @ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class FriendApiController {
@@ -66,8 +68,7 @@ public class FriendApiController {
 
             log.info("Friend API | findAll() Success: 모든 친구 검색 완료");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Friend API | findAll() Fail: 오류 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
@@ -95,12 +96,11 @@ public class FriendApiController {
             Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
                     requestDTO.getStatus(), score, requestDTO.getMemo());
 
-            if(friendService.addFriend(friend)) {
+            if (friendService.addFriend(friend)) {
                 log.info("Friend API | addFriend() Success: 친구 등록 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend API | addFriend() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
@@ -124,7 +124,7 @@ public class FriendApiController {
             boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(),
                     requestDTO.getType(), requestDTO.getStatus(), score, requestDTO.getMemo());
 
-            if(result) {
+            if (result) {
                 log.info("Friend API | updateFriend() Success: 친구 업데이트 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
                 return;
@@ -132,8 +132,7 @@ public class FriendApiController {
             log.warn("Friend API | updateFriend() Fail: 친구 업데이트 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Friend API | updateFriend() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
@@ -155,17 +154,15 @@ public class FriendApiController {
         try {
             Friend friend = friendService.findById(request.getFriendId());
 
-            if(friendService.deleteFriend(friend)) {
+            if (friendService.deleteFriend(friend)) {
                 log.info("Friend API | deleteFriend() Success: 친구 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
-            }
-            else {
+            } else {
                 log.warn("Friend API | deleteFriend() Fail: 친구 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend API | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
