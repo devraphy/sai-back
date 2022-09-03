@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Tag(name = "Member API", description = "회원 관련 API를 제공합니다.")
+@Tag(name = "Member API", description = "회원 관련 CRUD 기능을 제공합니다.")
 @RestController @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api")

@@ -2,10 +2,10 @@ package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +35,11 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Api(tags = "Member API")
+@Tag(name = "Event API", description = "이벤트 관련 CRUD 기능을 제공합니다.")
 @RestController @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/event")
-@ApiResponses({@ApiResponse(code = 500, message = "에러 발생"), @ApiResponse(code = 401, message = "토큰 검증 실패")})
+@ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class EventApiController {
 
     @PersistenceContext EntityManager em;
@@ -52,8 +52,8 @@ public class EventApiController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    @ApiOperation(value = "이벤트 등록")
-    @ApiResponse(code = 200, message = "이벤트 등록 성공")
+    @Operation(summary = "이벤트 등록")
+    @ApiResponse(responseCode = "200", description = "이벤트 등록 성공")
     @PostMapping
     public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
                          HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -85,8 +85,8 @@ public class EventApiController {
         }
     }
 
-    @ApiOperation(value = "전체 이벤트 검색", notes = "사용자 소유의 모든 이벤트 검색")
-    @ApiResponse(code = 200, message = "검색 성공")
+    @Operation(summary = "전체 이벤트 검색", description = "사용자 소유의 모든 이벤트 검색")
+    @ApiResponse(responseCode = "200", description = "검색 성공")
     @GetMapping
     public void searchEvents(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -119,8 +119,8 @@ public class EventApiController {
         }
     }
 
-    @ApiOperation(value = "이벤트 변경")
-    @ApiResponses({@ApiResponse(code = 200, message = "변경 완료"), @ApiResponse(code = 400, message = "변경 실패")})
+    @Operation(summary = "이벤트 변경")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @PutMapping
     public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {
@@ -168,8 +168,8 @@ public class EventApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
-    @ApiOperation(value = "이벤트 삭제")
-    @ApiResponses({@ApiResponse(code = 200, message = "삭제 완료"), @ApiResponse(code = 400, message = "삭제 실패")})
+    @Operation(summary = "이벤트 삭제")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
     @DeleteMapping // 이벤트 - 삭제
     public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {

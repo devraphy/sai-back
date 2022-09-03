@@ -1,10 +1,10 @@
 package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,6 @@ import projectsai.saibackend.service.FriendService;
 import projectsai.saibackend.service.JwtCookieService;
 import projectsai.saibackend.service.MemberService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -31,11 +28,11 @@ import java.util.List;
 import static java.util.stream.Collectors.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Api(tags = "Friend API")
+@Tag(name = "Friend API", description = "친구 관련 CRUD 기능을 제공합니다.")
 @RestController @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/friend")
-@ApiResponses({@ApiResponse(code = 500, message = "에러 발생"), @ApiResponse(code = 401, message = "토큰 검증 실패")})
+@ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class FriendApiController {
 
     private final FriendService friendService;
@@ -44,8 +41,8 @@ public class FriendApiController {
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(value = "친구 등록")
-    @ApiResponse(code = 200, message = "친구 등록 완료")
+    @Operation(summary = "친구 등록")
+    @ApiResponse(responseCode = "200", description = "친구 등록 완료")
     @PostMapping
     public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -73,8 +70,8 @@ public class FriendApiController {
         }
     }
 
-    @ApiOperation(value = "모든 친구 검색", notes = "사용자 소유의 모든 친구 검색")
-    @ApiResponse(code = 200, message = "검색 완료")
+    @Operation(summary = "모든 친구 검색", description = "사용자 소유의 모든 친구 검색")
+    @ApiResponse(responseCode = "200", description = "검색 완료")
     @GetMapping
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -99,8 +96,8 @@ public class FriendApiController {
         }
     }
 
-    @ApiOperation(value = "친구 정보 변경")
-    @ApiResponses({@ApiResponse(code = 200, message = "변경 완료"), @ApiResponse(code = 400, message = "변경 실패")})
+    @Operation(summary = "친구 정보 변경")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @PutMapping
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {
@@ -128,8 +125,8 @@ public class FriendApiController {
         }
     }
 
-    @ApiOperation(value = "친구 삭제")
-    @ApiResponses({@ApiResponse(code = 200, message = "삭제 완료"), @ApiResponse(code = 400, message = "삭제 실패")})
+    @Operation(summary = "친구 삭제")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
     @DeleteMapping
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletResponse servletResp) throws IOException {
