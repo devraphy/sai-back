@@ -2,6 +2,9 @@ package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,10 +31,9 @@ import java.util.List;
 import static java.util.stream.Collectors.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Tag(name = "Friend API", description = "친구 관련 CRUD 기능을 제공합니다.")
-@RestController @Slf4j
-@RequiredArgsConstructor
+@RestController @Slf4j @RequiredArgsConstructor
 @RequestMapping("/api/friend")
+@Tag(name = "Friend API", description = "친구 관련 CRUD 기능을 제공합니다.")
 @ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class FriendApiController {
 
@@ -43,6 +45,8 @@ public class FriendApiController {
 
     @Operation(summary = "친구 등록")
     @ApiResponse(responseCode = "200", description = "친구 등록 완료")
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @PostMapping
     public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO,
                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -72,6 +76,8 @@ public class FriendApiController {
 
     @Operation(summary = "모든 친구 검색", description = "사용자 소유의 모든 친구 검색")
     @ApiResponse(responseCode = "200", description = "검색 완료")
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @GetMapping
     public void findAll(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -98,6 +104,8 @@ public class FriendApiController {
 
     @Operation(summary = "친구 정보 변경")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @PutMapping
     public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {
@@ -127,6 +135,8 @@ public class FriendApiController {
 
     @Operation(summary = "친구 삭제")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @DeleteMapping
     public void deleteFriend(@RequestBody @Valid DeleteFriendRequest request,
                              HttpServletResponse servletResp) throws IOException {

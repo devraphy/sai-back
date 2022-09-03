@@ -1,56 +1,35 @@
 package projectsai.saibackend.security.config;
 
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.HashSet;
-import java.util.Set;
+
 
 @Configuration
 @EnableWebMvc
 public class SwaggerConfig {
 
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Project SAI API")
-                .version("1.0.0")
-                .description("Project SAI API Documentation")
-                .build();
-    }
-
     @Bean
-    public Docket swaggerApi() {
-        // header의 Cookie를 사용하게 하려면 어떻게 해야하지?????
-        return new Docket(DocumentationType.SWAGGER_2)
-                .consumes(getConsumeContentTypes())
-                .produces(getProduceContentTypes())
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("projectsai.saibackend.api"))
-                .paths(PathSelectors.any())
-                .build();
-    }
+    public OpenAPI openAPI(@Value("${springdoc.version}") String springDocVersion) {
+        Info info = new Info()
+                .title("Project SAI API Documentation")
+                .version(springDocVersion)
+                .description("Open API for project SAI")
+                .termsOfService("http://swagger.io/terms/")
+                .contact(new Contact()
+                        .name("devRaphy")
+                        .url("https://github.com/devraphy")
+                        .email("devraphy@gmail.com"));
 
-    private Set<String> getConsumeContentTypes() {
-        Set<String> consumes = new HashSet<>();
-        consumes.add("application/json;charset=UTF-8");
-        return consumes;
-    }
-
-    private Set<String> getProduceContentTypes() {
-        Set<String> produces = new HashSet<>();
-        produces.add("application/json;charset=UTF-8");
-        return produces;
+        return new OpenAPI()
+                .components(new Components())
+                .info(info);
     }
 }

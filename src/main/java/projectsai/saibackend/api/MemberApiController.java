@@ -2,6 +2,9 @@ package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,25 +92,34 @@ public class MemberApiController {
 
     @Operation(summary = "자동 로그인", description = "refresh_token 검증을 이용한 로그인")
     @ApiResponse(responseCode = "200", description = "로그인 성공(토큰 갱신 및 Role 발행)")
+    @Parameters({@Parameter(name = "access_token", description = "회원가입 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "회원가입 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @GetMapping("/login")
     public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        try {
-            String refreshToken = jwtCookieService.getRefreshToken(servletReq);
-            String email = jwtProvider.getUserEmail(refreshToken);
-            Member member = memberService.findByEmail(email);
-            String role = member.getRole();
+        if(jwtCookieService.validateRefreshToken(servletReq)) {
+            try {
+                String refreshToken = jwtCookieService.getRefreshToken(servletReq);
+                String email = jwtProvider.getUserEmail(refreshToken);
+                Member member = memberService.findByEmail(email);
+                String role = member.getRole();
 
-            jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
+                jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
-            log.info("Member API | tokenLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+                log.info("Member API | tokenLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+            }
+            catch (Exception e) {
+                log.error("Member API | tokenLogin() Fail: 에러 발생 => {}", e.getMessage());
+                servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            }
         }
-        catch (Exception e) {
-            log.error("Member API | tokenLogin() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        else {
+            log.warn("Member API | tokenLogin() Fail: refresh 토큰 만료");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
@@ -137,9 +149,10 @@ public class MemberApiController {
 
     @Operation(summary = "로그아웃", description = "모든 토큰 및 Role 말소")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @GetMapping("/logout")
     public void logoutMember(HttpServletResponse servletResp) throws IOException {
-
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
@@ -156,6 +169,8 @@ public class MemberApiController {
 
     @Operation(summary = "개인 정보 조회", description = "access_token의 payload(email)를 이용한 회원 정보 검색")
     @ApiResponse(responseCode = "200", description = "회원 정보 출력")
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @GetMapping("/profile") // 회원 - 정보 조회
     public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -179,6 +194,8 @@ public class MemberApiController {
 
     @Operation(summary = "개인 정보 변경", description = "이메일, 비밀번호 변경 가능")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @PutMapping("/profile")
     public void updateMember(@RequestBody @Valid UpdateMemberRequest requestDTO,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -206,6 +223,8 @@ public class MemberApiController {
 
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 시 모든 토큰 및 Role 말소")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "탈퇴 완료"), @ApiResponse(responseCode = "400", description = "탈퇴 실패")})
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     @DeleteMapping("/profile") // 회원 - 탈퇴
     public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {

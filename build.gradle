@@ -33,7 +33,6 @@ dependencies {
 
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11' // open API
 
-
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT
 	runtimeOnly 'org.springframework.boot:spring-boot-starter-security' // Spring Security
 
