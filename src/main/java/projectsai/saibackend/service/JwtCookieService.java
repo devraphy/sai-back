@@ -26,7 +26,8 @@ public class JwtCookieService {
         return cookie;
     }
 
-    // Token 발행 및 이를 담은 Cookie 객체를 생성 후 HttpServletResponse 안에 저장
+    // Access & Refresh Token을 생성하고 Cookie에 저장
+    // Header에 Role을 저장
     public void setTokenInCookie(String email, String role, HttpServletRequest servletRequest,
                                   HttpServletResponse servletResponse) {
 
@@ -38,10 +39,10 @@ public class JwtCookieService {
 
         servletResponse.addCookie(access_cookie);
         servletResponse.addCookie(refresh_cookie);
-        servletResponse.setHeader("Role", role);
+        servletResponse.setHeader("role", role);
     }
 
-    // HttpServletRequest 내부의 Cookie(= 토큰 값) 검증
+    // Request의 Cookie(= JWT) 검증
     public boolean validateAccessToken(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             String accessToken = this.getAccessToken(servletRequest);
@@ -72,6 +73,7 @@ public class JwtCookieService {
         return false;
     }
 
+    // 자동 로그인 시 Request의 Cookie에서 Refresh Token 검증
     public boolean validateRefreshToken(HttpServletRequest servletRequest) {
         try {
             String refreshToken = this.getRefreshToken(servletRequest);
@@ -92,6 +94,7 @@ public class JwtCookieService {
         return false;
     }
 
+    // 로그아웃 또는 회원 탈퇴 시 Cookie와 Role을 말소
     public void terminateCookieAndRole(HttpServletResponse servletResponse) {
         Cookie accessCookie = new Cookie("access_token", null);
         Cookie refreshCookie = new Cookie("refresh_token", null);
@@ -104,10 +107,12 @@ public class JwtCookieService {
         servletResponse.setHeader("Role", null);
     }
 
+    // Request의 Cookie로부터 AccessToken 가져오기
     public String getAccessToken(HttpServletRequest servletRequest) {
         return servletRequest.getCookies()[0].getValue();
     }
 
+    // Request의 Cookie로부터 RefreshToken 가져오기
     public String getRefreshToken(HttpServletRequest servletRequest) {
         return servletRequest.getCookies()[1].getValue();
     }

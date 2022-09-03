@@ -38,10 +38,9 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Tag(name = "Event API", description = "이벤트 관련 CRUD 기능을 제공합니다.")
-@RestController @Slf4j
-@RequiredArgsConstructor
 @RequestMapping("/api/event")
+@RestController @Slf4j @RequiredArgsConstructor
+@Tag(name = "Event API", description = "이벤트 관련 CRUD 기능을 제공합니다.")
 @ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class EventApiController {
 
@@ -55,46 +54,13 @@ public class EventApiController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    @Operation(summary = "이벤트 등록")
-    @ApiResponse(responseCode = "200", description = "이벤트 등록 성공")
-    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
-            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    @PostMapping
-    public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
-                         HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    /* =================== GET MAPPING =================== */
 
-        servletResp.setContentType(APPLICATION_JSON_VALUE);
-
-        try {
-            String accessToken = jwtCookieService.getAccessToken(servletReq);
-            String email = jwtProvider.getUserEmail(accessToken);
-            Member owner = memberService.findByEmail(email);
-
-            Event event = new Event(owner, requestDTO.getDate(), requestDTO.getPurpose(),
-                    requestDTO.getName(), requestDTO.getEvaluation());
-
-            eventService.addEvent(event);
-
-            for (Long id : requestDTO.getParticipants()) {
-                Friend friend = friendService.findById(id);
-                recordService.addRecord(new Record(event, friend));
-                friendService.updateScoreStatus(friend, requestDTO.getEvaluation());
-            }
-            log.info("Event API | addEvent() Success: 이벤트 저장 성공");
-            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-        }
-        catch(Exception e) {
-            log.error("Event API | addEvent() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-        }
-    }
-
+    @GetMapping
     @Operation(summary = "전체 이벤트 검색", description = "사용자 소유의 모든 이벤트 검색")
     @ApiResponse(responseCode = "200", description = "검색 성공")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    @GetMapping
     public void searchEvents(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
@@ -126,11 +92,51 @@ public class EventApiController {
         }
     }
 
+
+    /* =================== POST MAPPING =================== */
+
+    @PostMapping
+    @Operation(summary = "이벤트 등록")
+    @ApiResponse(responseCode = "200", description = "이벤트 등록 성공")
+    @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
+            @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
+    public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
+                         HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member owner = memberService.findByEmail(email);
+
+            Event event = new Event(owner, requestDTO.getDate(), requestDTO.getPurpose(),
+                    requestDTO.getName(), requestDTO.getEvaluation());
+
+            eventService.addEvent(event);
+
+            for (Long id : requestDTO.getParticipants()) {
+                Friend friend = friendService.findById(id);
+                recordService.addRecord(new Record(event, friend));
+                friendService.updateScoreStatus(friend, requestDTO.getEvaluation());
+            }
+            log.info("Event API | addEvent() Success: 이벤트 저장 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
+        }
+        catch(Exception e) {
+            log.error("Event API | addEvent() Fail: 에러 발생 => {}", e.getMessage());
+            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
+        }
+    }
+
+    /* =================== PUT MAPPING =================== */
+
+    @PutMapping
     @Operation(summary = "이벤트 변경")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    @PutMapping
     public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {
 
@@ -177,11 +183,13 @@ public class EventApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
+    /* =================== DELETE MAPPING =================== */
+
+    @DeleteMapping
     @Operation(summary = "이벤트 삭제")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    @DeleteMapping // 이벤트 - 삭제
     public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO,
                             HttpServletResponse servletResp) throws IOException {
 
