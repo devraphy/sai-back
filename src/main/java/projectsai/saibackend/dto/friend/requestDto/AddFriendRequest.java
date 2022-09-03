@@ -1,6 +1,6 @@
 package projectsai.saibackend.dto.friend.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 import projectsai.saibackend.domain.enums.RelationStatus;
@@ -11,20 +11,20 @@ import java.time.LocalDate;
 
 @Data @NotNull
 public class AddFriendRequest {
-    @ApiModelProperty(example = "친구 이름")
+    @Schema(description = "친구 이름", example = "곽두팔")
     private String name;
 
-    @ApiModelProperty(example = "관계 종류(friend, business)")
+    @Schema(description = "관계 종류", example = "friend, business 중 하나")
     private RelationType type;
 
-    @ApiModelProperty(example = "관계 상태(great, positive, normal, negative, bad)")
+    @Schema(description = "관계 상태", example = "great, positive, normal, negative, bad 중 하나")
     private RelationStatus status;
 
     @Nullable
-    @ApiModelProperty(example = "추가 정보")
+    @Schema(description = "추가 정보", example = "대학 동기")
     private String memo;
 
     @Nullable
-    @ApiModelProperty(example = "친구 생일")
+    @Schema(description = "친구 생일", example = "20202-09-04")
     private LocalDate birthDate;
 }

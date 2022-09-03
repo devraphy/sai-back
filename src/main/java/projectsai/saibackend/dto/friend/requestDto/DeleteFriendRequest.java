@@ -1,12 +1,12 @@
 package projectsai.saibackend.dto.friend.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class DeleteFriendRequest {
-    @ApiModelProperty(example = "삭제할 친구 ID")
+    @Schema(description = "삭제할 친구 ID", example = "1")
     private Long friendId;
 }
