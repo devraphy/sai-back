@@ -30,14 +30,19 @@ public class JwtFilter implements Filter {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
         HttpServletResponse servletResponse = (HttpServletResponse) response;
 
+        /* 해당 URL로 요청할 시에는 Cookie의 JWT 검증 안함 */
         if(servletRequest.getRequestURI().equals("/api/join") ||
                 servletRequest.getRequestURI().equals("/api/email/validation") ||
                 servletRequest.getRequestURI().equals("/api/login")) {
             chain.doFilter(request, response);
         }
+
+        /* 그 외 URL로 요청할 시에는 Cookie의 JWT 검증 */
         else if(jwtCookieService.validateAccessToken(servletRequest, servletResponse)) {
             chain.doFilter(request, response);
         }
+
+        /* Cookie의 JWT 검증 실패한 경우 */
         else {
             servletResponse.setContentType(APPLICATION_JSON_VALUE);
             servletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
