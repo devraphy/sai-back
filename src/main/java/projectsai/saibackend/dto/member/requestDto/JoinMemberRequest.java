@@ -1,18 +1,18 @@
 package projectsai.saibackend.dto.member.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class JoinMemberRequest {
-    @ApiModelProperty(example = "사용할 이메일")
+    @Schema(description = "사용할 이메일", example = "abc@gmail.com")
     private String email;
 
-    @ApiModelProperty(example = "사용할 이름")
+    @Schema(description = "사용할 이름", example = "곽두팔")
     private String name;
 
-    @ApiModelProperty(example = "사용할 비밀번호")
+    @Schema(description = "사용할 비밀번호", example = "abcdef123")
     private String password;
 }

@@ -1,15 +1,15 @@
 package projectsai.saibackend.dto.member.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class LoginMemberRequest {
-    @ApiModelProperty(example = "이메일")
+    @Schema(description = "이메일", example = "abc@gmail.com")
     private String email;
 
-    @ApiModelProperty(example = "비밀번호")
+    @Schema(description = "비밀번호", example = "abcdef123")
     private String password;
 }

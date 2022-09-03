@@ -1,12 +1,12 @@
 package projectsai.saibackend.dto.member.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data @NotNull
 public class EmailValidationRequest {
-    @ApiModelProperty(example = "중복 검사할 이메일")
+    @Schema(description = "중복 검사할 이메일", example = "abc@gmail.com")
     private String email;
 }
