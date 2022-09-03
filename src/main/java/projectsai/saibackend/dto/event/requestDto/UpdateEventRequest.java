@@ -1,8 +1,7 @@
 package projectsai.saibackend.dto.event.requestDto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.enums.EventEvaluation;
 import projectsai.saibackend.domain.enums.EventPurpose;
 
@@ -12,21 +11,21 @@ import java.util.List;
 
 @Data @NotNull
 public class UpdateEventRequest {
-    @ApiModelProperty(example = "이벤트 ID")
+    @Schema(description = "이벤트 ID", example = "1")
     private Long eventId;
 
-    @ApiModelProperty(example = "변경할 이벤트 이름")
+    @Schema(description = "변경할 이벤트 이름", example = "출사 가는날")
     private String name;
 
-    @ApiModelProperty(example = "변경할 이벤트 날짜")
+    @Schema(description = "변경할 이벤트 날짜", example = "2022-09-03")
     private LocalDate date;
 
-    @ApiModelProperty(example = "변경할 이벤트 목적(chill, work)")
+    @Schema(description = "변경할 이벤트 목적", example = "chill, work 중 하나(String)")
     private EventPurpose purpose;
 
-    @ApiModelProperty(example = "변경할 이벤트 평가(great, positive, normal, negative, bad)")
+    @Schema(description = "변경할 이벤트 평가", example = "great, positive, normal, negative, bad 중 하나(String)")
     private EventEvaluation evaluation;
 
-    @ApiModelProperty(example = "변경할 이벤트 참가자 리스트(Long)")
+    @Schema(description = "변경할 이벤트 참가자 리스트", example = "[1,2,3,4,5]")
     private List<Long> participants;
 }
