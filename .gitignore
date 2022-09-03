@@ -1,6 +1,5 @@
 HELP.md
 .gradle
-application.yml
 application.properties
 DummyData.java
 memo.txt
