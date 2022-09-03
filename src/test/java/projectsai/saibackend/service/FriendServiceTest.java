@@ -145,11 +145,11 @@ class FriendServiceTest {
     @Test @DisplayName("Friend - 친구 정보 수정")
     void updateFriend() throws Exception {
         // given
-        Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null, null);
+        Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
         friendService.addFriend(testFriend);
 
         // when
-        friendService.updateFriend(testFriend.getFriendId(), "바꾼이름", RelationType.FRIEND,  RelationStatus.POSITIVE, 70,null, null);
+        friendService.updateFriend(testFriend.getFriendId(), "바꾼이름", RelationType.FRIEND,  RelationStatus.POSITIVE, 70,null);
 
         // then
         Assertions.assertEquals( "바꾼이름", testFriend.getName());

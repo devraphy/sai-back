@@ -17,7 +17,6 @@ public class FindFriendResponse {
     private RelationType type;
     private RelationStatus status;
     private String memo;
-    private LocalDate birthDate;
 
     public FindFriendResponse(Friend friend) {
         this.id = friend.getFriendId();
@@ -25,6 +24,5 @@ public class FindFriendResponse {
         this.type = friend.getType();
         this.status = friend.getStatus();
         this.memo = friend.getMemo();
-        this.birthDate = friend.getBirthDate();
     }
 }

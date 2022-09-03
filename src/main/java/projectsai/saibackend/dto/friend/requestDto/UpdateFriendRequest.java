@@ -26,8 +26,4 @@ public class UpdateFriendRequest {
     @Nullable
     @Schema(description = "변경할 추가 정보", example = "대학 동기")
     private String memo;
-
-    @Nullable
-    @Schema(description = "변경할 친구 생일", example = "2022-09-03")
-    private LocalDate birthDate;
 }

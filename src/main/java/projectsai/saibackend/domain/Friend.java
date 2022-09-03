@@ -46,15 +46,14 @@ public class Friend {
     // Constructor
     public Friend() {}
 
-    public Friend(Member member, String name, RelationType type, RelationStatus status,
-                  int score, @Nullable String memo, @Nullable LocalDate birthDate) {
+    public Friend(Member member, String name, RelationType type,
+                  RelationStatus status, int score, @Nullable String memo) {
         this.owner = member;
         this.name = name;
         this.type = type;
         this.status = status;
         this.score = score;
         this.memo = memo;
-        this.birthDate = birthDate;
     }
 
     // Business Methods
@@ -62,13 +61,12 @@ public class Friend {
         this.owner = member;
     }
 
-    public void updateInfo(String name, RelationType type, Integer score, RelationStatus status, String memo, LocalDate birthDate) {
+    public void updateInfo(String name, RelationType type, Integer score, RelationStatus status, String memo) {
         this.name = name;
         this.type = type;
         this.score = score;
         this.status = status;
         this.memo = memo;
-        this.birthDate = birthDate;
     }
 
     public void calcScore(EventEvaluation curnEvaluation) {

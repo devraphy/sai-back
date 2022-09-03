@@ -23,8 +23,4 @@ public class AddFriendRequest {
     @Nullable
     @Schema(description = "추가 정보", example = "대학 동기")
     private String memo;
-
-    @Nullable
-    @Schema(description = "친구 생일", example = "20202-09-04")
-    private LocalDate birthDate;
 }

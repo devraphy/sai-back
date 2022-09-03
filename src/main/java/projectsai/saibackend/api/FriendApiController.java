@@ -60,7 +60,7 @@ public class FriendApiController {
 
             int score = friendService.setInitialScore(requestDTO.getStatus());
             Friend friend = new Friend(owner, requestDTO.getName(), requestDTO.getType(),
-                    requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+                    requestDTO.getStatus(), score, requestDTO.getMemo());
 
             if(friendService.addFriend(friend)) {
                 log.info("Friend API | addFriend() Success: 친구 등록 완료");
@@ -114,8 +114,8 @@ public class FriendApiController {
 
         try {
             Integer score = friendService.setInitialScore(requestDTO.getStatus());
-            boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(), requestDTO.getType(),
-                    requestDTO.getStatus(), score, requestDTO.getMemo(), requestDTO.getBirthDate());
+            boolean result = friendService.updateFriend(requestDTO.getFriendId(), requestDTO.getName(),
+                    requestDTO.getType(), requestDTO.getStatus(), score, requestDTO.getMemo());
 
             if(result) {
                 log.info("Friend API | updateFriend() Success: 친구 업데이트 완료");
