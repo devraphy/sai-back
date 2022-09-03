@@ -9,7 +9,6 @@ import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Entity @Getter
 public class Friend {
@@ -39,9 +38,6 @@ public class Friend {
 
     @Nullable
     private String memo;
-
-    @Nullable
-    private LocalDate birthDate;
 
     // Constructor
     public Friend() {}

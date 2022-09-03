@@ -7,7 +7,6 @@ import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Data @NotNull
 public class AddFriendRequest {
