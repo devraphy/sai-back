@@ -157,7 +157,7 @@ public class MemberApiController {
 
         try {
             log.info("Member API | logoutMember() Success: 로그아웃 성공");
-            jwtCookieService.terminateCookie(servletResp);
+            jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         catch (Exception e) {
@@ -233,7 +233,7 @@ public class MemberApiController {
 
         if(memberService.deleteMember(requestDTO.getEmail())) {
             log.info("Member API | deleteMember() Success: 탈퇴 완료");
-            jwtCookieService.terminateCookie(servletResp);
+            jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
             return;
         }

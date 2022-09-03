@@ -92,8 +92,7 @@ public class JwtCookieService {
         return false;
     }
 
-    // Client(= 브라우저) 쿠키 말소
-    public void terminateCookie(HttpServletResponse servletResponse) {
+    public void terminateCookieAndRole(HttpServletResponse servletResponse) {
         Cookie accessCookie = new Cookie("access_token", null);
         Cookie refreshCookie = new Cookie("refresh_token", null);
 
@@ -105,12 +104,10 @@ public class JwtCookieService {
         servletResponse.setHeader("Role", null);
     }
 
-    // Header Cookie에서 Access 토큰 가져오기
     public String getAccessToken(HttpServletRequest servletRequest) {
         return servletRequest.getCookies()[0].getValue();
     }
 
-    // Header Cookie에서 Refresh 토큰 가져오기
     public String getRefreshToken(HttpServletRequest servletRequest) {
         return servletRequest.getCookies()[1].getValue();
     }
