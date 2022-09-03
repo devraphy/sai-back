@@ -1,10 +1,10 @@
 package projectsai.saibackend.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,11 +23,11 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Api(tags = "Event API")
+@Tag(name = "Member API", description = "회원 관련 API를 제공합니다.")
 @RestController @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@ApiResponses({@ApiResponse(code = 500, message = "에러 발생"), @ApiResponse(code = 401, message = "토큰 검증 실패")})
+@ApiResponses({@ApiResponse(responseCode = "500", description = "에러 발생"), @ApiResponse(responseCode = "401", description = "토큰 검증 실패")})
 public class MemberApiController {
 
     private final MemberService memberService;
@@ -36,8 +36,8 @@ public class MemberApiController {
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(value = "이메일 중복 검증")
-    @ApiResponses({@ApiResponse(code = 200, message = "이메일 사용 가능"), @ApiResponse(code = 400, message = "이메일 사용 불가")})
+    @Operation(summary = "이메일 중복 검증", description = "회원가입 페이지에서 이메일 중복 검사에서 사용됩니다.")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "이메일 사용 가능"), @ApiResponse(responseCode = "400", description = "이메일 사용 불가")})
     @PostMapping("/email/validation")
     public void emailValidation(@RequestBody @Valid EmailValidationRequest request,
                                 HttpServletResponse servletResp) throws IOException {
@@ -57,8 +57,8 @@ public class MemberApiController {
         }
     }
 
-    @ApiOperation(value = "회원 가입")
-    @ApiResponses({@ApiResponse(code = 200, message = "회원 가입 완료"), @ApiResponse(code = 400, message = "회원 가입 실패")})
+    @Operation(summary = "회원 가입")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "회원 가입 완료"), @ApiResponse(responseCode = "400", description = "회원 가입 실패")})
     @PostMapping("/join") // 회원 가입
     public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -87,8 +87,8 @@ public class MemberApiController {
     }
 
 
-    @ApiOperation(value = "자동 로그인", notes = "refresh_token 검증을 이용한 로그인")
-    @ApiResponse(code = 200, message = "로그인 성공(토큰 갱신 및 Role 발행)")
+    @Operation(summary = "자동 로그인", description = "refresh_token 검증을 이용한 로그인")
+    @ApiResponse(responseCode = "200", description = "로그인 성공(토큰 갱신 및 Role 발행)")
     @GetMapping("/login")
     public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -112,8 +112,8 @@ public class MemberApiController {
         }
     }
 
-    @ApiOperation(value = "일반 로그인", notes = "ID와 PW 입력을 이용한 로그인")
-    @ApiResponses({@ApiResponse(code = 200, message = "로그인 성공(토큰 및 Role 발행)"), @ApiResponse(code = 400, message = "로그인 실패")})
+    @Operation(summary = "일반 로그인", description = "ID와 PW 입력을 이용한 로그인")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "로그인 성공(토큰 및 Role 발행)"), @ApiResponse(responseCode = "400", description = "로그인 실패")})
     @PostMapping("/login")
     public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -135,8 +135,8 @@ public class MemberApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
-    @ApiOperation(value = "로그아웃", notes = "모든 토큰 및 Role 말소")
-    @ApiResponse(code = 200, message = "로그아웃 성공")
+    @Operation(summary = "로그아웃", description = "모든 토큰 및 Role 말소")
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @GetMapping("/logout")
     public void logoutMember(HttpServletResponse servletResp) throws IOException {
 
@@ -154,8 +154,8 @@ public class MemberApiController {
         }
     }
 
-    @ApiOperation(value = "개인 정보 조회", notes = "access_token의 payload(email)를 이용한 회원 정보 검색")
-    @ApiResponse(code = 200, message = "회원 정보 출력")
+    @Operation(summary = "개인 정보 조회", description = "access_token의 payload(email)를 이용한 회원 정보 검색")
+    @ApiResponse(responseCode = "200", description = "회원 정보 출력")
     @GetMapping("/profile") // 회원 - 정보 조회
     public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -177,8 +177,8 @@ public class MemberApiController {
 
     }
 
-    @ApiOperation(value = "개인 정보 변경", notes = "이메일, 비밀번호 변경 가능")
-    @ApiResponses({@ApiResponse(code = 200, message = "변경 완료"), @ApiResponse(code = 400, message = "변경 실패")})
+    @Operation(summary = "개인 정보 변경", description = "이메일, 비밀번호 변경 가능")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @PutMapping("/profile")
     public void updateMember(@RequestBody @Valid UpdateMemberRequest requestDTO,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
@@ -204,8 +204,8 @@ public class MemberApiController {
         objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
     }
 
-    @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴 시 모든 토큰 및 Role 말소")
-    @ApiResponses({@ApiResponse(code = 200, message = "탈퇴 완료"), @ApiResponse(code = 400, message = "탈퇴 실패")})
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 시 모든 토큰 및 Role 말소")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "탈퇴 완료"), @ApiResponse(responseCode = "400", description = "탈퇴 실패")})
     @DeleteMapping("/profile") // 회원 - 탈퇴
     public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO,
                              HttpServletResponse servletResp) throws IOException {
