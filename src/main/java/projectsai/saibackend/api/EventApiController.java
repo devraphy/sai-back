@@ -54,7 +54,7 @@ public class EventApiController {
     private final RecordService recordService;
     private final JwtCookieService jwtCookieService;
     private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
 
     /* =================== GET MAPPING =================== */

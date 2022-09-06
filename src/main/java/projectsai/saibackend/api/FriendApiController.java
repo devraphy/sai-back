@@ -43,7 +43,7 @@ public class FriendApiController {
     private final MemberService memberService;
     private final JwtCookieService jwtCookieService;
     private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
 
     /* =================== GET MAPPING =================== */
