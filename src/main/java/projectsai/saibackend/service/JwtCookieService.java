@@ -81,7 +81,7 @@ public class JwtCookieService {
                 log.info("JwtCookieService | validateRefreshToken() Success: Refresh 토큰 유효함");
                 return true;
             }
-            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료");
+            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 검증 실패");
             return false;
         } catch (ExpiredJwtException e) {
             log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료됨 => {}", e.getMessage());

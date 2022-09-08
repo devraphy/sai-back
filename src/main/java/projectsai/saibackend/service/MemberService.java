@@ -1,5 +1,6 @@
 package projectsai.saibackend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,11 +8,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Member;
+import projectsai.saibackend.dto.member.requestDto.DeleteMemberRequest;
+import projectsai.saibackend.dto.member.requestDto.EmailValidationRequest;
+import projectsai.saibackend.dto.member.requestDto.JoinMemberRequest;
+import projectsai.saibackend.dto.member.requestDto.UpdateMemberRequest;
+import projectsai.saibackend.dto.member.responseDto.JoinMemberResponse;
+import projectsai.saibackend.dto.member.responseDto.MemberResultResponse;
+import projectsai.saibackend.dto.member.responseDto.SearchMemberResponse;
 import projectsai.saibackend.repository.MemberRepository;
+import projectsai.saibackend.security.jwt.JwtProvider;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
 @Service
@@ -24,9 +38,12 @@ public class MemberService {
     EntityManager em;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtCookieService jwtCookieService;
+    private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
-    @Transactional
-    public boolean signUp(Member member) { // 회원 가입
+    @Transactional // 회원 가입
+    public boolean save(Member member) {
         try {
             memberRepository.addMember(member);
             log.info("Member Service | signUp() Success: 저장 성공");
@@ -37,7 +54,8 @@ public class MemberService {
         }
     }
 
-    public List<Member> findAll() { // 전체 회원 검색
+    // 전체 회원 검색
+    public List<Member> findAll() {
         try {
             List<Member> memberList = memberRepository.findAll();
             log.info("Member Service | findAll() Success: 검색 성공");
@@ -51,7 +69,8 @@ public class MemberService {
         }
     }
 
-    public Member findMember(Long id) { // 특정 회원 검색
+    // 특정 회원 검색
+    public Member findMember(Long id) {
         try {
             Member member = memberRepository.findById(id);
             log.info("Member Service | findMember() Success: 검색 성공");
@@ -65,7 +84,8 @@ public class MemberService {
         }
     }
 
-    public Member findByEmail(String email) { // email 회원 검색
+    // email 회원 검색
+    public Member findByEmail(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
             log.info("Member Service | findByEmail(): 검색 성공");
@@ -79,7 +99,8 @@ public class MemberService {
         }
     }
 
-    public Boolean emailValidation(String email) { // 회원 가입 - email 중복 검사
+    // 회원 가입 - email 중복 검사
+    public Boolean emailValidation(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
             if (member.getVisibility().equals(Boolean.FALSE)) {
@@ -96,7 +117,8 @@ public class MemberService {
         return false;
     }
 
-    public boolean loginValidation(String email, String password) { // 로그인 - email & password 검증
+    // 로그인 - email & password 검증
+    public boolean loginValidation(String email, String password) {
         try {
             Member member = memberRepository.findByEmail(email);
 
@@ -118,8 +140,8 @@ public class MemberService {
         return false;
     }
 
-    @Transactional
-    public boolean updateMember(Long id, String email, String name, String password) { // 회원 정보 수정
+    @Transactional // 회원 정보 수정
+    public boolean updateMember(Long id, String email, String name, String password) {
         try {
             Member member = memberRepository.findByEmail(email);
 
@@ -153,8 +175,8 @@ public class MemberService {
         return false;
     }
 
-    @Transactional
-    public boolean deleteMember(String email) { // 회원 탈퇴(= visibility 수정)
+    @Transactional // 회원 탈퇴(= visibility 수정)
+    public boolean deleteMember(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
             if (member.getVisibility().equals(Boolean.FALSE)) {
@@ -175,4 +197,106 @@ public class MemberService {
             return false;
         }
     }
+
+    // MemberApi - profile 요청
+    public void getProfile(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member member = this.findByEmail(email);
+
+            log.info("Member Service | getProfile() Success: 프로필 요청 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
+        } catch (Exception e) {
+            log.error("Member Service | getProfile() Fail: 에러 발생 => {}", e.getMessage());
+            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        }
+    }
+
+    // MemberApi - email 중복 검증
+    public void checkEmailDuplication(EmailValidationRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        if (this.emailValidation(requestDTO.getEmail().toLowerCase())) {
+            log.info("Member Service | checkEmailDuplication() Success: 중복 검증 통과");
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+        } else {
+            log.warn("Member Service | checkEmailDuplication() Fail: 중복 검증 실패");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        }
+    }
+
+    @Transactional // MemberApi - 회원가입
+    public void signUp(JoinMemberRequest requestDTO, HttpServletRequest servletReq,
+                                     HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        Member member = new Member(requestDTO.getName(), requestDTO.getEmail().toLowerCase(),
+                passwordEncoder.encode(requestDTO.getPassword()), Boolean.TRUE, "ROLE_USER");
+
+        if (this.save(member)) {
+            String email = member.getEmail();
+            String role = member.getRole();
+
+            jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
+
+            log.info("Member API | joinMember() Success: 회원 가입 완료");
+            objectMapper.writeValue(servletResp.getOutputStream(),
+                    new JoinMemberResponse(member.getMemberId(), Boolean.TRUE));
+        } else {
+            log.warn("Member API | joinMember() Fail: 회원 가입 실패");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(servletResp.getOutputStream(),
+                    new MemberResultResponse(Boolean.FALSE));
+        }
+    }
+
+    @Transactional // MemberApi - 프로필 수정
+    public void updateProfile(UpdateMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        String accessToken = jwtCookieService.getAccessToken(servletReq);
+        String userEmail = jwtProvider.getUserEmail(accessToken);
+        Member member = this.findByEmail(userEmail);
+
+        boolean result = this.updateMember(member.getMemberId(), requestDTO.getEmail().toLowerCase(),
+                requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
+
+        if (result) {
+            log.info("Member Service | updateProfile() Success: 프로필 업데이트 완료");
+            jwtCookieService.setTokenInCookie(requestDTO.getEmail(), "ROLE_USER", servletReq, servletResp);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+        }
+        else {
+            log.warn("Member Service | updateProfile() Fail: 프로필 업데이트 실패");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        }
+    }
+
+    @Transactional // MemberApi - 회원 탈퇴
+    public void resign(DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        if (this.deleteMember(requestDTO.getEmail())) {
+            log.info("Member API | deleteMember() Success: 탈퇴 완료");
+            jwtCookieService.terminateCookieAndRole(servletResp);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
+        }
+        else {
+            log.warn("Member API | deleteMember() Fail: 탈퇴 실패");
+            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        }
+    }
+
 }
