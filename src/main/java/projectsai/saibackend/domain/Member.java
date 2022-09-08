@@ -1,11 +1,11 @@
 package projectsai.saibackend.domain;
 
 import lombok.Getter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,8 +24,8 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @CreationTimestamp
-    private Timestamp signUpDate;
+    @NotNull
+    private LocalDateTime signUpDate;
 
     @NotNull
     private Boolean visibility;
@@ -41,6 +41,7 @@ public class Member {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.signUpDate = LocalDateTime.now();
         this.visibility = visibility;
         this.role = role;
     }

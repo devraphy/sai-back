@@ -18,7 +18,6 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member owner;
