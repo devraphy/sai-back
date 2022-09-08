@@ -194,8 +194,9 @@ public class EventService {
                 List<Record> recordList = recordService.findAll(event);
                 List<Long> friendIds = recordList.stream()
                         .map(o -> o.getFriend().getFriendId()).collect(Collectors.toList());
-                List<Friend> friendList = friendService.findFriends(friendIds);
-                result.add(new SearchEventResponse(event, friendList));
+                List<Friend> participants = friendService.findFriends(friendIds);
+                result.add(new SearchEventResponse(event.getEventId(), event.getName(), event.getDate(),
+                        event.getPurpose(), event.getEvaluation(), participants));
             }
 
             log.info("Event Service | searchEventApi() Success: 이벤트 검색 성공");
