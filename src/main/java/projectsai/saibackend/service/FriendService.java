@@ -257,11 +257,11 @@ public class FriendService {
             List<FindFriendResponse> result = friendList.stream()
                     .map(FindFriendResponse::new).collect(toList());
 
-            log.info("Friend Service | findAllFriends() Success: 모든 친구 검색 완료");
+            log.info("Friend Service | findAllFriendsApi() Success: 모든 친구 검색 완료");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
         }
         catch (Exception e) {
-            log.error("Friend Service | findAllFriends() Fail: 오류 발생 => {}", e.getMessage());
+            log.error("Friend Service | findAllFriendsApi() Fail: 오류 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
@@ -282,11 +282,11 @@ public class FriendService {
                     requestDTO.getStatus(), score, requestDTO.getMemo());
 
             if (this.save(friend)) {
-                log.info("Friend Service | addFriend() Success: 친구 등록 완료");
+                log.info("Friend Service | addFriendApi() Success: 친구 등록 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             }
             else {
-                log.info("Friend Service | addFriend() Fail: 친구 등록 실패");
+                log.info("Friend Service | addFriendApi() Fail: 친구 등록 실패");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
             }
         }
@@ -307,17 +307,17 @@ public class FriendService {
                     requestDTO.getType(), requestDTO.getStatus(), score, requestDTO.getMemo());
 
             if (result) {
-                log.info("Friend Service | updateFriend() Success: 친구 업데이트 완료");
+                log.info("Friend Service | updateFriendApi() Success: 친구 업데이트 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             }
             else {
-                log.warn("Friend Service | updateFriend() Fail: 친구 업데이트 실패");
+                log.warn("Friend Service | updateFriendApi() Fail: 친구 업데이트 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
             }
         }
         catch (Exception e) {
-            log.error("Friend Service | updateFriend() Fail: 에러 발생 => {}", e.getMessage());
+            log.error("Friend Service | updateFriendApi() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
@@ -332,16 +332,16 @@ public class FriendService {
             Friend friend = this.findById(requestDTO.getFriendId());
 
             if (this.deleteFriend(friend)) {
-                log.info("Friend Service | deleteFriend() Success: 친구 삭제 완료");
+                log.info("Friend Service | deleteFriendApi() Success: 친구 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
             } else {
-                log.warn("Friend Service | deleteFriend() Fail: 친구 삭제 실패");
+                log.warn("Friend Service | deleteFriendApi() Fail: 친구 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
             }
         }
         catch (Exception e) {
-            log.error("Friend Service | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
+            log.error("Friend Service | deleteFriendApi() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }

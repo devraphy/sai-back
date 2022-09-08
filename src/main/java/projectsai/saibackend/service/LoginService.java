@@ -41,16 +41,16 @@ public class LoginService {
 
                 jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
-                log.info("Login Service | autoLogin() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
+                log.info("Login Service | autoLoginApi() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
                 objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
 
             } catch (Exception e) {
-                log.error("Login Service | autoLogin() Fail: 에러 발생 => {}", e.getMessage());
+                log.error("Login Service | autoLoginApi() Fail: 에러 발생 => {}", e.getMessage());
                 servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
             }
         } else {
-            log.warn("Login Service | autoLogin() Fail: 토큰 검증 실패");
+            log.warn("Login Service | autoLoginApi() Fail: 토큰 검증 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
@@ -62,11 +62,11 @@ public class LoginService {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
-            log.info("Login Service | logout() Success: 로그아웃 성공");
+            log.info("Login Service | logoutApi() Success: 로그아웃 성공");
             jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         } catch (Exception e) {
-            log.error("Login Service | logout() Fail: 에러 발생 => {}", e.getMessage());
+            log.error("Login Service | logoutApi() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
@@ -82,11 +82,11 @@ public class LoginService {
 
             jwtCookieService.setTokenInCookie(email, member.getRole(), servletReq, servletResp);
 
-            log.info("Login Service | basicLogin() Success: 로그인 성공");
+            log.info("Login Service | basicLoginApi() Success: 로그인 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
         }
         else {
-            log.warn("Login Service | basicLogin() Fail: 로그인 실패");
+            log.warn("Login Service | basicLoginApi() Fail: 로그인 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }

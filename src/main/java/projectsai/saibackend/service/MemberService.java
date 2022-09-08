@@ -208,10 +208,10 @@ public class MemberService {
             String email = jwtProvider.getUserEmail(accessToken);
             Member member = this.findByEmail(email);
 
-            log.info("Member Service | getProfile() Success: 프로필 요청 성공");
+            log.info("Member Service | getProfileApi() Success: 프로필 요청 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
         } catch (Exception e) {
-            log.error("Member Service | getProfile() Fail: 에러 발생 => {}", e.getMessage());
+            log.error("Member Service | getProfileApi() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
@@ -223,10 +223,10 @@ public class MemberService {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         if (this.emailValidation(requestDTO.getEmail().toLowerCase())) {
-            log.info("Member Service | checkEmailDuplication() Success: 중복 검증 통과");
+            log.info("Member Service | emailValidationApi() Success: 중복 검증 통과");
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         } else {
-            log.warn("Member Service | checkEmailDuplication() Fail: 중복 검증 실패");
+            log.warn("Member Service | emailValidationApi() Fail: 중복 검증 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
@@ -247,11 +247,11 @@ public class MemberService {
 
             jwtCookieService.setTokenInCookie(email, role, servletReq, servletResp);
 
-            log.info("Member API | joinMember() Success: 회원 가입 완료");
+            log.info("Member API | signUpApi() Success: 회원 가입 완료");
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new JoinMemberResponse(member.getMemberId(), Boolean.TRUE));
         } else {
-            log.warn("Member API | joinMember() Fail: 회원 가입 실패");
+            log.warn("Member API | signUpApi() Fail: 회원 가입 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(),
                     new MemberResultResponse(Boolean.FALSE));
@@ -271,12 +271,12 @@ public class MemberService {
                 requestDTO.getName(), passwordEncoder.encode(requestDTO.getPassword()));
 
         if (result) {
-            log.info("Member Service | updateProfile() Success: 프로필 업데이트 완료");
+            log.info("Member Service | updateProfileApi() Success: 프로필 업데이트 완료");
             jwtCookieService.setTokenInCookie(requestDTO.getEmail(), "ROLE_USER", servletReq, servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         else {
-            log.warn("Member Service | updateProfile() Fail: 프로필 업데이트 실패");
+            log.warn("Member Service | updateProfileApi() Fail: 프로필 업데이트 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
@@ -288,12 +288,12 @@ public class MemberService {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         if (this.deleteMember(requestDTO.getEmail())) {
-            log.info("Member API | deleteMember() Success: 탈퇴 완료");
+            log.info("Member API | deleteMemberApi() Success: 탈퇴 완료");
             jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
         }
         else {
-            log.warn("Member API | deleteMember() Fail: 탈퇴 실패");
+            log.warn("Member API | deleteMemberApi() Fail: 탈퇴 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
