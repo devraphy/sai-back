@@ -28,7 +28,7 @@ public class LoginService {
     private final ObjectMapper objectMapper;
 
     // MemberApi - 자동 로그인
-    public void autoLogin(HttpServletRequest servletReq, HttpServletResponse servletResp ) throws IOException {
+    public void autoLoginApi(HttpServletRequest servletReq, HttpServletResponse servletResp ) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -57,7 +57,7 @@ public class LoginService {
     }
 
     // MemberApi - 로그아웃
-    public void logout(HttpServletResponse servletResp) throws IOException {
+    public void logoutApi(HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -72,7 +72,7 @@ public class LoginService {
         }
     }
 
-    public void basicLogin(LoginMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void basicLoginApi(LoginMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 

@@ -41,7 +41,7 @@ public class MemberApiController {
             @Parameter(name = "refresh_token", description = "회원가입 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        loginService.autoLogin(servletReq, servletResp);
+        loginService.autoLoginApi(servletReq, servletResp);
 
     }
 
@@ -52,7 +52,7 @@ public class MemberApiController {
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void logoutMember(HttpServletResponse servletResp) throws IOException {
 
-        loginService.logout(servletResp);
+        loginService.logoutApi(servletResp);
 
     }
 
@@ -63,7 +63,7 @@ public class MemberApiController {
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        memberService.getProfile(servletReq, servletResp);
+        memberService.getProfileApi(servletReq, servletResp);
 
     }
 
@@ -75,7 +75,8 @@ public class MemberApiController {
     public void emailValidation(@RequestBody @Valid EmailValidationRequest requestDTO,
                                 HttpServletResponse servletResp) throws IOException {
 
-        memberService.checkEmailDuplication(requestDTO, servletResp);
+        memberService.emailValidationApi(requestDTO, servletResp);
+
     }
 
     @PostMapping("/join") // 회원 가입
@@ -84,7 +85,8 @@ public class MemberApiController {
     public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        memberService.signUp(requestDTO, servletReq, servletResp);
+        memberService.signUpApi(requestDTO, servletReq, servletResp);
+
     }
 
     @PostMapping("/login")
@@ -93,7 +95,8 @@ public class MemberApiController {
     public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        loginService.basicLogin(requestDTO, servletReq, servletResp);
+        loginService.basicLoginApi(requestDTO, servletReq, servletResp);
+
     }
 
     /* =================== PUT MAPPING =================== */
@@ -106,7 +109,8 @@ public class MemberApiController {
     public void updateProfile(@RequestBody @Valid UpdateMemberRequest requestDTO,
                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
-        memberService.updateProfile(requestDTO, servletReq, servletResp);
+        memberService.updateProfileApi(requestDTO, servletReq, servletResp);
+
     }
 
     /* =================== DELETE MAPPING =================== */
@@ -116,9 +120,9 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "탈퇴 완료"), @ApiResponse(responseCode = "400", description = "탈퇴 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO,
-                             HttpServletResponse servletResp) throws IOException {
+    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
 
-        memberService.resign(requestDTO, servletResp);
+        memberService.deleteMemberApi(requestDTO, servletResp);
+
     }
 }

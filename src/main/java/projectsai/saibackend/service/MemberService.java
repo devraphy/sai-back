@@ -199,7 +199,7 @@ public class MemberService {
     }
 
     // MemberApi - profile 요청
-    public void getProfile(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void getProfileApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -218,7 +218,7 @@ public class MemberService {
     }
 
     // MemberApi - email 중복 검증
-    public void checkEmailDuplication(EmailValidationRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void emailValidationApi(EmailValidationRequest requestDTO, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -233,7 +233,7 @@ public class MemberService {
     }
 
     @Transactional // MemberApi - 회원가입
-    public void signUp(JoinMemberRequest requestDTO, HttpServletRequest servletReq,
+    public void signUpApi(JoinMemberRequest requestDTO, HttpServletRequest servletReq,
                                      HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
@@ -259,7 +259,7 @@ public class MemberService {
     }
 
     @Transactional // MemberApi - 프로필 수정
-    public void updateProfile(UpdateMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void updateProfileApi(UpdateMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -283,7 +283,7 @@ public class MemberService {
     }
 
     @Transactional // MemberApi - 회원 탈퇴
-    public void resign(DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteMemberApi(DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
