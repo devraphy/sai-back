@@ -80,15 +80,17 @@ public class JwtCookieService {
             if (jwtProvider.validateToken(refreshToken)) {
                 log.info("JwtCookieService | validateRefreshToken() Success: Refresh 토큰 유효함");
                 return true;
+            } else {
+                log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 검증 실패");
+                return false;
             }
-            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 검증 실패");
-            return false;
         } catch (ExpiredJwtException e) {
-            log.warn("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료됨 => {}", e.getMessage());
+            log.error("JwtCookieService | validateRefreshToken() Fail: Refresh 토큰 만료됨 => {}", e.getMessage());
+            return false;
         } catch (Exception e) {
             log.error("JwtCookieService | validateRefreshToken() Fail: 에러 발생 => {}", e.getMessage());
+            return false;
         }
-        return false;
     }
 
     // 로그아웃 또는 회원 탈퇴 시 Cookie와 Role을 말소

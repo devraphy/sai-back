@@ -125,7 +125,7 @@ public class MemberService {
             if (member.getVisibility().equals(Boolean.FALSE)) {
                 log.warn("Member Service | loginValidation() Fail: 탈퇴 사용자 => {}", email);
                 return false;
-            } else if (member.getEmail().equals(email) && passwordEncoder.matches(password, member.getPassword())) {
+            } else if (passwordEncoder.matches(password, member.getPassword())) {
                 log.info("Member Service | loginValidation() Success: 매칭 성공 => {}", email);
                 return true;
             }
@@ -234,7 +234,7 @@ public class MemberService {
 
     @Transactional // MemberApi - 회원가입
     public void signUpApi(JoinMemberRequest requestDTO, HttpServletRequest servletReq,
-                                     HttpServletResponse servletResp) throws IOException {
+                          HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -274,8 +274,7 @@ public class MemberService {
             log.info("Member Service | updateProfileApi() Success: 프로필 업데이트 완료");
             jwtCookieService.setTokenInCookie(requestDTO.getEmail(), "ROLE_USER", servletReq, servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-        }
-        else {
+        } else {
             log.warn("Member Service | updateProfileApi() Fail: 프로필 업데이트 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
@@ -291,8 +290,7 @@ public class MemberService {
             log.info("Member API | deleteMemberApi() Success: 탈퇴 완료");
             jwtCookieService.terminateCookieAndRole(servletResp);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
-        }
-        else {
+        } else {
             log.warn("Member API | deleteMemberApi() Fail: 탈퇴 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));

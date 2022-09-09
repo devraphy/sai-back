@@ -9,6 +9,8 @@ import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.dto.member.requestDto.LoginMemberRequest;
 import projectsai.saibackend.dto.member.responseDto.LoginMemberResponse;
 import projectsai.saibackend.dto.member.responseDto.MemberResultResponse;
+import projectsai.saibackend.exception.ErrorCode;
+import projectsai.saibackend.exception.ErrorResponse;
 import projectsai.saibackend.security.jwt.JwtProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +19,8 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Service @Slf4j
+@Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LoginService {
@@ -28,7 +31,7 @@ public class LoginService {
     private final ObjectMapper objectMapper;
 
     // MemberApi - 자동 로그인
-    public void autoLoginApi(HttpServletRequest servletReq, HttpServletResponse servletResp ) throws IOException {
+    public void autoLoginApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -47,12 +50,13 @@ public class LoginService {
             } catch (Exception e) {
                 log.error("Login Service | autoLoginApi() Fail: 에러 발생 => {}", e.getMessage());
                 servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+                objectMapper.writeValue(servletResp.getOutputStream(),
+                        new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
             }
         } else {
             log.warn("Login Service | autoLoginApi() Fail: 토큰 검증 실패");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            servletResp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.UNAUTHORIZED));
         }
     }
 
@@ -68,27 +72,37 @@ public class LoginService {
         } catch (Exception e) {
             log.error("Login Service | logoutApi() Fail: 에러 발생 => {}", e.getMessage());
             servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(),
+                    new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 
+    // MemberApi - 일반 로그인
     public void basicLoginApi(LoginMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
-        if (memberService.loginValidation(requestDTO.getEmail().toLowerCase(), requestDTO.getPassword())) {
-            Member member = memberService.findByEmail(requestDTO.getEmail().toLowerCase());
-            String email = member.getEmail();
+        try {
+            if (memberService.loginValidation(requestDTO.getEmail().toLowerCase(), requestDTO.getPassword())) {
+                Member member = memberService.findByEmail(requestDTO.getEmail().toLowerCase());
+                String email = member.getEmail();
 
-            jwtCookieService.setTokenInCookie(email, member.getRole(), servletReq, servletResp);
+                jwtCookieService.setTokenInCookie(email, member.getRole(), servletReq, servletResp);
 
-            log.info("Login Service | basicLoginApi() Success: 로그인 성공");
-            objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
+                log.info("Login Service | basicLoginApi() Success: 로그인 성공");
+                objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
+            } else {
+                log.warn("Login Service | basicLoginApi() Fail: 로그인 실패");
+                servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
+            }
         }
-        else {
-            log.warn("Login Service | basicLoginApi() Fail: 로그인 실패");
-            servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+        catch (Exception e) {
+            log.warn("Login Service | basicLoginApi() Fail: 에러 발생 => {}", e.getMessage());
+            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            objectMapper.writeValue(servletResp.getOutputStream(),
+                    new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 }
+

@@ -71,7 +71,8 @@ public class MemberApiController {
 
     @PostMapping("/email/validation")
     @Operation(summary = "이메일 중복 검증", description = "회원가입 페이지에서 이메일 중복 검사에서 사용됩니다.")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "이메일 사용 가능"), @ApiResponse(responseCode = "400", description = "이메일 사용 불가")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "이메일 사용 가능"),
+            @ApiResponse(responseCode = "400", description = "이메일 사용 불가")})
     public void emailValidation(@RequestBody @Valid EmailValidationRequest requestDTO,
                                 HttpServletResponse servletResp) throws IOException {
 
@@ -81,7 +82,8 @@ public class MemberApiController {
 
     @PostMapping("/join") // 회원 가입
     @Operation(summary = "회원 가입")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "회원 가입 완료"), @ApiResponse(responseCode = "400", description = "회원 가입 실패")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "회원 가입 완료"),
+            @ApiResponse(responseCode = "400", description = "회원 가입 실패")})
     public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -91,7 +93,8 @@ public class MemberApiController {
 
     @PostMapping("/login")
     @Operation(summary = "일반 로그인", description = "ID와 PW 입력을 이용한 로그인")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "로그인 성공(토큰 및 Role 발행)"), @ApiResponse(responseCode = "400", description = "로그인 실패")})
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "로그인 성공(토큰 및 Role 발행)"),
+            @ApiResponse(responseCode = "400", description = "로그인 실패")})
     public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO,
                            HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
@@ -107,7 +110,7 @@ public class MemberApiController {
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void updateProfile(@RequestBody @Valid UpdateMemberRequest requestDTO,
-                             HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
 
         memberService.updateProfileApi(requestDTO, servletReq, servletResp);
 
