@@ -59,12 +59,12 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("Friend - 친구 등록")
-    void addFriend() throws Exception {
+    void save() throws Exception {
         // given
         Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
 
         // when
-        boolean result = friendService.addFriend(testFriend);
+        boolean result = friendService.save(testFriend);
 
         // then
         Assertions.assertEquals(Boolean.TRUE, result);
@@ -156,10 +156,10 @@ class FriendServiceTest {
     void updateFriend() throws Exception {
         // given
         Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
-        friendService.addFriend(testFriend);
+        friendService.save(testFriend);
 
         // when
-        friendService.updateFriend(testFriend.getFriendId(), "바꾼이름", RelationType.FRIEND, RelationStatus.POSITIVE, 70, null);
+        friendService.updateFriendInfo(testFriend.getFriendId(), "바꾼이름", RelationType.FRIEND, RelationStatus.POSITIVE, 70, null);
 
         // then
         Assertions.assertEquals("바꾼이름", testFriend.getName());
@@ -217,7 +217,7 @@ class FriendServiceTest {
     public void deleteFriend() throws Exception {
         // given
         Friend testFriend = new Friend(owner, "테스트", RelationType.BUSINESS, RelationStatus.NORMAL, 50, null);
-        friendService.addFriend(testFriend);
+        friendService.save(testFriend);
 
         // when
         boolean result = friendService.deleteFriend(testFriend);

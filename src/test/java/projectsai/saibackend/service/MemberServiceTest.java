@@ -30,18 +30,18 @@ class MemberServiceTest {
     void createMember() throws Exception {
         user1 = new Member("이근형", "abc@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
         user2 = new Member("박근형", "def@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
-        memberService.signUp(user1);
-        memberService.signUp(user2);
+        memberService.save(user1);
+        memberService.save(user2);
     }
 
     @Test
     @DisplayName("Member - 회원 가입")
-    void signUp() throws Exception {
+    void save() throws Exception {
         // given
         Member newUser = new Member("라파파", "rapapa@gmail.com", passwordEncoder.encode("abcde"), Boolean.TRUE, "ROLE_USER");
 
         // when
-        memberService.signUp(newUser);
+        memberService.save(newUser);
 
         // then
         Assertions.assertEquals(newUser.getMemberId(), memberRepository.findByEmail("rapapa@gmail.com").getMemberId());
