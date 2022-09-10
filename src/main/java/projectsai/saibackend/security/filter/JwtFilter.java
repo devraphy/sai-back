@@ -1,6 +1,7 @@
 package projectsai.saibackend.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import projectsai.saibackend.exception.ErrorCode;
@@ -51,6 +52,7 @@ public class JwtFilter implements Filter {
             log.error("JwtFilter | Fail: 토큰 검증 실패");
             servletResponse.setContentType(APPLICATION_JSON_VALUE);
             servletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            objectMapper.registerModule(new JavaTimeModule());
             objectMapper.writeValue(servletResponse.getOutputStream(), new ErrorResponse(ErrorCode.UNAUTHORIZED));
         }
     }

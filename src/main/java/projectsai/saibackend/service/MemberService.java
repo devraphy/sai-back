@@ -3,6 +3,7 @@ package projectsai.saibackend.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import projectsai.saibackend.dto.member.requestDto.UpdateMemberRequest;
 import projectsai.saibackend.dto.member.responseDto.JoinMemberResponse;
 import projectsai.saibackend.dto.member.responseDto.MemberResultResponse;
 import projectsai.saibackend.dto.member.responseDto.SearchMemberResponse;
+import projectsai.saibackend.exception.ErrorCode;
+import projectsai.saibackend.exception.ErrorResponse;
 import projectsai.saibackend.repository.MemberRepository;
 import projectsai.saibackend.security.jwt.JwtProvider;
 
@@ -44,14 +47,9 @@ public class MemberService {
 
     @Transactional // 회원 가입
     public boolean save(Member member) {
-        try {
-            memberRepository.addMember(member);
-            log.info("Member Service | signUp() Success: 저장 성공");
-            return true;
-        } catch (Exception e) {
-            log.error("Member Service | signUp() Fail: 에러 발생 => {}", e.getMessage());
-            return false;
-        }
+        Long memberId = memberRepository.addMember(member);
+        log.info("Member Service | signUp() Success: 저장 성공");
+        return memberId != null;
     }
 
     // 전체 회원 검색
@@ -62,11 +60,10 @@ public class MemberService {
             return memberList;
         } catch (EmptyResultDataAccessException e) {
             log.warn("Member Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
-            return null;
         } catch (Exception e) {
             log.error("Member Service | findAll() Fail: 에러 발생  => {}", e.getMessage());
-            return null;
         }
+        return null;
     }
 
     // 특정 회원 검색
@@ -77,11 +74,10 @@ public class MemberService {
             return member;
         } catch (EmptyResultDataAccessException e) {
             log.warn("Member Service | findMember() Fail: 검색 결과 없음 => {}", e.getMessage());
-            return null;
         } catch (Exception e) {
             log.error("Member Service | findMember() Fail: 에러 발생 => {}", e.getMessage());
-            return null;
         }
+        return null;
     }
 
     // email 회원 검색
@@ -92,11 +88,10 @@ public class MemberService {
             return member;
         } catch (EmptyResultDataAccessException e) {
             log.warn("Member Service | findByEmail(): 검색 결과 없음 => {}", e.getMessage());
-            return null;
         } catch (Exception e) {
             log.error("Member Service | findByEmail(): 에러 발생 => {}", e.getMessage());
-            return null;
         }
+        return null;
     }
 
     // 회원 가입 - email 중복 검사
@@ -112,6 +107,7 @@ public class MemberService {
             return true;
         } catch (Exception e) {
             log.error("Member Service | emailValidation() Fail: 에러 발생 => {}", e.getMessage());
+            return false;
         }
         log.warn("Member Service | emailValidation() Fail: 사용중인 이메일 => {}", email);
         return false;
@@ -199,7 +195,7 @@ public class MemberService {
     }
 
     // MemberApi - profile 요청
-    public void getProfileApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void getProfileApi(HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -212,13 +208,12 @@ public class MemberService {
             objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
         } catch (Exception e) {
             log.error("Member Service | getProfileApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
         }
     }
 
     // MemberApi - email 중복 검증
-    public void emailValidationApi(EmailValidationRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void emailValidationApi(EmailValidationRequest requestDTO,
+                                   HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -228,7 +223,7 @@ public class MemberService {
         } else {
             log.warn("Member Service | emailValidationApi() Fail: 중복 검증 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
         }
     }
 
@@ -253,13 +248,13 @@ public class MemberService {
         } else {
             log.warn("Member API | signUpApi() Fail: 회원 가입 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(),
-                    new MemberResultResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
         }
     }
 
     @Transactional // MemberApi - 프로필 수정
-    public void updateProfileApi(UpdateMemberRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void updateProfileApi(UpdateMemberRequest requestDTO, HttpServletRequest servletReq,
+                                 HttpServletResponse servletResp) throws IOException {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -277,7 +272,7 @@ public class MemberService {
         } else {
             log.warn("Member Service | updateProfileApi() Fail: 프로필 업데이트 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
         }
     }
 
@@ -293,7 +288,7 @@ public class MemberService {
         } else {
             log.warn("Member API | deleteMemberApi() Fail: 탈퇴 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.FALSE));
+            objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
         }
     }
 

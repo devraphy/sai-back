@@ -1,10 +1,13 @@
 package projectsai.saibackend.repository;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import projectsai.saibackend.domain.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class MemberRepository {
     // *********************************** CREATE
 
     // CREATE - Member 객체 영속화
-    public Long addMember(Member user) {
+    public Long addMember(Member user) throws DuplicateKeyException {
         em.persist(user);
         return user.getMemberId();
     }
