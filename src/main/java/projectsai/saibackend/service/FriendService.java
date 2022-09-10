@@ -18,6 +18,8 @@ import projectsai.saibackend.dto.friend.requestDto.DeleteFriendRequest;
 import projectsai.saibackend.dto.friend.requestDto.UpdateFriendRequest;
 import projectsai.saibackend.dto.friend.responseDto.FindFriendResponse;
 import projectsai.saibackend.dto.friend.responseDto.FriendResultResponse;
+import projectsai.saibackend.exception.ErrorCode;
+import projectsai.saibackend.exception.ErrorResponse;
 import projectsai.saibackend.repository.EventRepository;
 import projectsai.saibackend.repository.FriendRepository;
 import projectsai.saibackend.repository.RecordRepository;
@@ -244,7 +246,7 @@ public class FriendService {
     }
 
     // FriendApi - 모든 친구 검색
-    public void findAllFriendsApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void findAllFriendsApi(HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -262,13 +264,12 @@ public class FriendService {
         }
         catch (Exception e) {
             log.error("Friend Service | findAllFriendsApi() Fail: 오류 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
     }
 
     @Transactional // FriendApi - 친구 저장
-    public void addFriendApi(AddFriendRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void addFriendApi(AddFriendRequest requestDTO, HttpServletRequest servletReq,
+                             HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -287,18 +288,16 @@ public class FriendService {
             }
             else {
                 log.info("Friend Service | addFriendApi() Fail: 친구 등록 실패");
-                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
         }
         catch (Exception e) {
             log.error("Friend Service | addFriend() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
     }
 
     @Transactional // FriendApi - 친구 정보 수정
-    public void updateFriendApi(UpdateFriendRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void updateFriendApi(UpdateFriendRequest requestDTO, HttpServletResponse servletResp) {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
@@ -313,18 +312,16 @@ public class FriendService {
             else {
                 log.warn("Friend Service | updateFriendApi() Fail: 친구 업데이트 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
         }
         catch (Exception e) {
             log.error("Friend Service | updateFriendApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
     }
 
     @Transactional // FriendApi - 친구 삭제(상태 수정)
-    public void deleteFriendApi(DeleteFriendRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteFriendApi(DeleteFriendRequest requestDTO, HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -337,13 +334,11 @@ public class FriendService {
             } else {
                 log.warn("Friend Service | deleteFriendApi() Fail: 친구 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
         }
         catch (Exception e) {
             log.error("Friend Service | deleteFriendApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.FALSE));
         }
     }
 }

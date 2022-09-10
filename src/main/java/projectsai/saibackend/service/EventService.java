@@ -18,6 +18,8 @@ import projectsai.saibackend.dto.event.requestDto.DeleteEventRequest;
 import projectsai.saibackend.dto.event.requestDto.UpdateEventRequest;
 import projectsai.saibackend.dto.event.responseDto.EventResultResponse;
 import projectsai.saibackend.dto.event.responseDto.SearchEventResponse;
+import projectsai.saibackend.exception.ErrorCode;
+import projectsai.saibackend.exception.ErrorResponse;
 import projectsai.saibackend.repository.EventRepository;
 import projectsai.saibackend.repository.RecordRepository;
 import projectsai.saibackend.security.jwt.JwtProvider;
@@ -177,7 +179,7 @@ public class EventService {
     }
 
     // EventApi - 모든 이벤트 검색
-    public void searchEventApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void searchEventApi(HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
         objectMapper.registerModule(new JavaTimeModule());
@@ -204,13 +206,11 @@ public class EventService {
         }
         catch (Exception e) {
             log.error("Event Service | searchEventApi() Fail: 오류 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
         }
     }
 
     @Transactional // EventApi - 이벤트 저장
-    public void addEventApi(AddEventRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void addEventApi(AddEventRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
@@ -234,13 +234,11 @@ public class EventService {
         }
         catch (Exception e) {
             log.error("Event Service | addEventApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
         }
     }
 
     @Transactional // EventApi - 이벤트 수정
-    public void updateEventApi(UpdateEventRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void updateEventApi(UpdateEventRequest requestDTO, HttpServletResponse servletResp) {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -271,23 +269,20 @@ public class EventService {
             if (result) {
                 log.info("Event Service | updateEventApi() Success: 이벤트 업데이트 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-                return;
             }
             else {
                 log.warn("Event Service | updateEventApi() Fail: 이벤트 업데이트 실패");
-                servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
         }
         catch (Exception e) {
             log.error("Event Service | updateEventApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
-        objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
     @Transactional // EventApi - 이벤트 삭제
-    public void deleteEventApi(DeleteEventRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteEventApi(DeleteEventRequest requestDTO, HttpServletResponse servletResp) {
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
         try {
@@ -297,18 +292,16 @@ public class EventService {
             if (result) {
                 log.info("Event Service | deleteEventApi() Success: 이벤트 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-                return;
             }
             else {
                 log.warn("Event Service | deleteEventApi() Fail: 이벤트 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
         }
         catch (Exception e) {
             log.error("Event Service | deleteEventApi() Fail: 에러 발생 => {}", e.getMessage());
-            servletResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.FALSE));
     }
 
 }
