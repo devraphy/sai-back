@@ -52,7 +52,7 @@ public class FriendApiController {
     @ApiResponse(responseCode = "200", description = "친구 등록 완료")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void addFriend(@RequestBody @Valid AddFriendRequest requestDTO, HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         friendService.addFriendApi(requestDTO, servletReq, servletResp);
 
@@ -65,7 +65,7 @@ public class FriendApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void updateFriend(@RequestBody @Valid UpdateFriendRequest requestDTO, HttpServletResponse servletResp) {
 
         friendService.updateFriendApi(requestDTO, servletResp);
 
@@ -78,7 +78,7 @@ public class FriendApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void deleteFriend(@RequestBody @Valid DeleteFriendRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteFriend(@RequestBody @Valid DeleteFriendRequest requestDTO, HttpServletResponse servletResp) {
 
         friendService.deleteFriendApi(requestDTO, servletResp);
 

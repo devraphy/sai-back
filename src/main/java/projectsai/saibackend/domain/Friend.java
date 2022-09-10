@@ -56,10 +56,6 @@ public class Friend {
     }
 
     // Business Methods
-    public void setOwner(Member member) {
-        this.owner = member;
-    }
-
     public void updateInfo(String name, RelationType type, Integer score, RelationStatus status, String memo) {
         this.name = name;
         this.type = type;

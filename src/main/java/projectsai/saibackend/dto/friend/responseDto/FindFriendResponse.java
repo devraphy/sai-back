@@ -6,7 +6,6 @@ import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.enums.RelationStatus;
 import projectsai.saibackend.domain.enums.RelationType;
 
-import java.time.LocalDate;
 
 
 @Data

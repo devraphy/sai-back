@@ -13,7 +13,8 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 
 
-@RestControllerAdvice @Slf4j
+@RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)

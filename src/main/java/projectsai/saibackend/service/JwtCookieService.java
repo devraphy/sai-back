@@ -103,7 +103,7 @@ public class JwtCookieService {
 
         servletResponse.addCookie(accessCookie);
         servletResponse.addCookie(refreshCookie);
-        servletResponse.setHeader("Role", null);
+        servletResponse.setHeader("role", null);
     }
 
     // Request의 Cookie로부터 AccessToken 가져오기

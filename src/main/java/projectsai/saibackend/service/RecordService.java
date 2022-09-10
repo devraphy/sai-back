@@ -10,8 +10,6 @@ import projectsai.saibackend.domain.Friend;
 import projectsai.saibackend.domain.Record;
 import projectsai.saibackend.repository.RecordRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -20,8 +18,6 @@ import java.util.List;
 @Slf4j
 public class RecordService {
 
-    @PersistenceContext
-    EntityManager em;
     private final RecordRepository recordRepository;
 
     @Transactional

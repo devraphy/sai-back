@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import projectsai.saibackend.domain.Member;
 
-import java.sql.Timestamp;
 
 @Data
 @Builder

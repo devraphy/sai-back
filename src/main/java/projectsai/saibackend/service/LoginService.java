@@ -47,8 +47,7 @@ public class LoginService {
             log.info("Login Service | autoLoginApi() Success: refresh 토큰 로그인 성공 및 토큰 갱신");
             objectMapper.writeValue(servletResp.getOutputStream(), new MemberResultResponse(Boolean.TRUE));
 
-        }
-        else {
+        } else {
             log.warn("Login Service | autoLoginApi() Fail: 토큰 검증 실패");
             servletResp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.UNAUTHORIZED));
@@ -79,8 +78,7 @@ public class LoginService {
 
             log.info("Login Service | basicLoginApi() Success: 로그인 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), new LoginMemberResponse(email, Boolean.TRUE));
-        } 
-        else {
+        } else {
             log.warn("Login Service | basicLoginApi() Fail: 로그인 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));

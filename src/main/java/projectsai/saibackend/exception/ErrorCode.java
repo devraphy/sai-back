@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter @AllArgsConstructor
+@Getter
+@AllArgsConstructor
 public enum ErrorCode {
 
     // Client

@@ -28,7 +28,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,8 +202,7 @@ public class EventService {
 
             log.info("Event Service | searchEventApi() Success: 이벤트 검색 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event Service | searchEventApi() Fail: 오류 발생 => {}", e.getMessage());
         }
     }
@@ -231,8 +229,7 @@ public class EventService {
 
             log.info("Event Service | addEventApi() Success: 이벤트 저장 성공");
             objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event Service | addEventApi() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -255,8 +252,7 @@ public class EventService {
             if (postParticipants.equals(prevParticipants) && !postEvaluation.equals(prevEvaluation)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
                 friendService.renewMultipleScore(postParticipants, postEvaluation);
-            }
-            else if (!postParticipants.equals(prevParticipants)) {
+            } else if (!postParticipants.equals(prevParticipants)) {
                 friendService.restoreMultipleScore(prevParticipants, prevEvaluation);
                 recordService.deleteAllRecords(event);
                 recordService.addMultipleRecords(event, postParticipants);
@@ -269,13 +265,11 @@ public class EventService {
             if (result) {
                 log.info("Event Service | updateEventApi() Success: 이벤트 업데이트 성공");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-            }
-            else {
+            } else {
                 log.warn("Event Service | updateEventApi() Fail: 이벤트 업데이트 실패");
                 objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event Service | updateEventApi() Fail: 에러 발생 => {}", e.getMessage());
         }
 
@@ -292,14 +286,12 @@ public class EventService {
             if (result) {
                 log.info("Event Service | deleteEventApi() Success: 이벤트 삭제 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new EventResultResponse(Boolean.TRUE));
-            }
-            else {
+            } else {
                 log.warn("Event Service | deleteEventApi() Fail: 이벤트 삭제 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Event Service | deleteEventApi() Fail: 에러 발생 => {}", e.getMessage());
         }
     }

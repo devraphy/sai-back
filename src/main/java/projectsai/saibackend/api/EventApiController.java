@@ -19,7 +19,6 @@ import projectsai.saibackend.service.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 
 
 @RequestMapping("/api/event")
@@ -40,7 +39,7 @@ public class EventApiController {
     @ApiResponse(responseCode = "200", description = "검색 성공")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void searchEvents(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void searchEvents(HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         eventService.searchEventApi(servletReq, servletResp);
 
@@ -55,7 +54,7 @@ public class EventApiController {
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void addEvent(@RequestBody @Valid AddEventRequest requestDTO,
-                         HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                         HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         eventService.addEventApi(requestDTO, servletReq, servletResp);
 
@@ -68,7 +67,7 @@ public class EventApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "변경 완료"), @ApiResponse(responseCode = "400", description = "변경 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void updateEvent(@RequestBody @Valid UpdateEventRequest requestDTO, HttpServletResponse servletResp) {
 
         eventService.updateEventApi(requestDTO, servletResp);
 
@@ -81,7 +80,7 @@ public class EventApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "삭제 완료"), @ApiResponse(responseCode = "400", description = "삭제 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteEvent(@RequestBody @Valid DeleteEventRequest requestDTO, HttpServletResponse servletResp) {
 
         eventService.deleteEventApi(requestDTO, servletResp);
 

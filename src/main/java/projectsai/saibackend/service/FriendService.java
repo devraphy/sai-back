@@ -29,9 +29,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,8 +59,7 @@ public class FriendService {
             friendRepository.addFriend(friend);
             log.info("Friend Service | addFriend() Success: 저장 성공");
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | addFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
@@ -75,8 +71,7 @@ public class FriendService {
             List<Friend> result = friendRepository.findAll(owner);
             log.info("Friend Service | findAll() Success: 검색 성공");
             return result;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findAll() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -88,8 +83,7 @@ public class FriendService {
             Friend friend = friendRepository.findById(id);
             log.info("Friend Service | findById() Success: 검색 성공");
             return friend;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findById() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -101,8 +95,7 @@ public class FriendService {
             List<Friend> friendList = friendRepository.findByName(owner, name);
             log.info("Friend Service | findByName() Success: 검색 성공");
             return friendList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByName() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -114,8 +107,7 @@ public class FriendService {
             List<Friend> friendList = friendRepository.findByType(owner, type);
             log.info("Friend Service | findByType() Success: 검색 성공");
             return friendList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByType() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -127,8 +119,7 @@ public class FriendService {
             List<Friend> friendList = friendRepository.findByStatus(owner, status);
             log.info("Friend Service | findByStatus() Success: 검색 성공");
             return friendList;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.warn("Friend Service | findByStatus() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -140,8 +131,7 @@ public class FriendService {
             List<Friend> friendList = friendRepository.findByIds(friendIds);
             log.info("Friend Service | findFriends() Success: 검색 성공");
             return friendList;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | findFriends() Fail: 검색 결과 없음 => {}", e.getMessage());
             return null;
         }
@@ -149,7 +139,7 @@ public class FriendService {
 
     @Transactional // 단일 친구 정보 변경
     public boolean updateFriendInfo(Long friendId, String name, RelationType type,
-                                RelationStatus status, Integer score, String memo) {
+                                    RelationStatus status, Integer score, String memo) {
         try {
             Friend findFriend = friendRepository.findById(friendId);
             findFriend.updateInfo(name, type, score, status, memo);
@@ -159,8 +149,7 @@ public class FriendService {
             em.flush();
             em.clear();
             return true;
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.info("Friend Service | updateFriend() Fail: 존재하지 않는 ID => {}", e.getMessage());
             return false;
         }
@@ -173,8 +162,7 @@ public class FriendService {
                 friend.restoreScore(prevEvaluation);
             }
             log.info("Friend Service | restoreScore() Success: 수정 성공");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | restoreScore() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -187,8 +175,7 @@ public class FriendService {
                 friend.calcStatus();
             }
             log.info("Friend Service | renewMultipleScore() Success: 수정 성공");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | renewMultipleScore() Success: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -200,8 +187,7 @@ public class FriendService {
             friend.calcStatus();
 
             log.info("Friend Service | updateScoreStatus() Success: 친구 점수 업데이트");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | updateScoreStatus() Success: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -229,8 +215,7 @@ public class FriendService {
 
             log.warn("Friend Service | deleteFriend() Success: 삭제 성공");
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Friend Service | deleteFriend() Fail: 에러 발생 => {}", e.getMessage());
             return false;
         }
@@ -261,8 +246,7 @@ public class FriendService {
 
             log.info("Friend Service | findAllFriendsApi() Success: 모든 친구 검색 완료");
             objectMapper.writeValue(servletResp.getOutputStream(), result);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | findAllFriendsApi() Fail: 오류 발생 => {}", e.getMessage());
         }
     }
@@ -285,13 +269,11 @@ public class FriendService {
             if (this.save(friend)) {
                 log.info("Friend Service | addFriendApi() Success: 친구 등록 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
-            }
-            else {
+            } else {
                 log.info("Friend Service | addFriendApi() Fail: 친구 등록 실패");
                 objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | addFriend() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -308,14 +290,12 @@ public class FriendService {
             if (result) {
                 log.info("Friend Service | updateFriendApi() Success: 친구 업데이트 완료");
                 objectMapper.writeValue(servletResp.getOutputStream(), new FriendResultResponse(Boolean.TRUE));
-            }
-            else {
+            } else {
                 log.warn("Friend Service | updateFriendApi() Fail: 친구 업데이트 실패");
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | updateFriendApi() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
@@ -336,8 +316,7 @@ public class FriendService {
                 servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Friend Service | deleteFriendApi() Fail: 에러 발생 => {}", e.getMessage());
         }
     }

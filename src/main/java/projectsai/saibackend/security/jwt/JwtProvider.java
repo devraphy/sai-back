@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Component
@@ -31,7 +29,7 @@ public class JwtProvider {
                 .setHeaderParam("typ", "access")
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + 1 * 86400 * 1000))
+                .setExpiration(new Date(now.getTime() + 86400 * 1000))
                 .signWith(SignatureAlgorithm.HS256, jwt_secret_key)
                 .compact();
     }
@@ -55,10 +53,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody().getSubject();
 
-        if (subject.equals(email)) {
-            return true;
-        }
-        return false;
+        return subject.equals(email);
     }
 
     // 토큰에서 회원 email 추출
