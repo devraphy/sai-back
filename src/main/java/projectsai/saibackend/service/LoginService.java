@@ -15,7 +15,6 @@ import projectsai.saibackend.security.jwt.JwtProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -31,7 +30,7 @@ public class LoginService {
     private final ObjectMapper objectMapper;
 
     // MemberApi - 자동 로그인
-    public void autoLoginApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void autoLoginApi(HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -55,7 +54,7 @@ public class LoginService {
     }
 
     // MemberApi - 로그아웃
-    public void logoutApi(HttpServletResponse servletResp) throws IOException {
+    public void logoutApi(HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
         log.info("Login Service | logoutApi() Success: 로그아웃 성공");
@@ -66,7 +65,7 @@ public class LoginService {
 
     // MemberApi - 일반 로그인
     public void basicLoginApi(LoginMemberRequest requestDTO, HttpServletRequest servletReq,
-                              HttpServletResponse servletResp) throws IOException {
+                              HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 

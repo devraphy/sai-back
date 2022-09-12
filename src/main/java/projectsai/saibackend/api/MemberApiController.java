@@ -17,7 +17,6 @@ import projectsai.saibackend.service.MemberService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 
 
 @RequestMapping("/api")
@@ -39,7 +38,7 @@ public class MemberApiController {
             @ApiResponse(responseCode = "400", description = "잘못된 토큰 사용")})
     @Parameters({@Parameter(name = "access_token", description = "회원가입 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "회원가입 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+    public void tokenLogin(HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         loginService.autoLoginApi(servletReq, servletResp);
 
@@ -50,7 +49,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void logoutMember(HttpServletResponse servletResp) throws IOException {
+    public void logoutMember(HttpServletResponse servletResp) throws Exception {
 
         loginService.logoutApi(servletResp);
 
@@ -61,7 +60,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원 정보 출력")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) {
+    public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         memberService.getProfileApi(servletReq, servletResp);
 
@@ -74,7 +73,7 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "이메일 사용 가능"),
             @ApiResponse(responseCode = "400", description = "이메일 사용 불가")})
     public void emailValidation(@RequestBody @Valid EmailValidationRequest requestDTO,
-                                HttpServletResponse servletResp) throws IOException {
+                                HttpServletResponse servletResp) throws Exception {
 
         memberService.emailValidationApi(requestDTO, servletResp);
 
@@ -85,7 +84,7 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "회원 가입 완료"),
             @ApiResponse(responseCode = "400", description = "회원 가입 실패")})
     public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
-                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception{
 
         memberService.signUpApi(requestDTO, servletReq, servletResp);
 
@@ -96,7 +95,7 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "로그인 성공(토큰 및 Role 발행)"),
             @ApiResponse(responseCode = "400", description = "로그인 실패")})
     public void basicLogin(@RequestBody @Valid LoginMemberRequest requestDTO,
-                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         loginService.basicLoginApi(requestDTO, servletReq, servletResp);
 
@@ -110,7 +109,7 @@ public class MemberApiController {
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
     public void updateProfile(@RequestBody @Valid UpdateMemberRequest requestDTO,
-                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws IOException {
+                              HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         memberService.updateProfileApi(requestDTO, servletReq, servletResp);
 
@@ -123,7 +122,7 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "탈퇴 완료"), @ApiResponse(responseCode = "400", description = "탈퇴 실패")})
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteMember(@RequestBody @Valid DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws Exception {
 
         memberService.deleteMemberApi(requestDTO, servletResp);
 

@@ -1,6 +1,7 @@
 package projectsai.saibackend.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -39,6 +40,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.JSON_ERROR.getStatus())
                 .body(new ErrorResponse(ErrorCode.JSON_ERROR));
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidFormat(final InvalidFormatException e) {
+        log.error("handleInvalidFormat() => {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.INVALID_INPUT_ERROR.getStatus())
+                .body(new ErrorResponse(ErrorCode.INVALID_INPUT_ERROR));
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

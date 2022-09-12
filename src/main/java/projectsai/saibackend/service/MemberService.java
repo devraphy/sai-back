@@ -24,7 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -46,9 +45,15 @@ public class MemberService {
 
     @Transactional // 회원 가입
     public boolean save(Member member) {
-        Long memberId = memberRepository.addMember(member);
-        log.info("Member Service | signUp() Success: 저장 성공");
-        return memberId != null;
+        try {
+            Long memberId = memberRepository.addMember(member);
+            log.info("Member Service | signUp() Success: 저장 성공");
+            return memberId != null;
+
+        } catch (Exception e) {
+            log.error("Member Service | signUp() Fail: 에러 발생 => {}", e.getMessage());
+        }
+        return false;
     }
 
     // 전체 회원 검색
@@ -212,7 +217,7 @@ public class MemberService {
 
     // MemberApi - email 중복 검증
     public void emailValidationApi(EmailValidationRequest requestDTO,
-                                   HttpServletResponse servletResp) throws IOException {
+                                   HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -228,7 +233,7 @@ public class MemberService {
 
     @Transactional // MemberApi - 회원가입
     public void signUpApi(JoinMemberRequest requestDTO, HttpServletRequest servletReq,
-                          HttpServletResponse servletResp) throws IOException {
+                          HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -253,7 +258,7 @@ public class MemberService {
 
     @Transactional // MemberApi - 프로필 수정
     public void updateProfileApi(UpdateMemberRequest requestDTO, HttpServletRequest servletReq,
-                                 HttpServletResponse servletResp) throws IOException {
+                                 HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
@@ -276,7 +281,7 @@ public class MemberService {
     }
 
     @Transactional // MemberApi - 회원 탈퇴
-    public void deleteMemberApi(DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws IOException {
+    public void deleteMemberApi(DeleteMemberRequest requestDTO, HttpServletResponse servletResp) throws Exception {
 
         servletResp.setContentType(APPLICATION_JSON_VALUE);
 
