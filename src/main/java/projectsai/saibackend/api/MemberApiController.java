@@ -60,7 +60,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원 정보 출력")
     @Parameters({@Parameter(name = "access_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE),
             @Parameter(name = "refresh_token", description = "로그인 시 발행되는 쿠키를 사용합니다.", in = ParameterIn.COOKIE)})
-    public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
+    public void showMember(HttpServletRequest servletReq, HttpServletResponse servletResp) {
 
         memberService.getProfileApi(servletReq, servletResp);
 
@@ -84,7 +84,7 @@ public class MemberApiController {
     @ApiResponses({@ApiResponse(responseCode = "200", description = "회원 가입 완료"),
             @ApiResponse(responseCode = "400", description = "회원 가입 실패")})
     public void joinMember(@RequestBody @Valid JoinMemberRequest requestDTO,
-                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception{
+                           HttpServletRequest servletReq, HttpServletResponse servletResp) throws Exception {
 
         memberService.signUpApi(requestDTO, servletReq, servletResp);
 
