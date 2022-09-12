@@ -47,7 +47,6 @@ public class MemberService {
     public boolean save(Member member) {
         Long memberId = memberRepository.addMember(member);
         em.flush();
-        log.info("Member Service | signUp() Success: 저장 성공");
         return memberId != null;
     }
 
