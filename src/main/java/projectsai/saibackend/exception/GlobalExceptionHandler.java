@@ -3,8 +3,6 @@ package projectsai.saibackend.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -68,22 +66,6 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ErrorCode.INVALID_INPUT_ERROR));
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ErrorResponse> handleConstraintViolation(final ConstraintViolationException e) {
-        log.error("handleConstraintViolation() => {}", e.getMessage());
-        return ResponseEntity
-                .status(ErrorCode.INVALID_INPUT_ERROR.getStatus())
-                .body(new ErrorResponse(ErrorCode.INVALID_INPUT_ERROR));
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<ErrorResponse> handleDataIntegrityViolation(final DataIntegrityViolationException e) {
-        log.error("handleDataIntegrityViolation() => {}", e.getMessage());
-        return ResponseEntity
-                .status(ErrorCode.INVALID_INPUT_ERROR.getStatus())
-                .body(new ErrorResponse(ErrorCode.INVALID_INPUT_ERROR));
-    }
-
     // SERVER
 
     @ExceptionHandler(IOException.class)
@@ -109,6 +91,4 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
                 .body(new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR));
     }
-
-
 }

@@ -45,15 +45,10 @@ public class MemberService {
 
     @Transactional // 회원 가입
     public boolean save(Member member) {
-        try {
-            Long memberId = memberRepository.addMember(member);
-            log.info("Member Service | signUp() Success: 저장 성공");
-            return memberId != null;
-
-        } catch (Exception e) {
-            log.error("Member Service | signUp() Fail: 에러 발생 => {}", e.getMessage());
-        }
-        return false;
+        Long memberId = memberRepository.addMember(member);
+        em.flush();
+        log.info("Member Service | signUp() Success: 저장 성공");
+        return memberId != null;
     }
 
     // 전체 회원 검색
@@ -198,22 +193,6 @@ public class MemberService {
         }
     }
 
-    // MemberApi - profile 요청
-    public void getProfileApi(HttpServletRequest servletReq, HttpServletResponse servletResp) {
-
-        servletResp.setContentType(APPLICATION_JSON_VALUE);
-
-        try {
-            String accessToken = jwtCookieService.getAccessToken(servletReq);
-            String email = jwtProvider.getUserEmail(accessToken);
-            Member member = this.findByEmail(email);
-
-            log.info("Member Service | getProfileApi() Success: 프로필 요청 성공");
-            objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
-        } catch (Exception e) {
-            log.error("Member Service | getProfileApi() Fail: 에러 발생 => {}", e.getMessage());
-        }
-    }
 
     // MemberApi - email 중복 검증
     public void emailValidationApi(EmailValidationRequest requestDTO,
@@ -253,6 +232,23 @@ public class MemberService {
             log.warn("Member API | signUpApi() Fail: 회원 가입 실패");
             servletResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(servletResp.getOutputStream(), new ErrorResponse(ErrorCode.BAD_REQUEST));
+        }
+    }
+
+    // MemberApi - profile 요청
+    public void getProfileApi(HttpServletRequest servletReq, HttpServletResponse servletResp) {
+
+        servletResp.setContentType(APPLICATION_JSON_VALUE);
+
+        try {
+            String accessToken = jwtCookieService.getAccessToken(servletReq);
+            String email = jwtProvider.getUserEmail(accessToken);
+            Member member = this.findByEmail(email);
+
+            log.info("Member Service | getProfileApi() Success: 프로필 요청 성공");
+            objectMapper.writeValue(servletResp.getOutputStream(), SearchMemberResponse.buildResponse(member));
+        } catch (Exception e) {
+            log.error("Member Service | getProfileApi() Fail: 에러 발생 => {}", e.getMessage());
         }
     }
 
