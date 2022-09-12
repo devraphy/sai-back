@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // CLIENT
     @ExceptionHandler(NullPointerException.class)
     protected ResponseEntity<ErrorResponse> handleNullPointer(final NullPointerException e) {
         log.error("handleNullPointer() => {}", e.getMessage());
@@ -58,14 +59,6 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ErrorCode.NO_HANDLER_FOUND));
     }
 
-    @ExceptionHandler(IOException.class)
-    protected ResponseEntity<ErrorResponse> handleIO(final IOException e) {
-        log.error("handleIO() => {}", e.getMessage());
-        return ResponseEntity
-                .status(ErrorCode.IO_ERROR.getStatus())
-                .body(new ErrorResponse(ErrorCode.IO_ERROR));
-    }
-
     @ExceptionHandler(DuplicateKeyException.class)
     protected ResponseEntity<ErrorResponse> handleDuplicateKey(final DuplicateKeyException e) {
         log.error("handleDuplicateKey() => {}", e.getMessage());
@@ -80,6 +73,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.INVALID_INPUT_ERROR.getStatus())
                 .body(new ErrorResponse(ErrorCode.INVALID_INPUT_ERROR));
+    }
+
+
+    // SERVER
+
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<ErrorResponse> handleIO(final IOException e) {
+        log.error("handleIO() => {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.IO_ERROR.getStatus())
+                .body(new ErrorResponse(ErrorCode.IO_ERROR));
     }
 
     @ExceptionHandler(RuntimeException.class)
