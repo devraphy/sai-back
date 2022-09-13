@@ -8,7 +8,10 @@ memo.txt
 !**/src/test/**/build/
 src/.DS_Store
 .DS_Store
+gradlew.bat
+gradlew
 settings.gradle
+/gradle
 
 ### STS ###
 .apt_generated
