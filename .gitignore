@@ -7,6 +7,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+system.properties
+gradlew.bat
+settings.gradle
+
 
 ### STS ###
 .apt_generated
