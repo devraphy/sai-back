@@ -12,6 +12,7 @@ src/.DS_Store
 .DS_Store
 gradlew.bat
 settings.gradle
+Procfile
 
 
 ### STS ###
