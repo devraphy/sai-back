@@ -1,12 +1,14 @@
 # 프로젝트 SAI(Social Activity Interpreter)
-### * 프로젝트 SAI의 백엔드 개발을 위한 Repository 입니다.
+### * 프로젝트 SAI의 백엔드 개발 Repository 입니다.
+
+### * [RestAPI 바로가기](https://restsai.herokuapp.com/sai-api)
 
 ### * 개발 명세 및 보고서
 - 사이의 개발 현황이 궁금하시다면 아래의 링크를 확인해주세요!
 - [사이 개발 명세 및 보고서 바로가기](https://docs.google.com/spreadsheets/d/1BZaCrvZ1CDQfG-mHz1vHmHRu7D0na4q504e9GBBEco8/edit?usp=sharing)
 
 ### * 개발 이야기
-- 사이의 개발 과정이 궁금하시다면 아래의 링크를 확인해주세요!
+- 사이를 개발하면서 해결한 문제와 고민, 과정을 보고싶다면 아래의 링크를 확인해주세요!
 - [사이 개발 과정 바로가기](https://devraphy.tistory.com/624)
 
 <hr>
@@ -35,6 +37,7 @@
 </br>
 
 ### d) 프로젝트 구조 및 기술 스택
-- 사이는 백엔드, RestAPI 서버 입니다. 
-- Spring JPA가 사용되며, RestAPI를 통해 프론트와 통신하는 구조입니다.  
-- 배포와 클라우드 서버 관련된 내용은 프로젝트 마무리 단계에서 결정할 예정입니다.
+- 사이는 RestAPI 서버 입니다. 
+- Spring Boot, Spring JPA, Spring Security
+- JWT, OpenAPI
+- MySQL, Heroku
