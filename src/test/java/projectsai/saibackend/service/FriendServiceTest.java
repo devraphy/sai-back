@@ -1,9 +1,6 @@
 package projectsai.saibackend.service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @SpringBootTest
 @Transactional

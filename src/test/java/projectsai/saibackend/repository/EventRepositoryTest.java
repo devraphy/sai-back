@@ -20,7 +20,6 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @SpringBootTest
 @Slf4j
 @Transactional

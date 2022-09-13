@@ -1,21 +1,28 @@
 package projectsai.saibackend.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import projectsai.saibackend.domain.Event;
 import projectsai.saibackend.domain.Friend;
+import projectsai.saibackend.domain.Member;
 import projectsai.saibackend.domain.Record;
+import projectsai.saibackend.domain.enums.EventEvaluation;
+import projectsai.saibackend.domain.enums.EventPurpose;
+import projectsai.saibackend.domain.enums.RelationStatus;
+import projectsai.saibackend.domain.enums.RelationType;
 
+import javax.management.relation.Relation;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,16 +36,29 @@ class RecordRepositoryTest {
     EntityManager em;
     @Autowired
     RecordRepository recordRepository;
+    BCryptPasswordEncoder passwordEncoder;
 
+    private Member member;
     private Event event;
-    private Friend friend;
-    private Record record;
+    private Friend friend1, friend2;
+    private Record record1, record2;
 
     @BeforeEach
     void createEventFriendRecord() {
-        event = em.find(Event.class, 6L);
-        friend = em.find(Friend.class, 14L);
-        record = new Record(event, friend);
+        member = new Member("테스트", "test@gmail.com",
+                passwordEncoder.encode("test"), Boolean.TRUE, "ROLE_USER");
+        em.persist(member);
+
+        friend1 = new Friend(member, "친구1", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
+        friend2 = new Friend(member, "친구2", RelationType.FRIEND, RelationStatus.NORMAL, 50, null);
+        em.persist(friend1);
+        em.persist(friend2);
+
+        event = new Event(member, LocalDate.now(), EventPurpose.CHILL, "test", EventEvaluation.GREAT);
+        em.persist(event);
+
+        record1 = new Record(event, friend1);
+        record2 = new Record(event, friend2);
     }
 
     @Test
@@ -47,23 +67,23 @@ class RecordRepositoryTest {
         // given
 
         // when
-        Long savedRecordId = recordRepository.addRecord(record);
+        Long savedRecordId = recordRepository.addRecord(record1);
 
         // then
-        Assertions.assertThat(savedRecordId).isEqualTo(record.getRecordId());
+        Assertions.assertThat(savedRecordId).isEqualTo(record1.getRecordId());
     }
 
     @Test
     @DisplayName("Record - Id로 기록 검색")
     public void findById() throws Exception {
         //given
-        Long savedRecordId = recordRepository.addRecord(record);
+        Long savedRecordId = recordRepository.addRecord(record1);
 
         //when
         Record findRecord = recordRepository.findById(savedRecordId);
 
         //then
-        Assertions.assertThat(findRecord).isEqualTo(record);
+        Assertions.assertThat(findRecord).isEqualTo(record1);
 
     }
 
@@ -71,6 +91,8 @@ class RecordRepositoryTest {
     @DisplayName("Record - 이벤트로 모든 기록 검색")
     void findAll() throws Exception {
         // given
+        recordRepository.addRecord(record1);
+        recordRepository.addRecord(record2);
 
         // when
         List<Record> allRecord = recordRepository.findAll(event);
@@ -87,11 +109,11 @@ class RecordRepositoryTest {
         // given
 
         // when
-        List<Record> allRecord = recordRepository.findByParticipant(friend);
+        List<Record> allRecord = recordRepository.findByParticipant(friend1);
 
         // then
         for (Record record : allRecord) {
-            Assertions.assertThat(record.getFriend()).isEqualTo(friend);
+            Assertions.assertThat(record.getFriend()).isEqualTo(friend1);
         }
     }
 
@@ -99,13 +121,13 @@ class RecordRepositoryTest {
     @DisplayName("Record - 특정 기록 검색")
     void findOne() throws Exception {
         // given
-        recordRepository.addRecord(record);
+        recordRepository.addRecord(record1);
 
         // when
-        Record oneRecord = recordRepository.findOne(event, friend);
+        Record oneRecord = recordRepository.findOne(event, friend1);
 
         // then
-        Assertions.assertThat(oneRecord.getRecordId()).isEqualTo(record.getRecordId());
+        Assertions.assertThat(oneRecord.getRecordId()).isEqualTo(record1.getRecordId());
     }
 
     @Test
@@ -125,10 +147,10 @@ class RecordRepositoryTest {
     @DisplayName("Record - 특정 기록 삭제")
     public void deleteRecord() throws Exception {
         //given
-        Long savedRecordId = recordRepository.addRecord(record);
+        Long savedRecordId = recordRepository.addRecord(record1);
 
         //when
-        recordRepository.deleteRecord(record);
+        recordRepository.deleteRecord(record1);
 
         //then
         Assertions.assertThat(recordRepository.findById(savedRecordId)).isEqualTo(null);

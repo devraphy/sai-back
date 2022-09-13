@@ -24,7 +24,7 @@ springdoc:
   swagger-ui:
     operations-sorter: method
     tags-sorter: alpha
-    path: /swagger-ui.html
+    path: /sai-api
     disable-swagger-default-url: true
     display-query-params-without-oauth2: true
     doc-expansion: none

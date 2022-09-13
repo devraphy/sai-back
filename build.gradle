@@ -20,34 +20,33 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.3'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.7.3'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.4'
 
-	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.30'
 
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5' // jackson
-	implementation 'com.querydsl:querydsl-jpa' // query dsl
-	implementation 'com.querydsl:querydsl-apt'
-    implementation 'org.jetbrains:annotations'
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+	implementation 'org.jetbrains:annotations:23.0.0'
 
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11' // open API
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11' // OpenAPI
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT
-	runtimeOnly 'org.springframework.boot:spring-boot-starter-security' // Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.7.3'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testImplementation 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-	developmentOnly 'org.springframework.boot:spring-boot-devtools' // devtools
-	developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter' // p6spy
+	implementation 'org.springframework.boot:spring-boot-devtools:2.7.3'// devtools
+	implementation 'p6spy:p6spy:3.9.1' // p6spy
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api' // Junit5
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0' // Junit5
+	testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 test {
