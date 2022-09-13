@@ -14,7 +14,7 @@ gradlew.bat
 gradlew
 settings.gradle
 Procfile
-
+/gradle
 
 ### STS ###
 .apt_generated
