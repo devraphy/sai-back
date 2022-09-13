@@ -11,7 +11,6 @@ src/.DS_Store
 gradlew.bat
 gradlew
 settings.gradle
-/gradle
 
 ### STS ###
 .apt_generated
