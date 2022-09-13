@@ -3,7 +3,6 @@ HELP.md
 application.properties
 DummyData.java
 memo.txt
-build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -13,7 +12,6 @@ src/.DS_Store
 gradlew.bat
 gradlew
 settings.gradle
-Procfile
 /gradle
 
 ### STS ###
