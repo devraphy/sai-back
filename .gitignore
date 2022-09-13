@@ -8,7 +8,10 @@ memo.txt
 !**/src/test/**/build/
 src/.DS_Store
 .DS_Store
-/build/resources/main/application.properties
+gradlew.bat
+gradlew
+settings.gradle
+/gradle
 
 ### STS ###
 .apt_generated
@@ -186,6 +189,7 @@ replay_pid*
 
 ### Gradle ###
 .gradle
+**/build/
 !src/**/build/
 
 # Ignore Gradle GUI config
