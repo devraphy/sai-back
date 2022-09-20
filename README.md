@@ -3,14 +3,20 @@
 
 ### * [RestAPI 바로가기](https://restsai.herokuapp.com/sai-api)
 
+### * 사이(SAI) RestAPI 사용 설명서
+- 사이 RestAPI 사용 설명서는 아래의 링크를 확인해주세요!
+- [사이 RestAPI 사용 설명서](https://devraphy.tistory.com/640)
 
 ### * 개발 명세 및 보고서
 - 사이의 개발 현황이 궁금하시다면 아래의 링크를 확인해주세요!
 - [사이 개발 명세 및 보고서 바로가기](https://docs.google.com/spreadsheets/d/1BZaCrvZ1CDQfG-mHz1vHmHRu7D0na4q504e9GBBEco8/edit?usp=sharing)
 
 ### * 개발 이야기
-- 사이를 개발하면서 해결한 문제와 고민, 과정을 보고싶다면 아래의 링크를 확인해주세요!
-- [사이 개발 과정 바로가기](https://devraphy.tistory.com/624)
+- 개발 과정에서 다음과 같은 문제를 마주하고 해결했습니다!
+- [JoinTable 전략의 문제점과 영속 상태에 대한 이해](https://devraphy.tistory.com/632)
+- [Update Query를 직접 작성한다면(feat. 타입 오류)](https://devraphy.tistory.com/633)
+- [WebSecurityConfigurerAdapter가 Deprecated 되었다!](https://devraphy.tistory.com/636)
+- [DataIntegrityValidationException은 어디서 처리할까?](https://devraphy.tistory.com/638)
 
 <hr>
 
