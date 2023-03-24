@@ -1,8 +1,6 @@
 # 프로젝트 SAI(Social Activity Interpreter)
 ### * 프로젝트 SAI의 백엔드 개발 Repository 입니다.
 
-### * [RestAPI 바로가기](https://restsai.herokuapp.com/sai-api)
-
 ### * 사이(SAI) RestAPI 사용 설명서
 - 사이 RestAPI 사용 설명서는 아래의 링크를 확인해주세요!
 - [사이 RestAPI 사용 설명서](https://devraphy.tistory.com/640)
